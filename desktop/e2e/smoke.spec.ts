@@ -68,6 +68,22 @@ test('app info comes through the IPC bridge', async () => {
   await expect(page.getByTestId('app-info')).toContainText('Electron');
 });
 
+test('camera → live signs with confidence → English draft (mock adapters)', async () => {
+  await page.getByRole('button', { name: 'Start camera' }).click();
+  await expect(page.getByTestId('recognizer-status')).toContainText('Recognizing', { timeout: 5000 });
+
+  // The fake camera produces real frames; the mock model only emits while frames flow.
+  const videoReady = await page.getByTestId('webcam-video').evaluate((v: HTMLVideoElement) => v.videoWidth > 0);
+  expect(videoReady).toBe(true);
+
+  await expect(page.getByTestId('sign-row').first()).toBeVisible({ timeout: 5000 });
+  await expect(page.getByRole('meter').first()).toHaveAttribute('aria-valuenow', /\d+/);
+  await expect(page.getByTestId('draft-preview')).toHaveText('Hello, nice to meet you.', { timeout: 15_000 });
+
+  await page.getByRole('button', { name: 'Stop camera' }).click();
+  await expect(page.getByText('Camera is off')).toBeVisible();
+});
+
 // Keep last: Playwright keeps waiting on the cancelled navigation, so later
 // locator calls on `page` would hang. The main process is the source of truth.
 test('navigation to external sites is blocked', async () => {

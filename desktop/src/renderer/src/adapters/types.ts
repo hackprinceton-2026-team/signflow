@@ -39,6 +39,8 @@ export interface VideoFrameInput {
 
 export interface SignRecognizer {
   readonly name: string;
+  /** What the frame sampler should send: metadata only, or JPEG-encoded frames. */
+  readonly frameFormat: 'none' | 'jpeg';
   start(): Promise<void>;
   stop(): void;
   pushFrame(frame: VideoFrameInput): void;

@@ -55,6 +55,7 @@ export interface MockRecognizerOptions {
 
 export class MockSignRecognizer implements SignRecognizer {
   readonly name = 'Mock recognizer';
+  readonly frameFormat = 'none' as const;
 
   private readonly signs = new Emitter<RecognizedSign>();
   private readonly status = new Emitter<AdapterStatus>();

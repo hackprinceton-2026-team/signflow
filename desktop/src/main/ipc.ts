@@ -32,6 +32,8 @@ export function registerIpcHandlers(): void {
   handle<CameraAccessStatus>(IpcChannels.cameraAccessStatus, () => cameraStatus());
 
   handle<CameraAccessStatus>(IpcChannels.cameraRequestAccess, async () => {
+    // E2E runs use Chromium's fake camera; never block on a system dialog there.
+    if (process.env['SIGNFLOW_E2E'] === '1') return 'granted';
     if (process.platform === 'darwin' && cameraStatus() === 'not-determined') {
       await systemPreferences.askForMediaAccess('camera');
     }
