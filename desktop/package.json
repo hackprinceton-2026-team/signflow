@@ -22,7 +22,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "npm run build && playwright test",
-    "check": "npm run typecheck && npm run lint && npm test"
+    "contract:generate": "node contract/cli.mts generate",
+    "contract:check": "node contract/cli.mts check",
+    "check": "npm run typecheck && npm run lint && npm test && npm run contract:check"
   },
   "dependencies": {
     "react": "^19.3.1",
@@ -38,15 +40,23 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.3.0",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
     "electron": "^45.3.2",
     "electron-vite": "^6.0.0",
     "eslint": "^10.15.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "globals": "^17.14.0",
     "jsdom": "^31.0.1",
+    "openapi-typescript": "^7.13.0",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.72.2",
     "vite": "^8.3.8",
     "vitest": "^5.1.0"
+  },
+  "overrides": {
+    "openapi-typescript": {
+      "typescript": "$typescript"
+    }
   }
 }

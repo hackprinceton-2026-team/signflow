@@ -1,0 +1,38 @@
+{
+  "$comment": "Frontend side of the backend contract. The canonical schema is the backend's Pydantic models (owner: Muhammad). Do not hand-write wire types here: fill in `schema` with the official component names once the OpenAPI document exists. `source` and `examplesDir` are the proposed shared locations and are not created by the frontend.",
+  "source": "../docs/contract/openapi.json",
+  "examplesDir": "../docs/contract/examples",
+  "output": "src/renderer/src/contract/generated/openapi.ts",
+  "concepts": {
+    "recognizedSign": {
+      "schema": null,
+      "required": true,
+      "description": "One recognized sign streamed by the model. Feeds the live sign feed (UI type RecognizedSign)."
+    },
+    "englishDraft": {
+      "schema": null,
+      "required": true,
+      "description": "English text generated from a run of signs, shown for user confirmation (UI type EnglishDraft)."
+    },
+    "errorMessage": {
+      "schema": null,
+      "required": false,
+      "description": "Error reported by the backend or model, surfaced in the UI."
+    },
+    "recognitionInput": {
+      "schema": null,
+      "required": false,
+      "description": "What the desktop sends for recognition (video frame, landmarks, ...). Depends on the backend's design."
+    },
+    "draftConfirmation": {
+      "schema": null,
+      "required": false,
+      "description": "Sent when the user confirms or edits a draft, if the backend wants it."
+    },
+    "sessionControl": {
+      "schema": null,
+      "required": false,
+      "description": "Session start/stop messages, if the backend uses them."
+    }
+  }
+}
