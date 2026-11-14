@@ -921,3 +921,27 @@ kbd {
 .flash-error {
   color: var(--danger);
 }
+
+/* ---------- Captions controls ---------- */
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.captions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 10px 16px;
+  align-items: end;
+}
+
+.captions-grid .toggle {
+  grid-column: 1 / -1;
+}
+
+.hint {
+  margin: 0;
+  font-size: 12px;
+}

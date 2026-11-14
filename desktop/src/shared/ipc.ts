@@ -11,6 +11,18 @@ export const IpcChannels = {
   cameraRequestAccess: 'camera:request-access',
   clipboardWriteText: 'clipboard:write-text',
   notesExport: 'notes:export',
+  /** main window → main: show/hide the floating captions window */
+  captionsSetVisible: 'captions:set-visible',
+  /** main window → main: new caption state (fire-and-forget) */
+  captionsUpdate: 'captions:update',
+  /** main → main window: captions window was opened/closed */
+  captionsVisibility: 'captions:visibility',
+  /** captions window → main: latest state on load */
+  captionsGetState: 'captions:get-state',
+  /** main → captions window: render this state */
+  captionsRender: 'captions:render',
+  /** captions window → main: user closed it */
+  captionsClose: 'captions:close',
 } as const;
 
 export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels];

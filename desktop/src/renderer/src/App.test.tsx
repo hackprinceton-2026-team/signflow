@@ -110,3 +110,21 @@ describe('<App /> notes mode', () => {
     expect(screen.getByRole('tab', { name: 'Notes' })).toHaveAttribute('aria-selected', 'true');
   });
 });
+
+describe('<App /> floating captions', () => {
+  it('CC toggles the overlay and streams confirmed sentences to it', async () => {
+    const { recognizer } = renderApp();
+    const toggle = screen.getByTestId('captions-toggle');
+    fireEvent.click(toggle);
+    await waitFor(() => expect(toggle).toHaveAttribute('aria-pressed', 'true'));
+    expect(window.signflow.captions.setVisible).toHaveBeenCalledWith(true);
+    expect(screen.getByRole('button', { name: 'Hide captions' })).toBeInTheDocument();
+
+    await produceDraft(recognizer, ['THANK-YOU']);
+    expect(window.signflow.captions.update).toHaveBeenLastCalledWith(expect.objectContaining({ live: 'Thank you.' }));
+    fireEvent.click(screen.getByRole('button', { name: /Confirm/ }));
+    expect(window.signflow.captions.update).toHaveBeenLastCalledWith(
+      expect.objectContaining({ lines: [expect.objectContaining({ text: 'Thank you.' })], live: '' }),
+    );
+  });
+});

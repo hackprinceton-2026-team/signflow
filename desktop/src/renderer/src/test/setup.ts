@@ -21,6 +21,18 @@ export function installFakeBridge(overrides: Partial<SignflowApi> = {}): Signflo
     },
     clipboard: { writeText: vi.fn(async () => undefined) },
     notes: { exportMarkdown: vi.fn(async () => ({ saved: true, fileName: 'notes.md' })) },
+    captions: {
+      setVisible: vi.fn(async (v: boolean) => v),
+      update: vi.fn(),
+      onVisibilityChange: vi.fn(() => () => undefined),
+      getState: vi.fn(async () => ({
+        lines: [],
+        live: '',
+        settings: { fontSize: 30, opacity: 0.75, showLive: true, maxLines: 2 },
+      })),
+      onRender: vi.fn(() => () => undefined),
+      close: vi.fn(),
+    },
     ...overrides,
   };
   Object.defineProperty(window, 'signflow', { value: api, configurable: true, writable: true });

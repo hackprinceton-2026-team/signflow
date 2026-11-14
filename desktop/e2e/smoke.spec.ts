@@ -136,6 +136,55 @@ test('IPC rejects malformed export payloads', async () => {
   expect(err).toContain('Export content must be a string');
 });
 
+test('floating captions: secure always-on-top overlay that mirrors confirmed sentences', async () => {
+  const opened = app.waitForEvent('window');
+  await page.getByTestId('captions-toggle').click();
+  const captions = await opened;
+  await captions.waitForLoadState('domcontentloaded');
+  expect(captions.url()).toBe('app://signflow/captions.html?e2e=1');
+  await expect(page.getByTestId('captions-toggle')).toHaveAttribute('aria-pressed', 'true');
+  await expect(captions.getByTestId('captions')).toBeVisible();
+
+  const overlay = await app.evaluate(({ BrowserWindow }) => {
+    const w = BrowserWindow.getAllWindows().find((x) => x.getTitle() === 'SignFlow Captions');
+    return w ? { onTop: w.isAlwaysOnTop(), focusable: w.isFocusable(), count: BrowserWindow.getAllWindows().length } : null;
+  });
+  expect(overlay).toMatchObject({ onTop: true, count: 2 });
+
+  // Both windows were created with the hardened preferences.
+  const prefs = await app.evaluate(() => {
+    const g = globalThis as { __SIGNFLOW_WINDOW_PREFS__?: Record<number, Record<string, unknown>> };
+    return Object.values(g.__SIGNFLOW_WINDOW_PREFS__ ?? {}).map((p) => [p['contextIsolation'], p['nodeIntegration'], p['sandbox']]);
+  });
+  expect(prefs.length).toBeGreaterThanOrEqual(2);
+  for (const p of prefs) expect(p).toEqual([true, false, true]);
+
+  // Sign → confirm in the main window → appears in the overlay.
+  await page.getByRole('button', { name: 'Start camera' }).click();
+  await expect(page.getByTestId('draft-text')).toBeVisible({ timeout: 15_000 });
+  await expect(captions.getByTestId('caption-live')).not.toBeEmpty();
+  const sentence = await page.getByTestId('draft-text').inputValue();
+  await page.getByTestId('draft-text').press('ControlOrMeta+Enter');
+  await expect(captions.getByTestId('caption-line').last()).toHaveText(sentence);
+  await page.getByRole('button', { name: 'Stop camera' }).click();
+
+  // Per-window sender checks: the overlay can't toggle itself via the main-window API.
+  const err = await captions.evaluate(async () => {
+    try {
+      await window.signflow.captions.setVisible(false);
+      return 'allowed';
+    } catch (e) {
+      return String(e);
+    }
+  });
+  expect(err).toContain('untrusted sender');
+
+  // Closing from the overlay's own × updates the main window.
+  await captions.getByRole('button', { name: 'Close captions' }).click();
+  await expect(page.getByTestId('captions-toggle')).toHaveAttribute('aria-pressed', 'false');
+  expect(await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows().length)).toBe(1);
+});
+
 // Keep last: Playwright keeps waiting on the cancelled navigation, so later
 // locator calls on `page` would hang. The main process is the source of truth.
 test('navigation to external sites is blocked', async () => {

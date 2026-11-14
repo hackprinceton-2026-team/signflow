@@ -26,7 +26,7 @@ export function secureWebPreferences(): WebPreferences {
  * E2E-only: remember the webPreferences each window was created with so the
  * Playwright smoke test can assert them (Electron 45 has no getter for this).
  */
-function recordPrefsForE2e(win: BrowserWindow, prefs: WebPreferences): void {
+export function recordPrefsForE2e(win: BrowserWindow, prefs: WebPreferences): void {
   if (process.env['SIGNFLOW_E2E'] !== '1') return;
   const g = globalThis as { __SIGNFLOW_WINDOW_PREFS__?: Record<number, WebPreferences> };
   g.__SIGNFLOW_WINDOW_PREFS__ ??= {};

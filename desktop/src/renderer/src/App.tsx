@@ -8,6 +8,7 @@ import { useSignSession } from './hooks/useSignSession';
 import { useSpeech } from './hooks/useSpeech';
 import { useNotes } from './hooks/useNotes';
 import { usePersistentState } from './hooks/usePersistentState';
+import { useCaptions } from './hooks/useCaptions';
 import { lastUtterance, type SessionSettings, type Utterance } from './state/session';
 import { CameraPanel } from './components/CameraPanel';
 import { LiveSignsPanel } from './components/LiveSignsPanel';
@@ -16,6 +17,7 @@ import { SpeechControls } from './components/SpeechControls';
 import { TranscriptPanel } from './components/TranscriptPanel';
 import { NotesPanel } from './components/NotesPanel';
 import { isAppMode, ModeTabs, type AppMode } from './components/ModeTabs';
+import { CaptionsPanel } from './components/CaptionsPanel';
 
 interface AppProps {
   /** Injected in tests; defaults to the mock adapter set. */
@@ -59,6 +61,7 @@ export function App({ adapters: injected, initialSettings }: AppProps) {
   }, []);
 
   const { state } = session;
+  const captions = useCaptions(state);
   const confirmLabel = mode === 'notes' ? 'Add to notes' : state.settings.autoSpeak ? 'Confirm & speak' : 'Confirm';
 
   return (
@@ -70,7 +73,19 @@ export function App({ adapters: injected, initialSettings }: AppProps) {
           </span>
           <h1>SignFlow</h1>
         </div>
-        <ModeTabs mode={mode} onChange={setMode} />
+        <div className="header-actions">
+          <ModeTabs mode={mode} onChange={setMode} />
+          <button
+            type="button"
+            className={`btn btn-sm ${captions.visible ? 'btn-primary' : ''}`}
+            onClick={() => void captions.toggle()}
+            aria-pressed={captions.visible}
+            title="Floating captions window"
+            data-testid="captions-toggle"
+          >
+            CC
+          </button>
+        </div>
       </header>
 
       <main className="app-main">
@@ -93,6 +108,7 @@ export function App({ adapters: injected, initialSettings }: AppProps) {
             onClearBuffer={session.clearBuffer}
             onTranslateNow={session.translateNow}
           />
+          <CaptionsPanel captions={captions} />
         </div>
         <div className="column">
           <DraftPanel

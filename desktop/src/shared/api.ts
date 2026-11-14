@@ -1,3 +1,4 @@
+import type { CaptionPayload } from './captions';
 import type { AppInfo, CameraAccessStatus, NotesExportRequest, NotesExportResult } from './ipc';
 
 /**
@@ -16,5 +17,15 @@ export interface SignflowApi {
   notes: {
     /** Shows a native Save dialog; writes only the file the user picks. */
     exportMarkdown(request: NotesExportRequest): Promise<NotesExportResult>;
+  };
+  captions: {
+    // Used by the main window:
+    setVisible(visible: boolean): Promise<boolean>;
+    update(payload: CaptionPayload): void;
+    onVisibilityChange(cb: (visible: boolean) => void): () => void;
+    // Used by the captions window:
+    getState(): Promise<CaptionPayload>;
+    onRender(cb: (payload: CaptionPayload) => void): () => void;
+    close(): void;
   };
 }

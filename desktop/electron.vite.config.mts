@@ -40,6 +40,7 @@ export default defineConfig({
       rollupOptions: {
         input: {
           index: resolve(root, 'src/renderer/index.html'),
+          captions: resolve(root, 'src/renderer/captions.html'),
         },
       },
     },

@@ -1,5 +1,5 @@
 import { join } from 'node:path';
-import { app, BrowserWindow } from 'electron';
+import { app, type BrowserWindow } from 'electron';
 import {
   hardenDefaultSession,
   hardenWebContents,
@@ -8,6 +8,7 @@ import {
 } from './security';
 import { createMainWindow } from './windows';
 import { registerIpcHandlers } from './ipc';
+import { CaptionsController } from './captions';
 
 // Sandbox every renderer, including any created by Electron internals.
 app.enableSandbox();
@@ -22,6 +23,7 @@ if (!app.requestSingleInstanceLock()) {
   registerPrivilegedSchemes();
 
   let mainWindow: BrowserWindow | null = null;
+  const captions = new CaptionsController(() => mainWindow);
 
   app.on('second-instance', () => {
     if (!mainWindow) return;
@@ -35,14 +37,21 @@ if (!app.requestSingleInstanceLock()) {
     registerAppProtocol(join(__dirname, '../renderer'));
     hardenDefaultSession();
     registerIpcHandlers();
+    captions.registerIpc();
 
-    mainWindow = createMainWindow();
-    mainWindow.on('closed', () => {
-      mainWindow = null;
-    });
+    const openMainWindow = () => {
+      const win = createMainWindow();
+      // The captions overlay never outlives the main window.
+      win.on('closed', () => {
+        if (mainWindow === win) mainWindow = null;
+        captions.hide();
+      });
+      mainWindow = win;
+    };
+    openMainWindow();
 
     app.on('activate', () => {
-      if (BrowserWindow.getAllWindows().length === 0) mainWindow = createMainWindow();
+      if (!mainWindow) openMainWindow();
     });
   });
 
