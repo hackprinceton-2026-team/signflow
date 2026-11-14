@@ -1,13 +1,17 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { AppInfo } from '@shared/ipc';
-import { createAdapters } from './adapters';
+import { createAdapters, isE2eRun } from './adapters';
 import type { Adapters } from './adapters/types';
 import { useCamera } from './hooks/useCamera';
 import { useFrameSampler } from './hooks/useFrameSampler';
 import { useSignSession } from './hooks/useSignSession';
-import type { SessionSettings } from './state/session';
+import { useSpeech } from './hooks/useSpeech';
+import { lastUtterance, type SessionSettings, type Utterance } from './state/session';
 import { CameraPanel } from './components/CameraPanel';
 import { LiveSignsPanel } from './components/LiveSignsPanel';
+import { DraftPanel } from './components/DraftPanel';
+import { SpeechControls } from './components/SpeechControls';
+import { TranscriptPanel } from './components/TranscriptPanel';
 
 interface AppProps {
   /** Injected in tests; defaults to the mock adapter set. */
@@ -16,14 +20,22 @@ interface AppProps {
 }
 
 export function App({ adapters: injected, initialSettings }: AppProps) {
-  const [adapters] = useState<Adapters>(() => injected ?? createAdapters('mock'));
+  const [adapters] = useState<Adapters>(() => injected ?? createAdapters('mock', { silentSpeech: isE2eRun() }));
   const [info, setInfo] = useState<AppInfo | null>(null);
   const [mirrored, setMirrored] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const camera = useCamera();
   const cameraOn = camera.status === 'on';
-  const session = useSignSession(adapters, { active: cameraOn, initialSettings });
+  const speech = useSpeech(adapters.speech);
+  const { speak } = speech;
+  const handleConfirm = useCallback(
+    (utterance: Utterance, settings: SessionSettings) => {
+      if (settings.autoSpeak) speak(utterance.text);
+    },
+    [speak],
+  );
+  const session = useSignSession(adapters, { active: cameraOn, initialSettings, onConfirm: handleConfirm });
   useFrameSampler(videoRef, adapters.recognizer, cameraOn);
 
   useEffect(() => {
@@ -72,12 +84,27 @@ export function App({ adapters: injected, initialSettings }: AppProps) {
           />
         </div>
         <div className="column">
-          <section className="panel" aria-label="Conversation">
-            <h2 className="panel-title">English draft</h2>
-            <p className="muted" data-testid="draft-preview">
-              {state.draft ? state.draft.text : 'Drafts appear here after a pause in signing.'}
-            </p>
-          </section>
+          <DraftPanel
+            draft={state.draft}
+            status={state.draftStatus}
+            error={state.draftError}
+            threshold={state.settings.minConfidence}
+            autoSpeak={state.settings.autoSpeak}
+            canRetry={state.buffer.length > 0}
+            onEdit={session.editDraft}
+            onConfirm={session.confirm}
+            onDiscard={session.discardDraft}
+            onPreview={speak}
+            onRetry={session.translateNow}
+            onDismissError={session.clearBuffer}
+          />
+          <SpeechControls
+            speech={speech}
+            autoSpeak={state.settings.autoSpeak}
+            onAutoSpeakChange={(autoSpeak) => session.updateSettings({ autoSpeak })}
+            lastText={lastUtterance(state)?.text}
+          />
+          <TranscriptPanel transcript={state.transcript} onSpeak={speak} onClear={session.clearTranscript} />
         </div>
       </main>
 

@@ -19,7 +19,7 @@ test.afterAll(async () => {
 
 test('main window loads from the app:// origin', async () => {
   await expect(page).toHaveTitle('SignFlow');
-  expect(page.url()).toBe('app://signflow/index.html');
+  expect(page.url()).toBe('app://signflow/index.html?e2e=1');
   await expect(page.getByRole('heading', { name: 'SignFlow' })).toBeVisible();
 });
 
@@ -68,7 +68,7 @@ test('app info comes through the IPC bridge', async () => {
   await expect(page.getByTestId('app-info')).toContainText('Electron');
 });
 
-test('camera → live signs with confidence → English draft (mock adapters)', async () => {
+test('camera → live signs → draft → edit + confirm (mock adapters)', async () => {
   await page.getByRole('button', { name: 'Start camera' }).click();
   await expect(page.getByTestId('recognizer-status')).toContainText('Recognizing', { timeout: 5000 });
 
@@ -78,7 +78,12 @@ test('camera → live signs with confidence → English draft (mock adapters)', 
 
   await expect(page.getByTestId('sign-row').first()).toBeVisible({ timeout: 5000 });
   await expect(page.getByRole('meter').first()).toHaveAttribute('aria-valuenow', /\d+/);
-  await expect(page.getByTestId('draft-preview')).toHaveText('Hello, nice to meet you.', { timeout: 15_000 });
+  await expect(page.getByTestId('draft-text')).toHaveValue('Hello, nice to meet you.', { timeout: 15_000 });
+  await page.getByTestId('draft-text').fill('Hello, nice to meet you all.');
+  await page.getByTestId('draft-text').press('ControlOrMeta+Enter');
+  await expect(page.getByTestId('utterance').first()).toContainText('Hello, nice to meet you all.');
+  // Auto-speak fired (silent engine in e2e runs).
+  await expect(page.getByTestId('speech-state')).toHaveText('Speaking');
 
   await page.getByRole('button', { name: 'Stop camera' }).click();
   await expect(page.getByText('Camera is off')).toBeVisible();
@@ -92,5 +97,5 @@ test('navigation to external sites is blocked', async () => {
   });
   await page.waitForTimeout(500);
   const url = await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0]?.webContents.getURL());
-  expect(url).toBe('app://signflow/index.html');
+  expect(url).toBe('app://signflow/index.html?e2e=1');
 });

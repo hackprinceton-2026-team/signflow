@@ -36,8 +36,10 @@ function recordPrefsForE2e(win: BrowserWindow, prefs: WebPreferences): void {
 /** URL for a renderer HTML entry, in dev (Vite server) or prod (app://). */
 export function rendererUrl(entry: 'index' | 'captions'): string {
   const devUrl = process.env['ELECTRON_RENDERER_URL'];
-  if (devUrl) return `${devUrl}/${entry}.html`;
-  return `${APP_ORIGIN}/${entry}.html`;
+  // E2E runs tell the renderer to use silent speech (no audio during tests).
+  const query = process.env['SIGNFLOW_E2E'] === '1' ? '?e2e=1' : '';
+  if (devUrl) return `${devUrl}/${entry}.html${query}`;
+  return `${APP_ORIGIN}/${entry}.html${query}`;
 }
 
 export function createMainWindow(): BrowserWindow {

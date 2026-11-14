@@ -66,7 +66,10 @@ describe('useSignSession', () => {
     await act(() => vi.advanceTimersByTimeAsync(1100));
     act(() => result.current.editDraft('Thank you so much.'));
     act(() => result.current.confirm());
-    expect(onConfirm).toHaveBeenCalledWith(expect.objectContaining({ text: 'Thank you so much.', edited: true }));
+    expect(onConfirm).toHaveBeenCalledWith(
+      expect.objectContaining({ text: 'Thank you so much.', edited: true }),
+      expect.objectContaining({ autoSpeak: true }),
+    );
     expect(result.current.state.transcript).toHaveLength(1);
     expect(result.current.state.draft).toBeNull();
   });

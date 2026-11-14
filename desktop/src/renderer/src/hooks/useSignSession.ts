@@ -13,7 +13,7 @@ export interface SignSessionOptions {
   active: boolean;
   initialSettings?: Partial<SessionSettings>;
   /** Called once per confirmed sentence (TTS, captions, notes…). */
-  onConfirm?: (utterance: Utterance) => void;
+  onConfirm?: (utterance: Utterance, settings: SessionSettings) => void;
 }
 
 /**
@@ -100,7 +100,7 @@ export function useSignSession(adapters: Pick<Adapters, 'recognizer' | 'translat
     const next = sessionReducer(s, { type: 'draft/confirmed', at });
     dispatch({ type: 'draft/confirmed', at });
     const added = next.transcript.length > s.transcript.length ? next.transcript.at(-1) : undefined;
-    if (added) onConfirmRef.current?.(added);
+    if (added) onConfirmRef.current?.(added, next.settings);
   }, []);
 
   const editDraft = useCallback((text: string) => dispatch({ type: 'draft/edited', text }), []);

@@ -15,6 +15,13 @@ function renderApp() {
   return { recognizer, adapters };
 }
 
+async function produceDraft(recognizer: FakeRecognizer, glosses: string[]) {
+  fireEvent.click(screen.getByRole('button', { name: 'Start camera' }));
+  await waitFor(() => expect(recognizer.start).toHaveBeenCalled());
+  act(() => glosses.forEach((g) => recognizer.emit(g, 0.9)));
+  await screen.findByTestId('draft-text');
+}
+
 describe('<App />', () => {
   it('renders the shell and app info from the preload bridge', async () => {
     renderApp();
@@ -40,9 +47,41 @@ describe('<App />', () => {
     expect(screen.getAllByTestId('sign-row')).toHaveLength(4);
     expect(within(screen.getByTestId('phrase-buffer')).getByText('MEET')).toBeInTheDocument();
 
-    await waitFor(() => expect(screen.getByTestId('draft-preview')).toHaveTextContent('Hello, nice to meet you.'));
+    await waitFor(() => expect(screen.getByTestId('draft-text')).toHaveValue('Hello, nice to meet you.'));
 
     fireEvent.click(screen.getByRole('button', { name: 'Stop camera' }));
     expect(recognizer.stop).toHaveBeenCalled();
+  });
+});
+
+describe('<App /> draft confirmation + speech', () => {
+  it('edit → confirm speaks the sentence and adds it to the conversation', async () => {
+    const { recognizer, adapters } = renderApp();
+    await produceDraft(recognizer, ['HOW', 'YOU']);
+    fireEvent.change(screen.getByTestId('draft-text'), { target: { value: 'How are you today?' } });
+    fireEvent.click(screen.getByRole('button', { name: /Confirm & speak/ }));
+
+    expect(adapters.speech.spoken.at(-1)?.text).toBe('How are you today?');
+    expect(screen.getByTestId('utterance')).toHaveTextContent('How are you today?');
+    expect(screen.getByTestId('utterance')).toHaveTextContent('edited');
+    expect(screen.queryByTestId('draft-text')).not.toBeInTheDocument();
+  });
+
+  it('with auto-speak off, confirming does not speak', async () => {
+    const { recognizer, adapters } = renderApp();
+    fireEvent.click(screen.getByRole('checkbox', { name: /Auto-speak/ }));
+    await produceDraft(recognizer, ['THANK-YOU']);
+    fireEvent.click(screen.getByRole('button', { name: /^Confirm/ }));
+    expect(adapters.speech.spoken).toHaveLength(0);
+    expect(screen.getByTestId('utterance')).toHaveTextContent('Thank you.');
+  });
+
+  it('discarding drops the draft without speaking', async () => {
+    const { recognizer, adapters } = renderApp();
+    await produceDraft(recognizer, ['HELLO']);
+    fireEvent.click(screen.getByRole('button', { name: 'Discard' }));
+    expect(screen.queryByTestId('draft-text')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('utterance')).not.toBeInTheDocument();
+    expect(adapters.speech.spoken).toHaveLength(0);
   });
 });

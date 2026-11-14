@@ -11,16 +11,22 @@ export type AdapterMode = 'mock';
  * Only `mock` exists today. When backend/ and ml/ expose the WebSocket in
  * docs/interfaces.md, add a `remote` mode here. No component needs to change.
  */
-export function createAdapters(mode: AdapterMode = 'mock'): Adapters {
+export function createAdapters(mode: AdapterMode = 'mock', opts: { silentSpeech?: boolean } = {}): Adapters {
+  const speech = !opts.silentSpeech && hasSpeechSynthesis() ? new WebSpeechEngine() : new MockSpeechEngine();
   switch (mode) {
     case 'mock':
     default:
       return {
         recognizer: new MockSignRecognizer({ seed: Date.now() % 100_000 }),
         translator: new MockTranslator(),
-        speech: hasSpeechSynthesis() ? new WebSpeechEngine() : new MockSpeechEngine(),
+        speech,
       };
   }
+}
+
+/** True when the main process launched us for automated tests. */
+export function isE2eRun(): boolean {
+  return typeof location !== 'undefined' && new URLSearchParams(location.search).get('e2e') === '1';
 }
 
 function hasSpeechSynthesis(): boolean {
