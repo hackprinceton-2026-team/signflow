@@ -19,6 +19,8 @@ export function installFakeBridge(overrides: Partial<SignflowApi> = {}): Signflo
       accessStatus: vi.fn(async () => 'granted' as const),
       requestAccess: vi.fn(async () => 'granted' as const),
     },
+    clipboard: { writeText: vi.fn(async () => undefined) },
+    notes: { exportMarkdown: vi.fn(async () => ({ saved: true, fileName: 'notes.md' })) },
     ...overrides,
   };
   Object.defineProperty(window, 'signflow', { value: api, configurable: true, writable: true });

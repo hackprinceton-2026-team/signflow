@@ -6,17 +6,18 @@ import { useCallback, useState } from 'react';
  */
 export function usePersistentState<T>(
   key: string,
-  initial: T,
+  initial: T | (() => T),
   validate: (value: unknown) => value is T = (_v): _v is T => true,
 ) {
   const [value, setValue] = useState<T>(() => {
+    const fallback = () => (typeof initial === 'function' ? (initial as () => T)() : initial);
     try {
       const raw = localStorage.getItem(key);
-      if (raw === null) return initial;
+      if (raw === null) return fallback();
       const parsed: unknown = JSON.parse(raw);
-      return validate(parsed) ? parsed : initial;
+      return validate(parsed) ? parsed : fallback();
     } catch {
-      return initial;
+      return fallback();
     }
   });
 

@@ -1,13 +1,17 @@
 import { _electron as electron, expect, test, type ElectronApplication, type Page } from '@playwright/test';
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 let app: ElectronApplication;
 let page: Page;
+let userData: string;
 
 test.beforeAll(async () => {
+  userData = mkdtempSync(join(tmpdir(), 'signflow-e2e-'));
   app = await electron.launch({
     args: [join(__dirname, '..'), '--use-fake-device-for-media-stream'],
-    env: { ...process.env, SIGNFLOW_E2E: '1', ELECTRON_RENDERER_URL: '' },
+    env: { ...process.env, SIGNFLOW_E2E: '1', SIGNFLOW_USER_DATA: userData, ELECTRON_RENDERER_URL: '' },
   });
   page = await app.firstWindow();
   await page.waitForLoadState('domcontentloaded');
@@ -15,6 +19,12 @@ test.beforeAll(async () => {
 
 test.afterAll(async () => {
   await app?.close();
+  rmSync(userData, { recursive: true, force: true });
+});
+
+test('uses an isolated profile for e2e runs', async () => {
+  const path = await app.evaluate(({ app: electronApp }) => electronApp.getPath('userData'));
+  expect(path).toBe(userData);
 });
 
 test('main window loads from the app:// origin', async () => {
@@ -87,6 +97,43 @@ test('camera → live signs → draft → edit + confirm (mock adapters)', async
 
   await page.getByRole('button', { name: 'Stop camera' }).click();
   await expect(page.getByText('Camera is off')).toBeVisible();
+});
+
+test('notes mode: confirmed sentences are appended and exported as Markdown', async () => {
+  await page.getByRole('tab', { name: 'Notes' }).click();
+  await page.getByLabel('Note title').fill('E2E lecture');
+  await page.getByRole('button', { name: 'Start camera' }).click();
+  await expect(page.getByTestId('draft-text')).toBeVisible({ timeout: 15_000 });
+  const sentence = await page.getByTestId('draft-text').inputValue();
+  await page.getByRole('button', { name: /Add to notes/ }).click();
+  await expect(page.getByTestId('note-body')).toHaveValue(new RegExp(sentence.replace(/[.?]/g, '\\$&')));
+
+  // Stub the native Save dialog in the main process, then export for real.
+  const outFile = join(userData, 'export.md');
+  await app.evaluate(({ dialog }, file) => {
+    dialog.showSaveDialog = (async () => ({ canceled: false, filePath: file })) as typeof dialog.showSaveDialog;
+  }, outFile);
+  await page.getByRole('button', { name: 'Export .md' }).click();
+  await expect(page.getByText('Saved export.md')).toBeVisible();
+  const md = readFileSync(outFile, 'utf8');
+  expect(md.startsWith('# E2E lecture')).toBe(true);
+  expect(md).toContain(sentence);
+
+  await page.getByRole('button', { name: 'Stop camera' }).click();
+  await page.getByRole('tab', { name: 'Conversation' }).click();
+});
+
+test('IPC rejects malformed export payloads', async () => {
+  const err = await page.evaluate(async () => {
+    try {
+      // @ts-expect-error deliberately wrong payload
+      await window.signflow.notes.exportMarkdown({ suggestedName: 'x', content: 123 });
+      return 'no error';
+    } catch (e) {
+      return String(e);
+    }
+  });
+  expect(err).toContain('Export content must be a string');
 });
 
 // Keep last: Playwright keeps waiting on the cancelled navigation, so later

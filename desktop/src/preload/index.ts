@@ -12,6 +12,12 @@ const api: SignflowApi = {
     accessStatus: () => ipcRenderer.invoke(IpcChannels.cameraAccessStatus),
     requestAccess: () => ipcRenderer.invoke(IpcChannels.cameraRequestAccess),
   },
+  clipboard: {
+    writeText: (text) => ipcRenderer.invoke(IpcChannels.clipboardWriteText, text),
+  },
+  notes: {
+    exportMarkdown: (request) => ipcRenderer.invoke(IpcChannels.notesExport, request),
+  },
 };
 
 contextBridge.exposeInMainWorld('signflow', api);

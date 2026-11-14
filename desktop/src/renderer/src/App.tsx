@@ -6,12 +6,16 @@ import { useCamera } from './hooks/useCamera';
 import { useFrameSampler } from './hooks/useFrameSampler';
 import { useSignSession } from './hooks/useSignSession';
 import { useSpeech } from './hooks/useSpeech';
+import { useNotes } from './hooks/useNotes';
+import { usePersistentState } from './hooks/usePersistentState';
 import { lastUtterance, type SessionSettings, type Utterance } from './state/session';
 import { CameraPanel } from './components/CameraPanel';
 import { LiveSignsPanel } from './components/LiveSignsPanel';
 import { DraftPanel } from './components/DraftPanel';
 import { SpeechControls } from './components/SpeechControls';
 import { TranscriptPanel } from './components/TranscriptPanel';
+import { NotesPanel } from './components/NotesPanel';
+import { isAppMode, ModeTabs, type AppMode } from './components/ModeTabs';
 
 interface AppProps {
   /** Injected in tests; defaults to the mock adapter set. */
@@ -27,13 +31,18 @@ export function App({ adapters: injected, initialSettings }: AppProps) {
 
   const camera = useCamera();
   const cameraOn = camera.status === 'on';
+  const [mode, setMode] = usePersistentState<AppMode>('signflow.mode', 'conversation', isAppMode);
   const speech = useSpeech(adapters.speech);
+  const notes = useNotes();
   const { speak } = speech;
+  const { append: appendToNotes } = notes;
   const handleConfirm = useCallback(
     (utterance: Utterance, settings: SessionSettings) => {
-      if (settings.autoSpeak) speak(utterance.text);
+      // Notes mode is silent note-taking; conversation mode speaks.
+      if (mode === 'notes') appendToNotes(utterance.text, utterance.confirmedAt);
+      else if (settings.autoSpeak) speak(utterance.text);
     },
-    [speak],
+    [appendToNotes, mode, speak],
   );
   const session = useSignSession(adapters, { active: cameraOn, initialSettings, onConfirm: handleConfirm });
   useFrameSampler(videoRef, adapters.recognizer, cameraOn);
@@ -50,6 +59,7 @@ export function App({ adapters: injected, initialSettings }: AppProps) {
   }, []);
 
   const { state } = session;
+  const confirmLabel = mode === 'notes' ? 'Add to notes' : state.settings.autoSpeak ? 'Confirm & speak' : 'Confirm';
 
   return (
     <div className="app">
@@ -60,6 +70,7 @@ export function App({ adapters: injected, initialSettings }: AppProps) {
           </span>
           <h1>SignFlow</h1>
         </div>
+        <ModeTabs mode={mode} onChange={setMode} />
       </header>
 
       <main className="app-main">
@@ -89,7 +100,7 @@ export function App({ adapters: injected, initialSettings }: AppProps) {
             status={state.draftStatus}
             error={state.draftError}
             threshold={state.settings.minConfidence}
-            autoSpeak={state.settings.autoSpeak}
+            confirmLabel={confirmLabel}
             canRetry={state.buffer.length > 0}
             onEdit={session.editDraft}
             onConfirm={session.confirm}
@@ -98,13 +109,19 @@ export function App({ adapters: injected, initialSettings }: AppProps) {
             onRetry={session.translateNow}
             onDismissError={session.clearBuffer}
           />
-          <SpeechControls
-            speech={speech}
-            autoSpeak={state.settings.autoSpeak}
-            onAutoSpeakChange={(autoSpeak) => session.updateSettings({ autoSpeak })}
-            lastText={lastUtterance(state)?.text}
-          />
-          <TranscriptPanel transcript={state.transcript} onSpeak={speak} onClear={session.clearTranscript} />
+          {mode === 'notes' ? (
+            <NotesPanel notes={notes} />
+          ) : (
+            <>
+              <SpeechControls
+                speech={speech}
+                autoSpeak={state.settings.autoSpeak}
+                onAutoSpeakChange={(autoSpeak) => session.updateSettings({ autoSpeak })}
+                lastText={lastUtterance(state)?.text}
+              />
+              <TranscriptPanel transcript={state.transcript} onSpeak={speak} onClear={session.clearTranscript} />
+            </>
+          )}
         </div>
       </main>
 

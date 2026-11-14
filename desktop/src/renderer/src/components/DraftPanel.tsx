@@ -7,7 +7,8 @@ interface Props {
   status: DraftStatus;
   error: string | null;
   threshold: number;
-  autoSpeak: boolean;
+  /** e.g. "Confirm", "Confirm & speak", "Add to notes". */
+  confirmLabel: string;
   canRetry: boolean;
   onEdit: (text: string) => void;
   onConfirm: () => void;
@@ -25,7 +26,7 @@ export function DraftPanel({
   status,
   error,
   threshold,
-  autoSpeak,
+  confirmLabel,
   canRetry,
   onEdit,
   onConfirm,
@@ -97,7 +98,7 @@ export function DraftPanel({
           </div>
           <div className="draft-actions">
             <button type="button" className="btn btn-primary" onClick={onConfirm} disabled={empty}>
-              Confirm{autoSpeak ? ' & speak' : ''} <kbd>{CONFIRM_SHORTCUT}</kbd>
+              {confirmLabel} <kbd>{CONFIRM_SHORTCUT}</kbd>
             </button>
             <button type="button" className="btn" onClick={() => onPreview(draft.text)} disabled={empty}>
               Preview voice

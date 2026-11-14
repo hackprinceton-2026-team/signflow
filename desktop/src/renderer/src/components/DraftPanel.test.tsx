@@ -15,7 +15,7 @@ function renderDraft(overrides: Partial<Parameters<typeof DraftPanel>[0]> = {}) 
     status: 'idle' as const,
     error: null,
     threshold: 0.6,
-    autoSpeak: true,
+    confirmLabel: 'Confirm & speak',
     canRetry: true,
     onEdit: vi.fn(),
     onConfirm: vi.fn(),
@@ -56,14 +56,14 @@ describe('<DraftPanel />', () => {
     expect(p.onDiscard).toHaveBeenCalled();
   });
 
-  it('labels Confirm without "speak" when auto-speak is off', () => {
-    renderDraft({ autoSpeak: false });
-    expect(screen.getByRole('button', { name: /^Confirm/ })).not.toHaveTextContent('speak');
+  it('uses the confirm label it is given', () => {
+    renderDraft({ confirmLabel: 'Add to notes' });
+    expect(screen.getByRole('button', { name: /^Add to notes/ })).toBeInTheDocument();
   });
 
   it('disables confirm for an emptied draft', () => {
     renderDraft({ draft: { ...active, text: '   ', edited: true } });
-    expect(screen.getByRole('button', { name: /Confirm/ })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /Confirm & speak/ })).toBeDisabled();
     expect(screen.getByText('Edited')).toBeInTheDocument();
   });
 

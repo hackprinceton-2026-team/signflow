@@ -12,6 +12,10 @@ import { registerIpcHandlers } from './ipc';
 // Sandbox every renderer, including any created by Electron internals.
 app.enableSandbox();
 
+// E2E runs get a throwaway profile so tests never touch real notes/settings.
+const e2eUserData = process.env['SIGNFLOW_E2E'] === '1' ? process.env['SIGNFLOW_USER_DATA'] : undefined;
+if (e2eUserData) app.setPath('userData', e2eUserData);
+
 if (!app.requestSingleInstanceLock()) {
   app.quit();
 } else {

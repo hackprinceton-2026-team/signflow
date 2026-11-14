@@ -1,4 +1,4 @@
-import type { AppInfo, CameraAccessStatus } from './ipc';
+import type { AppInfo, CameraAccessStatus, NotesExportRequest, NotesExportResult } from './ipc';
 
 /**
  * Shape of `window.signflow`, the only bridge between renderer and main.
@@ -9,5 +9,12 @@ export interface SignflowApi {
   camera: {
     accessStatus(): Promise<CameraAccessStatus>;
     requestAccess(): Promise<CameraAccessStatus>;
+  };
+  clipboard: {
+    writeText(text: string): Promise<void>;
+  };
+  notes: {
+    /** Shows a native Save dialog; writes only the file the user picks. */
+    exportMarkdown(request: NotesExportRequest): Promise<NotesExportResult>;
   };
 }

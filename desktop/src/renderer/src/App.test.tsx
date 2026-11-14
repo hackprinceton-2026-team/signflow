@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { App } from './App';
 import { installFakeBridge } from './test/setup';
@@ -21,6 +21,8 @@ async function produceDraft(recognizer: FakeRecognizer, glosses: string[]) {
   act(() => glosses.forEach((g) => recognizer.emit(g, 0.9)));
   await screen.findByTestId('draft-text');
 }
+
+beforeEach(() => localStorage.clear());
 
 describe('<App />', () => {
   it('renders the shell and app info from the preload bridge', async () => {
@@ -83,5 +85,28 @@ describe('<App /> draft confirmation + speech', () => {
     expect(screen.queryByTestId('draft-text')).not.toBeInTheDocument();
     expect(screen.queryByTestId('utterance')).not.toBeInTheDocument();
     expect(adapters.speech.spoken).toHaveLength(0);
+  });
+});
+
+describe('<App /> notes mode', () => {
+  it('confirmed sentences go into notes silently; mode is remembered', async () => {
+    const { recognizer, adapters } = renderApp();
+    fireEvent.click(screen.getByRole('tab', { name: 'Notes' }));
+    expect(screen.getByRole('tab', { name: 'Notes' })).toHaveAttribute('aria-selected', 'true');
+    expect(screen.queryByRole('heading', { name: 'Text to speech' })).not.toBeInTheDocument();
+
+    await produceDraft(recognizer, ['I', 'NEED', 'HELP']);
+    fireEvent.click(screen.getByRole('button', { name: /Add to notes/ }));
+
+    expect((screen.getByTestId('note-body') as HTMLTextAreaElement).value).toContain('I need help.');
+    expect(adapters.speech.spoken).toHaveLength(0);
+    expect(localStorage.getItem('signflow.mode')).toBe('"notes"');
+  });
+
+  it('arrow keys switch modes', () => {
+    renderApp();
+    const tab = screen.getByRole('tab', { name: 'Conversation' });
+    fireEvent.keyDown(tab, { key: 'ArrowRight' });
+    expect(screen.getByRole('tab', { name: 'Notes' })).toHaveAttribute('aria-selected', 'true');
   });
 });
