@@ -33,6 +33,15 @@ Live mode is built to fail gracefully:
 - **Translation errors:** the backend's explanation appears in the draft (for example a missing `GOOGLE_API_KEY`), with **Retry** and **Use demo mode**. The latter finishes the same phrase locally; the signs are kept.
 - **Cloud voice errors:** the same confirmed text is spoken with the system voice instead, and a notice says so. The cloud request gives up after 10 s so the fallback isn't left waiting.
 
+### Live modes: Words, Sentence (Gemini), Review
+
+The Live screen's **Mode** switch:
+- **Words** speaks each recognized sign at once, with no AI.
+- **Sentence (Gemini)** has Gemini, through the backend, compose each signed sentence and speaks it automatically, with a labelled local fallback and a safety review gate.
+- **Review** is the original draft + confirm flow, still the default.
+
+With the ASL recognizer started through `desktop/scripts/asl/signflow_recognizer.py`, its camera preview appears inside SignFlow; SignFlow still never opens the camera. Details and measurements: [`docs/realtime-modes.md`](../docs/realtime-modes.md).
+
 ### Voices (Settings › Speech)
 
 - **Speech engine:** *System voice* or *Kokoro — Local Neural Voice* (see below). This is the on-device voice; in live mode with the cloud voice selected, it is the fallback.
