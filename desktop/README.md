@@ -23,8 +23,8 @@ Choose in **Settings › Connection**:
 
 | Mode     | Translation                                            | Speech                                     | Needs                          |
 | -------- | ------------------------------------------------------ | ------------------------------------------ | ------------------------------ |
-| **Demo** | Mock translator, on the device                         | System voice                               | Nothing                        |
-| **Live** | SignFlow backend (`POST /translate`, Gemini), with an Everyday / Medical / Emergency context | System voice, or **cloud voice** (`POST /speak`, Amazon Polly Generative: Ruth by default, or Danielle / Matthew) with automatic fallback to the system voice | The backend running on `http://localhost:8000` (see `backend/README.md`) |
+| **Demo** | Mock translator, on the device                         | System voice or **Kokoro** (on-device neural) | Nothing (Kokoro: the model, installed once) |
+| **Live** | SignFlow backend (`POST /translate`, Gemini), with an Everyday / Medical / Emergency context | System voice, **Kokoro**, or **cloud voice** (`POST /speak`, Amazon Polly Generative: Ruth by default, or Danielle / Matthew) with automatic fallback to the on-device voice | The backend running on `http://localhost:8000` (see `backend/README.md`) |
 
 Signs come from the demo recognizer in both modes until the ML model is connected. Switching modes never restarts recognition.
 
@@ -35,6 +35,7 @@ Live mode is built to fail gracefully:
 
 ### Voices (Settings › Speech)
 
+- **Speech engine:** *System voice* or *Kokoro — Local Neural Voice* (see below). This is the on-device voice; in live mode with the cloud voice selected, it is the fallback.
 - **Cloud voice:** Ruth (recommended), Danielle, or Matthew, all Amazon Polly **Generative**. The backend retries with Neural only if a voice lacks Generative, and says so.
 - **System / fallback voice:** "Automatic" picks the most natural installed English voice (Premium or Enhanced macOS voices first, never novelty voices). The app waits briefly for macOS to load its voice list before speaking.
 - **Voice in use:** shows the voice and engine that actually spoke last (for example "Ruth · Amazon Polly Generative", or the macOS voice after a fallback), or, before anything is spoken, what will be used.
@@ -42,6 +43,25 @@ Live mode is built to fail gracefully:
 - Defaults are natural playback: rate 1.0×, pitch 1.0, volume 100%. Cloud playback keeps the voice's pitch when the rate changes.
 
 The backend URL is fixed to `http://localhost:8000` because it's the only backend origin the renderer's CSP allows (`src/shared/csp.ts`).
+
+### Kokoro — Local Neural Voice
+
+[Kokoro-82M](https://huggingface.co/hexgrad/Kokoro-82M) (Apache-2.0) speaks confirmed text with a natural neural voice, entirely on this device: no backend, no AWS, no Gemini, and no network after the one-time install.
+
+```bash
+cd desktop
+npm run kokoro:install          # ~326 MB, once; verifies SHA-256 of every file
+npm run dev                     # Settings › Speech › Speech engine › Kokoro — Local Neural Voice
+```
+
+- **Model:** `onnx-community/Kokoro-82M-v1.0-ONNX`, pinned to commit `1939ad2`, full-precision `onnx/model.onnx` (the reference quality, and the fastest variant measured on Apple Silicon). Installed to `~/Library/Application Support/SignFlow/models/Kokoro-82M-v1.0-ONNX` (override with `SIGNFLOW_KOKORO_MODELS`), never into the repo. `npm run kokoro:install -- --verify` re-checks it offline.
+- **Voices:** Heart (`af_heart`, recommended), Bella (`af_bella`), Michael (`am_michael`). The voice files ship in the `kokoro-js` npm package; the install script checks them against the upstream hashes.
+- **Speed:** the Rate slider (0.5–2×) is Kokoro's native speed, so the voice keeps its natural pitch. Pitch doesn't apply.
+- **States:** *Not installed* (with the install command), *Installed*, *Loading model…*, *Ready · loaded in N s*, or *Unavailable* (with the reason and **Check again**). Selecting Kokoro loads the model in the background (about 1–2 s), so the first sentence doesn't wait for it.
+- **Fallback:** if Kokoro is missing, still loading fails, crashes, times out, or the audio device can't play, the system voice speaks the same confirmed text (or the sentences not yet spoken) and a notice says so. After three crashes Kokoro stays off until restart.
+- **How it runs:** `kokoro-js` + ONNX Runtime (native CPU, performance-core threads) in an Electron `utilityProcess` (`src/main/kokoro/`), so loading and synthesis never block the UI. The renderer reaches it only through `window.signflow.kokoro` (validated IPC) and plays the returned WAV through an `<audio>` element. No CSP or sandbox setting changed. The utility process blocks all http(s) requests (`networkGuard.ts`), and transformers.js is set to local files only.
+- **Playback:** text is split into sentences; all are queued at once and each plays as soon as it's ready and the previous one ended. Kokoro's ~0.35 s of leading silence is trimmed. **Stop** cancels queued sentences in the engine, and late results are discarded, so nothing stale plays.
+- `npm run kokoro:bench` measures load and synthesis on this machine (`-- --play` plays every clip). Measured on an M4 MacBook (16 GB), see `docs/kokoro-tts.md`.
 
 ### Real-stack check (real backend, real Gemini, macOS voices)
 
@@ -61,6 +81,7 @@ It needs a Gemini key in `backend/.env` (`GOOGLE_API_KEY`) or the environment, a
 - **Speak** confirms first, then speaks exactly the confirmed text. There is no way to speak an unconfirmed draft.
 - In live mode, `/translate` returns text only. `/speak` is called only from the confirm path, with the final (possibly edited) text. Tests assert both on the wire.
 - **Speak when confirming** (Settings) is opt-in and off by default. **Test voice** speaks a fixed phrase, never your text.
+- The same rules hold for Kokoro: it is called only from the confirm path and Test voice, and its engine can't reach the network.
 - Floating captions show unconfirmed in-progress text only if **Show in-progress text** is on.
 
 ## Keyboard
@@ -102,6 +123,8 @@ All shortcuts come from one table (`src/renderer/src/app/shortcuts.ts`), which a
 | `npm run test:e2e`          | Builds, then runs Playwright against Electron: smoke, accessibility, and live mode (against a contract-validating stand-in backend; `SIGNFLOW_E2E_BACKEND=external` uses a backend you started) |
 | `npm run check`             | typecheck + lint + unit tests + contract check                       |
 | `npm run contract:sync`     | Pin `../backend/openapi.json` and regenerate the TypeScript types (see `contract/`) |
+| `npm run kokoro:install`    | Download and verify the Kokoro model (`-- --verify` checks only, offline) |
+| `npm run kokoro:bench`      | Measure Kokoro load/synthesis on this machine (`-- --play` to listen) |
 
 ## Layout
 
@@ -137,7 +160,7 @@ The UI depends only on the interfaces in `src/renderer/src/adapters/types.ts`:
 | ---------------- | --------------------------------------------- | --------------------------- |
 | `SignRecognizer` | frames in → `RecognizedSign` events out (ml/) | `mock/mockRecognizer.ts`    |
 | `Translator`     | signs → `EnglishDraft` (backend/)             | `mock/mockTranslator.ts`    |
-| `SpeechEngine`   | text → audio                                  | `speech.ts` (system voices) |
+| `SpeechEngine`   | text → audio                                  | `speech.ts` (system voices), `kokoroSpeech.ts` (Kokoro, local) |
 
 Live mode implements them over HTTP in `src/renderer/src/adapters/remote/`: `createBackendClient` (typed by the generated contract, with timeouts and typed errors), `RemoteTranslator`, `CloudSpeechEngine`, and `FallbackSpeechEngine`. Wire types are generated from the backend's Pydantic models (see [`contract/README.md`](contract/README.md)). A real recognizer can plug in the same way once `ml/` serves one.
 
@@ -148,5 +171,6 @@ Live mode implements them over HTTP in `src/renderer/src/adapters/remote/`: `cre
 - A strict CSP is applied as a response header and a `<meta>` tag (`src/shared/csp.ts`). Production allows no inline or eval scripts.
 - IPC is authorized per sender. Every handler rejects frames that aren't our top-level pages. Only the main window can drive the captions overlay or toggle fullscreen; only the overlay can read its state or close itself. Payloads are validated and size-limited in main.
 - Only the camera permission (video only) is granted. Navigation, `window.open`, and `<webview>` are blocked.
+- Kokoro runs in a separate `utilityProcess` with http(s) blocked; its IPC handlers validate text length, voice, speed, and request ids.
 - Clipboard and file export go through main. The renderer has no clipboard permission and never chooses file paths.
-- E2E runs (`SIGNFLOW_E2E=1`) use a throwaway profile and silent speech, so tests never touch real data or play audio.
+- E2E runs (`SIGNFLOW_E2E=1`) use a throwaway profile and silent speech, so tests never touch real data or play audio. (Kokoro still synthesizes for real in E2E, muted; `e2e/kokoro.spec.ts` skips its real-model test when the model isn't installed.)
