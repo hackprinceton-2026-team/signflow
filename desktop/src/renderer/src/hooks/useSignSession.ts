@@ -114,6 +114,7 @@ export function useSignSession(adapters: Pick<Adapters, 'recognizer' | 'translat
   const editDraft = useCallback((text: string) => dispatch({ type: 'draft/edited', text }), []);
   const discardDraft = useCallback(() => dispatch({ type: 'draft/discarded' }), []);
   const clearBuffer = useCallback(() => dispatch({ type: 'buffer/cleared' }), []);
+  const clearTranslationError = useCallback(() => dispatch({ type: 'translation/errorCleared' }), []);
   const clearTranscript = useCallback(() => dispatch({ type: 'transcript/cleared' }), []);
   const updateSettings = useCallback(
     (patch: Partial<SessionSettings>) => dispatch({ type: 'settings/updated', settings: patch }),
@@ -130,6 +131,7 @@ export function useSignSession(adapters: Pick<Adapters, 'recognizer' | 'translat
     editDraft,
     discardDraft,
     clearBuffer,
+    clearTranslationError,
     clearTranscript,
     updateSettings,
   };

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { CameraView } from '../live/CameraView';
 import { ConfirmToast } from '../live/ConfirmToast';
+import { NoticeToast } from '../live/NoticeToast';
 import { LiveScreen } from '../screens/LiveScreen';
 import { NotesScreen } from '../screens/NotesScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
@@ -112,6 +113,7 @@ export function AppShell() {
       )}
 
       <ConfirmToast feedback={flow.feedback} onDone={flow.clearFeedback} />
+      <NoticeToast notice={flow.notice} onDone={flow.clearNotice} />
 
       {/* Always-mounted, invisible source for the frame sampler, so recognition keeps
           running whichever screen is open. */}

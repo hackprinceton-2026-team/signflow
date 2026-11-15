@@ -17,8 +17,12 @@ function isSpeechOptions(v: unknown): v is SpeechOptions {
 
 /** React state around a SpeechEngine: voices, playback state, persisted options. */
 export function useSpeech(engine: SpeechEngine) {
-  const [voices, setVoices] = useState<SpeechVoice[]>(() => engine.voices());
-  const [state, setState] = useState<SpeechState>('idle');
+  // Voices and playback state are tracked per engine, so swapping engines at runtime
+  // (demo ↔ live, system ↔ cloud voice) never shows the previous engine's values.
+  const [voicesEntry, setVoicesEntry] = useState<{ engine: SpeechEngine; voices: SpeechVoice[] } | null>(null);
+  const [stateEntry, setStateEntry] = useState<{ engine: SpeechEngine; state: SpeechState } | null>(null);
+  const voices = voicesEntry?.engine === engine ? voicesEntry.voices : engine.voices();
+  const state: SpeechState = stateEntry?.engine === engine ? stateEntry.state : 'idle';
   const [lastSpoken, setLastSpoken] = useState<string | null>(null);
   const [options, setOptions] = usePersistentState<SpeechOptions>(
     'signflow.speech',
@@ -27,8 +31,8 @@ export function useSpeech(engine: SpeechEngine) {
   );
 
   useEffect(() => {
-    const offVoices = engine.onVoicesChanged(setVoices);
-    const offState = engine.onState(setState);
+    const offVoices = engine.onVoicesChanged((v) => setVoicesEntry({ engine, voices: v }));
+    const offState = engine.onState((st) => setStateEntry({ engine, state: st }));
     return () => {
       offVoices();
       offState();

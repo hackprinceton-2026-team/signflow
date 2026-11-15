@@ -102,6 +102,19 @@ describe('sessionReducer: drafts', () => {
     expect(s.draftError).toBe('backend down');
   });
 
+  it('clearing an error keeps the signs so they can be translated again', () => {
+    const failed = run(
+      withBuffer,
+      { type: 'translation/started', signIds: ['a', 'b'] },
+      { type: 'translation/failed', error: 'offline', signs: withBuffer.buffer },
+    );
+    const s = sessionReducer(failed, { type: 'translation/errorCleared' });
+    expect(s.draftStatus).toBe('idle');
+    expect(s.draftError).toBeNull();
+    expect(s.buffer.map((b) => b.id)).toEqual(['a', 'b']);
+    expect(sessionReducer(withBuffer, { type: 'translation/errorCleared' })).toBe(withBuffer);
+  });
+
   it('appends a new translation to a pending draft, keeping user edits', () => {
     const s = run(
       initialSessionState(),

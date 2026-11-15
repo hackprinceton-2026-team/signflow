@@ -106,7 +106,9 @@ export const GENERATED_BANNER = [
 /** Generate the TypeScript module committed at `config.output`. Deterministic for a given source. */
 export async function generateTypes(sourceText: string): Promise<string> {
   const doc = parseOpenApi(sourceText);
-  const ast = await openapiTS(doc, { alphabetize: true, silent: true });
+  // defaultNonNullable: false → fields with a server-side default are optional, which is
+  // what clients may send (e.g. TranslationRequest.mode defaults to "chat").
+  const ast = await openapiTS(doc, { alphabetize: true, silent: true, defaultNonNullable: false });
   const sha = createHash('sha256').update(sourceText).digest('hex');
   return [
     '/* eslint-disable */',

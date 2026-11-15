@@ -3,15 +3,16 @@ import { MockTranslator } from './mock/mockTranslator';
 import { MockSpeechEngine, WebSpeechEngine } from './speech';
 import type { Adapters } from './types';
 
-export type AdapterMode = 'mock';
+/** Builds the demo (mock) adapter set. Live mode swaps in remote adapters; see app/useSignFlow. */
+export type DemoAdapterMode = 'mock';
 
 /**
- * Builds the adapter set the app runs with.
- *
- * Only `mock` exists today. When backend/ and ml/ expose the WebSocket in
- * docs/interfaces.md, add a `remote` mode here. No component needs to change.
+ * The demo adapter set: mock recognizer + mock translator + system speech.
+ * Live mode (connection.ts) replaces the translator and, optionally, speech with
+ * the remote adapters in ./remote. The recognizer stays the demo one until the
+ * backend or ml/ serves recognition.
  */
-export function createAdapters(mode: AdapterMode = 'mock', opts: { silentSpeech?: boolean } = {}): Adapters {
+export function createAdapters(mode: DemoAdapterMode = 'mock', opts: { silentSpeech?: boolean } = {}): Adapters {
   const speech = !opts.silentSpeech && hasSpeechSynthesis() ? new WebSpeechEngine() : new MockSpeechEngine();
   switch (mode) {
     case 'mock':
@@ -34,3 +35,7 @@ function hasSpeechSynthesis(): boolean {
 }
 
 export type * from './types';
+export { DEFAULT_CONNECTION, isConnectionSettings, type AdapterMode, type ConnectionSettings, type VoiceSource } from './connection';
+export { BACKEND_URL, BackendError, createBackendClient, type BackendClient, type BackendErrorKind } from './remote/backendClient';
+export { RemoteTranslator } from './remote/remoteTranslator';
+export { CloudSpeechEngine, FallbackSpeechEngine } from './remote/cloudSpeech';

@@ -7,10 +7,12 @@ interface Props {
   speech: SpeechController;
   autoSpeak: boolean;
   onAutoSpeakChange: (value: boolean) => void;
+  /** The cloud voice can't change pitch. */
+  pitchSupported?: boolean;
 }
 
 /** Voice and playback settings. "Test voice" speaks a fixed phrase, never user text. */
-export function SpeechSettings({ speech, autoSpeak, onAutoSpeakChange }: Props) {
+export function SpeechSettings({ speech, autoSpeak, onAutoSpeakChange, pitchSupported = true }: Props) {
   const { options, voices } = speech;
   return (
     <div className="settings-stack">
@@ -33,7 +35,16 @@ export function SpeechSettings({ speech, autoSpeak, onAutoSpeakChange }: Props) 
       />
       <div className="settings-grid-3">
         <RangeField label="Rate" value={options.rate} min={0.5} max={2} step={0.1} format={(v) => `${v.toFixed(1)}×`} onChange={(rate) => speech.updateOptions({ rate })} />
-        <RangeField label="Pitch" value={options.pitch} min={0} max={2} step={0.1} format={(v) => v.toFixed(1)} onChange={(pitch) => speech.updateOptions({ pitch })} />
+        <RangeField
+          label="Pitch"
+          value={options.pitch}
+          min={0}
+          max={2}
+          step={0.1}
+          format={(v) => (pitchSupported ? v.toFixed(1) : 'n/a')}
+          description={pitchSupported ? undefined : 'Not supported by the cloud voice.'}
+          onChange={(pitch) => speech.updateOptions({ pitch })}
+        />
         <RangeField
           label="Volume"
           value={options.volume}

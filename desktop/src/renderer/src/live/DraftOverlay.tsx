@@ -22,6 +22,8 @@ export interface DraftOverlayProps {
   onDismissError: () => void;
   /** Lets callers (e.g. a keyboard shortcut) focus the editable text. */
   textRef?: RefObject<HTMLTextAreaElement | null>;
+  /** Live mode: offer to finish this phrase in demo mode after a backend failure. */
+  onUseDemo?: (() => void) | undefined;
 }
 
 /**
@@ -45,6 +47,7 @@ export function DraftOverlay({
     onRetry,
     onDismissError,
     textRef: externalRef,
+    onUseDemo,
 }: DraftOverlayProps) {
   const ownRef = useRef<HTMLTextAreaElement>(null);
   const textRef = externalRef ?? ownRef;
@@ -75,6 +78,11 @@ export function DraftOverlay({
           <Button size="sm" icon="retry" onClick={onRetry} disabled={!canRetry}>
             Retry
           </Button>
+          {onUseDemo && (
+            <Button size="sm" variant="ghost" onClick={onUseDemo}>
+              Use demo mode
+            </Button>
+          )}
           <Button size="sm" variant="ghost" onClick={onDismissError}>
             Dismiss
           </Button>

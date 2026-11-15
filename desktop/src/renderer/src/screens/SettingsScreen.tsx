@@ -5,10 +5,12 @@ import { useSignFlow } from '../app/useSignFlow';
 import { SpeechSettings } from '../components/SpeechSettings';
 import { SETTINGS_LIMITS } from '../state/session';
 import { SHORTCUTS } from '../app/shortcuts';
-import { Button, formatPercent, Icon, Kbd, RangeField, SelectField, StatusPill, Switch, type IconName } from '../ui';
+import type { BackendHealth } from '../hooks/useBackendHealth';
+import { Button, formatPercent, Icon, Kbd, RangeField, Segmented, SelectField, StatusPill, Switch, type IconName, type StatusTone } from '../ui';
 
 const SECTIONS: { id: string; label: string; icon: IconName }[] = [
   { id: 'camera', label: 'Camera', icon: 'camera' },
+  { id: 'connection', label: 'Connection', icon: 'cloud' },
   { id: 'recognition', label: 'Recognition', icon: 'sparkle' },
   { id: 'speech', label: 'Speech', icon: 'speaker' },
   { id: 'captions', label: 'Captions', icon: 'captions' },
@@ -29,6 +31,54 @@ function Section({ id, title, description, children }: { id: string; title: stri
   );
 }
 
+const BACKEND_STATUS: Record<BackendHealth['status'], { label: string; tone: StatusTone }> = {
+  disabled: { label: 'Not used in demo mode', tone: 'neutral' },
+  checking: { label: 'Checking…', tone: 'warning' },
+  online: { label: 'Online', tone: 'success' },
+  degraded: { label: 'Translation not configured', tone: 'warning' },
+  offline: { label: 'Offline', tone: 'danger' },
+};
+
+function BackendStatus({ health, baseUrl, cloudVoice }: { health: BackendHealth; baseUrl: string; cloudVoice: boolean }) {
+  const s = BACKEND_STATUS[health.status];
+  const speechMissing = cloudVoice && health.health?.speech === 'not_configured';
+  return (
+    <div className="backend-status" data-testid="backend-status">
+      <div className="setting-line">
+        <span className="setting-line-text">
+          <span className="setting-line-label">SignFlow backend</span>
+          <StatusPill tone={s.tone} pulse={health.status === 'checking'}>
+            {s.label}
+          </StatusPill>
+        </span>
+        <Button size="sm" icon="retry" onClick={() => void health.check()}>
+          Check again
+        </Button>
+      </div>
+      <p className="subtle mono backend-url">{baseUrl}</p>
+      {health.status === 'offline' && (
+        <p className="backend-hint">
+          {health.error} Start it with <code>cd backend &amp;&amp; uvicorn main:app</code>.
+        </p>
+      )}
+      {health.status === 'degraded' && (
+        <p className="backend-hint">
+          The backend is running, but translation needs a Gemini key: add <code>GOOGLE_API_KEY</code> to{' '}
+          <code>backend/.env</code> and restart it.
+        </p>
+      )}
+      {speechMissing && (
+        <p className="backend-hint">The cloud voice needs AWS credentials on the backend; the system voice is used instead.</p>
+      )}
+      {health.health && health.status === 'online' && (
+        <p className="subtle">
+          {health.health.model} · API v{health.health.version} · speech {health.health.speech === 'ready' ? 'ready' : 'not configured'}
+        </p>
+      )}
+    </div>
+  );
+}
+
 function InfoRow({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="info-row">
@@ -39,8 +89,24 @@ function InfoRow({ label, children }: { label: string; children: ReactNode }) {
 }
 
 export function SettingsScreen() {
-  const { camera, cameraOn, mirrored, setMirrored, session, speech, captions, notes, captureToNotes, setCaptureToNotes, updateSettings, info } =
-    useSignFlow();
+  const {
+    camera,
+    cameraOn,
+    mirrored,
+    setMirrored,
+    session,
+    speech,
+    captions,
+    notes,
+    captureToNotes,
+    setCaptureToNotes,
+    updateSettings,
+    info,
+    connection,
+    updateConnection,
+    live,
+    backend,
+  } = useSignFlow();
   const { settings } = session.state;
   const contentRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(SECTIONS[0]!.id);
@@ -115,6 +181,53 @@ export function SettingsScreen() {
           <Switch checked={mirrored} onChange={setMirrored} label="Mirror preview" description="Show yourself as in a mirror. Recognition is unaffected." />
         </Section>
 
+        <Section
+          id="connection"
+          title="Connection"
+          description="Demo runs entirely on this device. Live uses the SignFlow backend for AI translation."
+        >
+          <Segmented
+            label="Mode"
+            value={connection.mode}
+            options={[
+              { value: 'demo', label: 'Demo' },
+              { value: 'live', label: 'Live (SignFlow AI)' },
+            ]}
+            onChange={(mode) => updateConnection({ mode })}
+          />
+          <p className="subtle">
+            {live
+              ? 'English drafts come from the SignFlow backend (Gemini). Signs still come from the demo recognizer until the ML model is connected.'
+              : 'Mock recognizer and translator: no network, no AI service. Good for trying the app.'}
+          </p>
+          {live && <BackendStatus health={backend.health} baseUrl={backend.client.baseUrl} cloudVoice={connection.voice === 'cloud'} />}
+          <Segmented
+            label="Translation context"
+            value={connection.context}
+            disabled={!live}
+            options={[
+              { value: 'chat', label: 'Everyday' },
+              { value: 'medical', label: 'Medical' },
+              { value: 'emergency', label: 'Emergency' },
+            ]}
+            onChange={(context) => updateConnection({ context })}
+          />
+          <Segmented
+            label="Voice"
+            value={connection.voice}
+            disabled={!live}
+            options={[
+              { value: 'system', label: 'System voice' },
+              { value: 'cloud', label: 'Cloud voice' },
+            ]}
+            onChange={(voice) => updateConnection({ voice })}
+          />
+          <p className="subtle">
+            The cloud voice (Amazon Polly, through the backend) falls back to the system voice if it&apos;s unavailable.
+            Either way, only text you confirm is spoken.
+          </p>
+        </Section>
+
         <Section id="recognition" title="Recognition" description="How signs become a draft.">
           <RangeField
             label="Minimum confidence"
@@ -145,7 +258,12 @@ export function SettingsScreen() {
         </Section>
 
         <Section id="speech" title="Speech" description="Voice for confirmed text.">
-          <SpeechSettings speech={speech} autoSpeak={settings.autoSpeak} onAutoSpeakChange={(autoSpeak) => updateSettings({ autoSpeak })} />
+          <SpeechSettings
+            speech={speech}
+            autoSpeak={settings.autoSpeak}
+            onAutoSpeakChange={(autoSpeak) => updateSettings({ autoSpeak })}
+            pitchSupported={!(live && connection.voice === 'cloud')}
+          />
         </Section>
 
         <Section id="captions" title="Floating captions" description="An always-on-top caption bar for calls and presentations.">
@@ -223,7 +341,9 @@ export function SettingsScreen() {
               {info ? `${info.name} v${info.version} · Electron ${info.electron} · ${info.platform}` : 'Loading…'}
             </span>
           </InfoRow>
-          <InfoRow label="Adapters">Mock ML and backend (demo mode)</InfoRow>
+          <InfoRow label="Adapters">
+            {live ? 'Live: SignFlow AI translation · demo recognizer' : 'Demo: mock recognizer and translator'}
+          </InfoRow>
           <InfoRow label="Backend contract">
             {CONTRACT_GENERATED ? `Official schema (OpenAPI ${CONTRACT_OPENAPI_VERSION ?? ''})` : 'Waiting for the official backend schema'}
           </InfoRow>

@@ -119,7 +119,7 @@ export interface components {
              * @default ok
              * @constant
              */
-            status: "ok";
+            status?: "ok";
             /**
              * Translation
              * @enum {string}
@@ -167,7 +167,7 @@ export interface components {
              * @default mp3
              * @constant
              */
-            audio_format: "mp3";
+            audio_format?: "mp3";
             /** Voice Id */
             voice_id: string;
         };
@@ -198,7 +198,7 @@ export interface components {
              * @default chat
              * @enum {string}
              */
-            mode: "chat" | "medical" | "emergency";
+            mode?: "chat" | "medical" | "emergency";
             /**
              * Raw Signs
              * @description ASL glosses in signing order.

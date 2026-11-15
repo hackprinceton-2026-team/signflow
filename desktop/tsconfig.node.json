@@ -15,7 +15,9 @@
     "src/preload/**/*",
     "src/shared/**/*",
     "contract/**/*",
-    "src/renderer/src/**/*.node.test.ts"
+    "src/renderer/src/**/*.node.test.ts",
+    "src/renderer/src/adapters/remote/guards.ts",
+    "src/renderer/src/contract/**/*"
   ],
   "exclude": ["contract/fixtures/**"]
 }

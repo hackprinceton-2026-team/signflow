@@ -87,6 +87,8 @@ export type SessionAction =
   | { type: 'translation/started'; signIds: string[] }
   | { type: 'translation/succeeded'; draft: EnglishDraft }
   | { type: 'translation/failed'; error: string; signs: RecognizedSign[] }
+  /** Clear a failure but keep the signs, so the next pause translates them again. */
+  | { type: 'translation/errorCleared' }
   | { type: 'draft/edited'; text: string }
   | { type: 'draft/confirmed'; at: number }
   | { type: 'draft/discarded' }
@@ -176,6 +178,10 @@ export function sessionReducer(state: SessionState, action: SessionAction): Sess
         draftStatus: 'error',
         draftError: action.error,
       };
+
+    case 'translation/errorCleared':
+      if (state.draftStatus !== 'error') return state;
+      return { ...state, draftStatus: 'idle', draftError: null };
 
     case 'draft/edited':
       if (!state.draft) return state;

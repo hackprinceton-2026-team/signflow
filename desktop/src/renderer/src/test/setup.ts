@@ -8,6 +8,10 @@ configure({ asyncUtilTimeout: 3000 });
 
 afterEach(() => cleanup());
 
+// The cloud voice turns audio into blob: URLs. jsdom has none, and Node's version
+// rejects jsdom Blobs, so tests always use this stub.
+Object.assign(URL, { createObjectURL: () => 'blob:signflow-test', revokeObjectURL: () => undefined });
+
 /** A fake preload bridge so components can render outside Electron. */
 export function installFakeBridge(overrides: Partial<SignflowApi> = {}): SignflowApi {
   const api: SignflowApi = {

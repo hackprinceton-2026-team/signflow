@@ -1,6 +1,12 @@
-import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { AppInfo } from '@shared/ipc';
-import type { Adapters } from '../adapters/types';
+import { DEFAULT_CONNECTION, isConnectionSettings, type ConnectionSettings } from '../adapters/connection';
+import { newId } from '../adapters/emitter';
+import { BackendError, createBackendClient, type BackendClient } from '../adapters/remote/backendClient';
+import { CloudSpeechEngine, FallbackSpeechEngine } from '../adapters/remote/cloudSpeech';
+import { RemoteTranslator } from '../adapters/remote/remoteTranslator';
+import type { Adapters, SpeechEngine, Translator } from '../adapters/types';
+import { useBackendHealth } from '../hooks/useBackendHealth';
 import { useCamera } from '../hooks/useCamera';
 import { useCaptions } from '../hooks/useCaptions';
 import { useFrameSampler } from '../hooks/useFrameSampler';
@@ -33,13 +39,23 @@ export interface SignFlowOptions {
   adapters: Adapters;
   /** Overrides persisted settings (tests). */
   initialSettings?: Partial<SessionSettings>;
+  /** Backend client for live mode (tests inject one with a fake fetch). */
+  backendClient?: BackendClient;
+  /** E2E runs: the cloud voice plays muted. */
+  silentSpeech?: boolean;
+}
+
+/** A transient, non-blocking message (e.g. "cloud voice unavailable, used the system voice"). */
+export interface Notice {
+  id: string;
+  message: string;
 }
 
 /**
  * Everything the screens need: camera, recognition session, speech, notes,
  * captions, and persisted preferences, wired together once.
  */
-export function useSignFlowController({ adapters, initialSettings }: SignFlowOptions) {
+export function useSignFlowController({ adapters, initialSettings, backendClient, silentSpeech = false }: SignFlowOptions) {
   const [mirrored, setMirrored] = usePersistentState('signflow.mirror', true, isBoolean);
   const [captureToNotes, setCaptureToNotes] = usePersistentState('signflow.captureNotes', legacyCaptureDefault, isBoolean);
   const [savedSettings, setSavedSettings] = usePersistentState<SessionSettings>(
@@ -47,6 +63,13 @@ export function useSignFlowController({ adapters, initialSettings }: SignFlowOpt
     DEFAULT_SETTINGS,
     isSessionSettings,
   );
+  const [connection, setConnection] = usePersistentState<ConnectionSettings>(
+    'signflow.connection',
+    DEFAULT_CONNECTION,
+    isConnectionSettings,
+  );
+  const [client] = useState<BackendClient>(() => backendClient ?? createBackendClient());
+  const [notice, setNotice] = useState<Notice | null>(null);
   const [feedback, setFeedback] = useState<ConfirmFeedback | null>(null);
   const [info, setInfo] = useState<AppInfo | null>(null);
   const samplerRef = useRef<HTMLVideoElement>(null);
@@ -55,7 +78,24 @@ export function useSignFlowController({ adapters, initialSettings }: SignFlowOpt
 
   const camera = useCamera();
   const cameraOn = camera.status === 'on';
-  const speech = useSpeech(adapters.speech);
+  // Live mode swaps the translator (and optionally speech) for the backend's. The
+  // recognizer is the same object in both modes, so switching never restarts it.
+  const live = connection.mode === 'live';
+  const translator = useMemo<Translator>(
+    () => (live ? new RemoteTranslator(client, connection.context) : adapters.translator),
+    [adapters.translator, client, connection.context, live],
+  );
+  const speechEngine = useMemo<SpeechEngine>(() => {
+    if (!live || connection.voice !== 'cloud') return adapters.speech;
+    const cloud = new CloudSpeechEngine({ client, muted: silentSpeech });
+    return new FallbackSpeechEngine(cloud, adapters.speech, (err) => {
+      const reason = err instanceof BackendError ? err.message : 'playback failed';
+      setNotice({ id: newId(), message: `Cloud voice unavailable: ${reason} Used the system voice instead.` });
+    });
+  }, [adapters.speech, client, connection.voice, live, silentSpeech]);
+
+  const speech = useSpeech(speechEngine);
+  const health = useBackendHealth(client, live);
   const notes = useNotes();
 
   const { speak, available: speechAvailable } = speech;
@@ -73,7 +113,7 @@ export function useSignFlowController({ adapters, initialSettings }: SignFlowOpt
     [appendToNotes, captureToNotes, speak, speechAvailable],
   );
 
-  const session = useSignSession(adapters, {
+  const session = useSignSession({ recognizer: adapters.recognizer, translator }, {
     active: cameraOn,
     initialSettings: { ...savedSettings, ...initialSettings },
     onConfirm: handleConfirm,
@@ -81,7 +121,7 @@ export function useSignFlowController({ adapters, initialSettings }: SignFlowOpt
   useFrameSampler(samplerRef, adapters.recognizer, cameraOn);
   const captions = useCaptions(session.state);
 
-  const { updateSettings: updateSessionSettings, confirm, discardDraft } = session;
+  const { updateSettings: updateSessionSettings, confirm, discardDraft, clearTranslationError } = session;
   /** Update + persist recognition/speech settings. */
   const updateSettings = useCallback(
     (patch: Partial<SessionSettings>) => {
@@ -90,6 +130,16 @@ export function useSignFlowController({ adapters, initialSettings }: SignFlowOpt
     },
     [setSavedSettings, updateSessionSettings],
   );
+
+  const updateConnection = useCallback(
+    (patch: Partial<ConnectionSettings>) => setConnection((prev) => ({ ...prev, ...patch })),
+    [setConnection],
+  );
+  /** After a live-mode failure: switch to demo and translate the same signs there. */
+  const switchToDemo = useCallback(() => {
+    setConnection((prev) => ({ ...prev, mode: 'demo' }));
+    clearTranslationError();
+  }, [clearTranslationError, setConnection]);
 
   const confirmDraft = useCallback(() => confirm(), [confirm]);
   const speakDraft = useCallback(() => confirm({ speak: true }), [confirm]);
@@ -107,6 +157,14 @@ export function useSignFlowController({ adapters, initialSettings }: SignFlowOpt
 
   return {
     adapters,
+    translator,
+    connection,
+    updateConnection,
+    switchToDemo,
+    live,
+    backend: { client, health },
+    notice,
+    clearNotice: useCallback(() => setNotice(null), []),
     info,
     camera,
     cameraOn,
