@@ -117,14 +117,18 @@ The tests pin that every reference passes its own case and every counterexample 
     "fidelity": { "negation": { "checked": 25, "flagged": 1, "pass_rate": 0.96 }, "numbers": {…}, "time": {…}, "medical": {…}, "content": {…} },
     "by_mode": {…}, "by_category": {…},
     "latency_ms": { "count": 25, "min": …, "mean": …, "p50": …, "p90": …, "p95": …, "max": … },
-    "latency_over_budget": 0, "mean_reference_overlap": 0.81
+    "latency_over_budget": 0, "mean_reference_overlap": 0.81,
+    "tokens": { "count": 25, "mean_input": …, "mean_output": …, "mean_reasoning": …, "max_reasoning": … }
   },
   "cases": [ { "id", "category", "mode", "glosses", "status", "output", "references",
-               "latency_ms", "reference_overlap", "flags": [{ "code", "family", "severity", "detail" }], "error" } ]
+               "latency_ms", "reference_overlap", "flags": [{ "code", "family", "severity", "detail" }], "error",
+               "usage": { "input_tokens", "output_tokens", "reasoning_tokens" } } ]
 }
 ```
 
-The Markdown report has the same content for people: run details, fidelity and latency tables, results by mode and category, each failure with its glosses, output, expected references and flags, and a table of all cases.
+The Markdown report has the same content for people: run details, fidelity and latency tables, token usage (live runs), results by mode and category, each failure with its glosses, output, expected references and flags, and a table of all cases.
+
+`usage` holds the token counts Gemini reported for that request (`null` offline and for errors). `reasoning_tokens` are thinking tokens: the model generates them before the answer, so they add directly to latency. They are part of `output_tokens`. Recording usage adds nothing to the request. It reads the metadata already on Gemini's reply, and only counts are kept, never content. `--responses` keeps recorded usage when re-scoring a report.
 
 Compare runs only when `dataset.sha256` matches. `prompt_sha256` tells you whether the production prompt changed between them. Latency percentiles use the nearest-rank method over successful translations only.
 

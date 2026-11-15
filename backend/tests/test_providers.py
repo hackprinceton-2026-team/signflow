@@ -15,7 +15,14 @@ from pydantic import SecretStr
 
 from signflow_api.errors import SpeechUnavailable, TranslationRejected, UpstreamError, UpstreamTimeout
 from signflow_api.speech import PollySynthesizer, SynthesisResult, aws_credentials_available
-from signflow_api.translation import GeminiTranslator, classify_provider_error, clean_output
+from signflow_api.translation import (
+    GeminiTranslator,
+    TokenUsage,
+    Translation,
+    classify_provider_error,
+    clean_output,
+    token_usage,
+)
 
 # ---------- Gemini translator ----------
 
@@ -258,3 +265,36 @@ def test_aws_credentials_detection_is_local_and_honest(monkeypatch, tmp_path):
     monkeypatch.setenv("AWS_ACCESS_KEY_ID", "AKIATEST")
     monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "secret")
     assert aws_credentials_available("us-east-1") is True
+
+
+# ---------- Token usage ----------
+
+
+def test_translate_detailed_reports_token_usage_including_thinking():
+    reply = AIMessage(
+        content="I have never smoked.",
+        usage_metadata={
+            "input_tokens": 96,
+            "output_tokens": 412,
+            "total_tokens": 508,
+            "output_token_details": {"reasoning": 405},
+        },
+    )
+    translation = asyncio.run(translator_with(lambda _: reply).translate_detailed(["NEVER", "SMOKE"], "medical"))
+    assert translation.text == "I have never smoked."
+    assert translation.usage == TokenUsage(input_tokens=96, output_tokens=412, reasoning_tokens=405)
+
+
+def test_translate_detailed_without_usage_metadata():
+    translation = asyncio.run(translator_with(lambda _: AIMessage(content="Hi.")).translate_detailed(["HI"], "chat"))
+    assert translation == Translation("Hi.", None)
+
+
+def test_token_usage_defaults_missing_reasoning_to_zero():
+    reply = AIMessage(content="Hi.", usage_metadata={"input_tokens": 5, "output_tokens": 2, "total_tokens": 7})
+    assert token_usage(reply) == TokenUsage(input_tokens=5, output_tokens=2, reasoning_tokens=0)
+
+
+def test_translate_still_returns_plain_text():
+    reply = AIMessage(content=" Hi. ", usage_metadata={"input_tokens": 5, "output_tokens": 2, "total_tokens": 7})
+    assert asyncio.run(translator_with(lambda _: reply).translate(["HI"], "chat")) == "Hi."

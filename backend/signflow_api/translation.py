@@ -6,7 +6,8 @@ import asyncio
 import logging
 import re
 from collections.abc import Sequence
-from typing import TYPE_CHECKING, Protocol
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, Any, Protocol
 
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
@@ -76,6 +77,42 @@ def classify_provider_error(exc: BaseException, model: str) -> Exception:
     return UpstreamError()
 
 
+@dataclass(frozen=True)
+class TokenUsage:
+    """Token counts Gemini reported for one translation. Counts only: never content."""
+
+    input_tokens: int
+    output_tokens: int
+    #: Thinking tokens, part of ``output_tokens``. Generated before the answer, so they add latency.
+    reasoning_tokens: int
+
+    def to_dict(self) -> dict[str, int]:
+        return {
+            "input_tokens": self.input_tokens,
+            "output_tokens": self.output_tokens,
+            "reasoning_tokens": self.reasoning_tokens,
+        }
+
+
+def token_usage(message: Any) -> TokenUsage | None:
+    """The usage LangChain attached to a model reply, or ``None`` when the provider sent none."""
+    usage = getattr(message, "usage_metadata", None)
+    if not usage:
+        return None
+    details = usage.get("output_token_details") or {}
+    return TokenUsage(
+        input_tokens=int(usage.get("input_tokens") or 0),
+        output_tokens=int(usage.get("output_tokens") or 0),
+        reasoning_tokens=int(details.get("reasoning") or 0),
+    )
+
+
+@dataclass(frozen=True)
+class Translation:
+    text: str
+    usage: TokenUsage | None = None
+
+
 class Translator(Protocol):
     model_name: str
 
@@ -104,14 +141,20 @@ class GeminiTranslator:
             )
         self.model_name = model
         self._timeout_s = timeout_s
-        self._chain = PROMPT | llm | StrOutputParser()
+        self._chain = PROMPT | llm
+        self._parser = StrOutputParser()
 
     async def translate(self, glosses: Sequence[str], mode: TranslationMode) -> str:
+        return (await self.translate_detailed(glosses, mode)).text
+
+    async def translate_detailed(self, glosses: Sequence[str], mode: TranslationMode) -> Translation:
+        """``translate`` plus the token usage Gemini reported (used by the evaluation harness)."""
         try:
-            raw = await asyncio.wait_for(
+            message = await asyncio.wait_for(
                 self._chain.ainvoke({"glosses": " ".join(glosses), "mode": mode}),
                 timeout=self._timeout_s,
             )
+            raw = self._parser.invoke(message)
         except TimeoutError as exc:
             raise UpstreamTimeout() from exc
         except Exception as exc:
@@ -125,4 +168,4 @@ class GeminiTranslator:
         text = clean_output(raw)
         if not text:
             raise UpstreamError("The AI service returned an empty translation. Try again.")
-        return text
+        return Translation(text, token_usage(message))
