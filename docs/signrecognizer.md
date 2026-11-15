@@ -12,6 +12,7 @@ Today both Demo and Live mode use `MockSignRecognizer` (`desktop/src/renderer/sr
 interface SignRecognizer {
   readonly name: string;                     // shown in Settings › Recognition
   readonly frameFormat: 'none' | 'jpeg';     // what pushFrame receives (below)
+  readonly simulated?: boolean;              // true only for the scripted demo recognizer; leave unset
   start(): Promise<void>;                    // camera turned on
   stop(): void;                              // camera turned off
   pushFrame(frame: VideoFrameInput): void;   // ~10 fps while the camera is on
@@ -37,7 +38,8 @@ interface AdapterStatus { state: 'idle' | 'connecting' | 'ready' | 'error'; mess
 | Step | Behavior |
 | --- | --- |
 | Lifecycle | `start()` when the user turns the camera on, `stop()` when it goes off. `start()` may be called again after `stop()`. Emit `connecting` → `ready` (or `error` with a user-readable `message`); the top bar shows it. |
-| Frames | `useFrameSampler` calls `pushFrame` at 10 fps. With `frameFormat: 'none'` you get `{ ts, width, height }` only. With `'jpeg'` you also get a JPEG `Blob` (longest edge ≤ 640 px, quality 0.7). Frames are **dropped, never queued**, while one is encoding; do the same if your model is busy. |
+| Frames | `useFrameSampler` calls `pushFrame` at 10 fps. With `frameFormat: 'none'` you get `{ ts, width, height }` only. With `'jpeg'` you also get a JPEG `Blob` (longest edge ≤ 640 px, quality 0.7). Frames are **dropped, never queued**, while one is encoding; do the same if your model is busy. With `'jpeg'`, the camera's privacy note says frames are sent to the sign recognition model. |
+| Labels | The demo recognizer sets `simulated: true`, which shows a "Simulated signs" pill and a "· simulated" tag. A real model leaves it unset, so those labels disappear. |
 | Signs | Every event appears in the live sign feed. Only events with `final: true` **and** `confidence >= minConfidence` (default 0.6, user-adjustable 0.3–0.95) go into the sentence. Re-emitting an `id` replaces it; a refinement below the threshold removes it again. |
 | Drafts | After `pauseMs` (default 1.6 s, adjustable 0.6–3 s) with no new accepted sign, the buffered glosses are translated: Live mode `POST /translate { raw_signs, mode }` (Gemini), Demo mode the mock translator. The user edits, then confirms. |
 | Speech | Never triggered by the recognizer. Only text the user confirms is spoken. |
