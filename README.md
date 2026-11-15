@@ -47,6 +47,6 @@ See [`desktop/README.md`](desktop/README.md) for scripts and architecture.
 
 ## Team
 
-- **Raimbek**: desktop app; backend and AI engineering since November 14, 2026
-- **Muhammad**: original author of the backend (FastAPI service, Gemini translation) and its Backend and AI Engineering owner until November 14, 2026
+- **Raimbek**: desktop app and UI.
+- **Muhammad**: original author of the backend (FastAPI service, Gemini translation) and its Backend and AI Engineering.
 - **Umar**: ML
