@@ -67,9 +67,22 @@ export type RecognizerEvent =
 
 export type RecognizerState = 'idle' | 'connecting' | 'ready' | 'error';
 
+/** Which camera SignFlow's recognizer launcher uses (desktop/scripts/asl/camera_select.py). */
+export interface RecognizerCamera {
+  active: string;
+  /** OpenCV index. */
+  index: number;
+  selection: 'automatic' | 'explicit-index' | 'explicit-name' | 'unidentified';
+  /** The index was physically verified to be that camera (or chosen explicitly). */
+  verified: boolean;
+  note: string;
+  available: { name: string; kind: 'built-in' | 'iPhone' | 'external' }[];
+}
+
 export interface RecognizerStatus {
   state: RecognizerState;
   message?: string;
+  camera?: RecognizerCamera;
   /** Which model the recognizer is running, once a message has told us. */
   model?: RecognizerModel;
 }
@@ -77,10 +90,41 @@ export interface RecognizerStatus {
 export type ParseResult =
   | { ok: true; event: RecognizerEvent }
   | { ok: true; preview: RecognizerPreview }
+  | { ok: true; camera: RecognizerCamera }
   | { ok: false; reason: string };
 
 const BASE64 = /^[A-Za-z0-9+/]+={0,2}$/;
 const isDim = (v: unknown): v is number => typeof v === 'number' && Number.isInteger(v) && v >= 16 && v <= 1280;
+
+const SELECTIONS = ['automatic', 'explicit-index', 'explicit-name', 'unidentified'] as const;
+const KINDS = ['built-in', 'iPhone', 'external'] as const;
+const shortText = (v: unknown): v is string => typeof v === 'string' && v.length > 0 && v.length <= 120;
+
+function parseCamera(o: Record<string, unknown>): ParseResult {
+  const available = o['available'];
+  if (
+    !shortText(o['active']) ||
+    typeof o['index'] !== 'number' || !Number.isInteger(o['index']) || o['index'] < 0 || o['index'] > 64 ||
+    !SELECTIONS.includes(o['selection'] as (typeof SELECTIONS)[number]) ||
+    typeof o['verified'] !== 'boolean' ||
+    !(o['note'] === undefined || (typeof o['note'] === 'string' && o['note'].length <= 300)) ||
+    !Array.isArray(available) || available.length > 16 ||
+    !available.every((a) => a && typeof a === 'object' && shortText(a.name) && KINDS.includes(a.kind))
+  ) {
+    return { ok: false, reason: 'malformed camera message' };
+  }
+  return {
+    ok: true,
+    camera: {
+      active: o['active'],
+      index: o['index'],
+      selection: o['selection'] as RecognizerCamera['selection'],
+      verified: o['verified'],
+      note: typeof o['note'] === 'string' ? o['note'] : '',
+      available: available.map((a: { name: string; kind: RecognizerCamera['available'][number]['kind'] }) => ({ name: a.name, kind: a.kind })),
+    },
+  };
+}
 
 function parsePreview(o: Record<string, unknown>): ParseResult {
   const jpeg = o['jpeg'];
@@ -155,6 +199,7 @@ export function parseRecognizerMessage(text: unknown, now: number): ParseResult 
   if (!msg || typeof msg !== 'object' || Array.isArray(msg)) return { ok: false, reason: 'not an object' };
   const o = msg as Record<string, unknown>;
   if (o['type'] === 'preview') return parsePreview(o);
+  if (text.length <= RECOGNIZER_MAX_MESSAGE_CHARS && o['type'] === 'camera') return parseCamera(o);
   // Only preview frames may be large.
   if (text.length > RECOGNIZER_MAX_MESSAGE_CHARS) return { ok: false, reason: 'message too large' };
 

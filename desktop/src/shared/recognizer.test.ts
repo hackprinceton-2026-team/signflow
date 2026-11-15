@@ -183,3 +183,22 @@ describe('preview frames (SignFlow recognizer launcher)', () => {
     expect(parse({ type: 'preview', jpeg: `/9j/${'A'.repeat(250_000)}`, width: 320, height: 180 })).toEqual({ ok: false, reason: 'message too large' });
   });
 });
+
+describe('camera messages (which camera the launcher uses)', () => {
+  const cam = {
+    type: 'camera', active: 'MacBook Air Camera', index: 1, selection: 'automatic', verified: true,
+    note: 'built-in camera preferred', available: [{ name: 'MacBook Air Camera', kind: 'built-in' }, { name: 'iPhone Camera', kind: 'iPhone' }],
+  };
+  it('accepts a well-formed report', () => {
+    const r = parse(cam);
+    expect(r.ok && 'camera' in r && r.camera).toMatchObject({ active: 'MacBook Air Camera', index: 1, verified: true });
+  });
+  it.each([
+    ['a bad selection', { ...cam, selection: 'magic' }],
+    ['a negative index', { ...cam, index: -1 }],
+    ['a bad device kind', { ...cam, available: [{ name: 'x', kind: 'webcam' }] }],
+    ['an over-long name', { ...cam, active: 'x'.repeat(200) }],
+  ])('drops %s', (_l, msg) => {
+    expect(parse(msg).ok).toBe(false);
+  });
+});

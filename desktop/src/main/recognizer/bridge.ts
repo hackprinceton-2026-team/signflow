@@ -58,6 +58,7 @@ export class RecognizerBridge {
   private model: RecognizerModel | undefined;
   private rejected = 0;
   private lastPreviewAt = -Infinity;
+  private camera: RecognizerStatus['camera'];
   private readonly opts: Required<RecognizerBridgeOptions>;
 
   constructor(options: RecognizerBridgeOptions) {
@@ -154,6 +155,11 @@ export class RecognizerBridge {
       if (this.rejected <= 5 || this.rejected % 50 === 0) this.opts.log(`dropped message (${parsed.reason}); ${this.rejected} so far`);
       return;
     }
+    if ('camera' in parsed) {
+      this.camera = parsed.camera;
+      this.setStatus({ ...this.status });
+      return;
+    }
     if ('preview' in parsed) {
       const now = this.opts.now();
       if (now - this.lastPreviewAt < this.opts.previewIntervalMs) return; // throttle
@@ -201,8 +207,10 @@ export class RecognizerBridge {
 
   private setStatus(next: RecognizerStatus): void {
     const prev = this.status;
-    if (prev.state === next.state && prev.message === next.message && prev.model === next.model) return;
-    this.status = next;
-    this.opts.onStatus(next);
+    const withCamera: RecognizerStatus = next.state === 'idle' || !this.camera ? next : { ...next, camera: this.camera };
+    if (next.state === 'idle') this.camera = undefined;
+    if (JSON.stringify(prev) === JSON.stringify(withCamera)) return;
+    this.status = withCamera;
+    this.opts.onStatus(withCamera);
   }
 }

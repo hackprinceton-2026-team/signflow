@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { RecognizerPreview } from '@shared/recognizer';
+import type { RecognizerPreview, RecognizerStatus } from '@shared/recognizer';
 import type { RecognizerBridge } from '../adapters/external/aslRecognizer';
 
 /** No frame for this long: the preview is gone (recognizer stopped, or plain live.py without previews). */
@@ -29,4 +29,20 @@ export function useRecognizerPreview(bridge: RecognizerBridge | undefined, activ
   }, [active, bridge]);
 
   return active ? frame : null;
+}
+
+/** Which camera the recognizer launcher reports it is using (null until it says, or with plain live.py). */
+export function useRecognizerCamera(bridge: RecognizerBridge | undefined, active: boolean) {
+  const [camera, setCamera] = useState<RecognizerStatus['camera'] | null>(null);
+  useEffect(() => {
+    if (!bridge || !active) return;
+    const off = bridge.onStatus((s) => {
+      if (s.camera) setCamera(s.camera);
+    });
+    return () => {
+      off();
+      setCamera(null);
+    };
+  }, [active, bridge]);
+  return active ? camera : null;
 }

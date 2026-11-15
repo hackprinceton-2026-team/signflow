@@ -241,3 +241,30 @@ describe('switching Words → Sentence with the ASL recognizer', () => {
     expect(backend.callsTo('/translate')[0]!.body).toMatchObject({ raw_signs: ['I', 'HUNGRY'] });
   });
 });
+
+describe('Settings › Camera with the ASL recognizer', () => {
+  it('shows the camera the recognizer reports, and how to choose another', async () => {
+    const { bridge } = renderApp();
+    const nav = () => within(screen.getByRole('navigation', { name: 'Main' }));
+    fireEvent.click(nav().getByRole('button', { name: 'Settings' }));
+    fireEvent.click(within(screen.getByRole('radiogroup', { name: 'Sign recognizer' })).getByRole('radio', { name: 'SignFlow ASL model (local)' }));
+    fireEvent.click(nav().getByRole('button', { name: 'Live' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Start recognition' }));
+    await waitFor(() => expect(bridge.listening).toBe(true));
+    act(() =>
+      bridge.setStatus({
+        state: 'ready',
+        camera: {
+          active: 'MacBook Air Camera', index: 1, selection: 'automatic', verified: true, note: 'built-in camera preferred',
+          available: [{ name: 'MacBook Air Camera', kind: 'built-in' }, { name: 'iPhone Camera', kind: 'iPhone' }],
+        },
+      }),
+    );
+    fireEvent.click(nav().getByRole('button', { name: 'Settings' }));
+    const panel = screen.getByTestId('recognizer-camera');
+    expect(panel).toHaveTextContent('MacBook Air Camera');
+    expect(panel).toHaveTextContent('automatic');
+    expect(panel).toHaveTextContent('iPhone Camera (iPhone)');
+    expect(panel).toHaveTextContent('--camera-name iPhone');
+  });
+});

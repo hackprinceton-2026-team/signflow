@@ -204,4 +204,14 @@ describe('RecognizerBridge', () => {
     expect(previews).toHaveLength(2);
     expect(events).toHaveLength(0);
   });
+
+  it('carries the launcher’s camera report in the status, and forgets it on stop', () => {
+    const { bridge, statuses, last } = setup();
+    bridge.start({ allowKeyword: false });
+    last().open();
+    last().message({ type: 'camera', active: 'MacBook Air Camera', index: 1, selection: 'automatic', verified: true, note: 'built-in camera preferred', available: [] });
+    expect(statuses.at(-1)).toMatchObject({ state: 'ready', camera: { active: 'MacBook Air Camera', index: 1 } });
+    bridge.stop();
+    expect(statuses.at(-1)).toEqual({ state: 'idle' });
+  });
 });

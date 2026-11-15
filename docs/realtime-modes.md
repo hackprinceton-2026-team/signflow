@@ -59,6 +59,20 @@ The ASL recognizer owns the camera, and SignFlow still never opens it. To see th
 - **In SignFlow:** Electron main validates each frame (JPEG marker, base64, dimensions, 200 KB cap) and forwards at most one per 80 ms. The stage shows it as a `data:` image, which the CSP already allows; the CSP is unchanged.
 - **Fallback:** with plain `live.py` (no frames), Live shows the "preview is in the recognizer window" card as before.
 
+### Which camera the recognizer uses
+
+macOS can list an iPhone Continuity Camera alongside (or before) the built-in camera. The launcher therefore never assumes index 0:
+
+- **Automatic (default):** prefers the built-in camera (AVFoundation device type `BuiltInWideAngleCamera` / built-in transport, or a MacBook/FaceTime/Built-in name), then other external cameras, then an iPhone.
+- **The index is verified physically.** OpenCV only accepts an index, and its order is **not** AVFoundation's list order. On the test MacBook Air, AVFoundation listed the MacBook camera first, but OpenCV index 0 was the iPhone. The launcher finds a capture size only the wanted camera supports (the MacBook Air's 1552×1552), requests it from each index in turn, one camera open at a time, and uses the index that delivers it. The result is cached while the devices don't change.
+  - **Side effect:** checking may briefly open the other camera (for example wake the iPhone) at startup.
+  - **No unique size:** if the wanted camera has no capture size of its own, the launcher logs a warning and asks for `--camera N`.
+- **Explicit choice always wins:** `--camera N` (an OpenCV index, used as is) or `--camera-name iPhone` (the first name containing it, index verified as above).
+- **Listing cameras:** `--list-cameras` prints them.
+- **Re-checked on every reopen:** if the chosen camera disappears, another is used and the log says which.
+- **In SignFlow:** **Settings › Camera** shows the camera in use (automatic / chosen, verified or not) and the others available. Switching happens by restarting the launcher with a flag; there is no in-app switcher.
+- **Setup:** listing cameras needs `pyobjc-framework-AVFoundation` in the recognizer's environment (`slenv/bin/pip install pyobjc-framework-AVFoundation`). Without it, cameras can't be identified, and index 0 is used with a warning to pass `--camera N`.
+
 ## Measured (Apple M4, 16 GB, 2026-11-15)
 
 Measured in the built app with Kokoro (Heart). Audio was muted for the run, but synthesized and started.
