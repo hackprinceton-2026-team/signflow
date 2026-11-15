@@ -24,6 +24,7 @@ Each run prints one line per case and a summary, and writes a JSON and a Markdow
 | `--responses FILE` | Re-score saved outputs offline: a report from an earlier run, or `{"case-id": "output"}` (or `{"case-id": {"output": "...", "latency_ms": 640}}`). Recorded latencies are kept. |
 | `--live` | Call the real Gemini API. Mutually exclusive with `--responses`. |
 | `--model NAME` | With `--live`: use this model instead of `GEMINI_MODEL`. |
+| `--thinking-level LEVEL` | With `--live`: `minimal`, `low`, `medium` or `high` instead of `GEMINI_THINKING_LEVEL`. The report's `settings.thinking_level` records what was sent (`model default` when nothing was). |
 | `--delay-s S` | With `--live`: pause between calls (free-tier keys are rate limited). |
 | `--case ID`, `--category NAME`, `--mode MODE` | Run a subset. Each is repeatable; filters combine. |
 | `--latency-budget-ms MS` | Flag slower translations (default 3000). A warning, not a failure. |

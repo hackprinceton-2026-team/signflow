@@ -13,6 +13,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from pydantic import SecretStr
 
+from .config import ThinkingLevel
 from .errors import TranslationRejected, UpstreamError, UpstreamTimeout
 from .schemas import TranslationMode
 
@@ -127,17 +128,21 @@ class GeminiTranslator:
         model: str,
         temperature: float,
         timeout_s: float,
+        thinking_level: ThinkingLevel | None = None,
         llm: BaseChatModel | None = None,
     ) -> None:
         if llm is None:
             from langchain_google_genai import ChatGoogleGenerativeAI
 
+            # Only sent when configured: unset keeps the model's own default thinking level.
+            thinking = {} if thinking_level is None else {"thinking_level": thinking_level}
             llm = ChatGoogleGenerativeAI(
                 model=model,
                 google_api_key=api_key,
                 temperature=temperature,
                 timeout=timeout_s,
                 max_retries=1,
+                **thinking,
             )
         self.model_name = model
         self._timeout_s = timeout_s

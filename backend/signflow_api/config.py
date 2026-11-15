@@ -22,6 +22,9 @@ BACKEND_DIR = Path(__file__).resolve().parent.parent
 #: Amazon Polly voice ids are plain ASCII words (e.g. "Ruth", "Matthew").
 VOICE_ID_PATTERN = r"^[A-Za-z]{2,32}$"
 
+#: Gemini 3+ thinking levels (``thinking_level``). Support varies by model.
+ThinkingLevel = Literal["minimal", "low", "medium", "high"]
+
 #: Amazon Polly synthesis engines, from most to least natural for conversation.
 PollyEngine = Literal["generative", "long-form", "neural", "standard"]
 
@@ -35,6 +38,9 @@ class Settings(BaseSettings):
     gemini_model: str = Field("gemini-3.5-flash", min_length=1)
     gemini_temperature: float = Field(0.2, ge=0, le=1)
     translate_timeout_s: float = Field(20, gt=0, le=120)
+    #: Unset (the default) sends no thinking setting, so the model uses its own default.
+    #: Lower levels can reduce latency; measure quality with ``python -m evals`` before changing it.
+    gemini_thinking_level: ThinkingLevel | None = None
 
     # --- Speech (Amazon Polly) ---
     aws_region: str = Field("us-east-1", min_length=1)
@@ -69,7 +75,7 @@ class Settings(BaseSettings):
             raise ValueError("CORS_ORIGINS must list origins explicitly; '*' is not allowed")
         return origins
 
-    @field_validator("polly_fallback_engine", mode="before")
+    @field_validator("polly_fallback_engine", "gemini_thinking_level", mode="before")
     @classmethod
     def _empty_is_none(cls, value: object) -> object:
         return None if isinstance(value, str) and not value.strip() else value

@@ -298,3 +298,26 @@ def test_token_usage_defaults_missing_reasoning_to_zero():
 def test_translate_still_returns_plain_text():
     reply = AIMessage(content=" Hi. ", usage_metadata={"input_tokens": 5, "output_tokens": 2, "total_tokens": 7})
     assert asyncio.run(translator_with(lambda _: reply).translate(["HI"], "chat")) == "Hi."
+
+
+# ---------- Thinking level (built offline: constructing the client sends no request) ----------
+
+
+def real_gemini(**kwargs) -> GeminiTranslator:
+    return GeminiTranslator(
+        api_key=SecretStr("unused"), model="gemini-3.5-flash", temperature=0.2, timeout_s=20, **kwargs
+    )
+
+
+def test_thinking_level_is_not_sent_unless_configured():
+    llm = real_gemini()._chain.last
+    assert llm.reasoning_effort is None
+    assert llm._prepare_params(None).thinking_config is None, "the model's own default applies"
+    assert llm.max_retries == 1 and llm.timeout == 20
+
+
+@pytest.mark.parametrize("level", ["minimal", "low", "medium", "high"])
+def test_configured_thinking_level_reaches_the_gemini_request(level: str):
+    config = real_gemini(thinking_level=level)._chain.last._prepare_params(None).thinking_config
+    assert config.thinking_level.value == level.upper()
+    assert config.thinking_budget is None

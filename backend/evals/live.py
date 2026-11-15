@@ -16,7 +16,7 @@ import re
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 
-from signflow_api.config import Settings
+from signflow_api.config import Settings, ThinkingLevel
 from signflow_api.translation import GeminiTranslator, Translator
 
 MODEL_NAME_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._\-]{0,63}$")
@@ -44,7 +44,13 @@ def load_settings() -> Settings:
     return Settings()
 
 
-def build_live_translator(settings: Settings, *, model: str | None = None) -> LiveSetup:
+#: Recorded in reports when no thinking level is sent (the model's own default applies).
+MODEL_DEFAULT = "model default"
+
+
+def build_live_translator(
+    settings: Settings, *, model: str | None = None, thinking_level: ThinkingLevel | None = None
+) -> LiveSetup:
     if not settings.translation_configured or settings.google_api_key is None:
         raise LiveUnavailable(
             "GOOGLE_API_KEY is not set. Add it to backend/.env (see .env.example) or export it, "
@@ -53,16 +59,22 @@ def build_live_translator(settings: Settings, *, model: str | None = None) -> Li
     if model is not None and not MODEL_NAME_PATTERN.match(model):
         raise LiveUnavailable("--model must be a plain model name such as gemini-3.5-flash")
     chosen = model or settings.gemini_model
+    thinking = thinking_level or settings.gemini_thinking_level
     translator = GeminiTranslator(
         api_key=settings.google_api_key,
         model=chosen,
         temperature=settings.gemini_temperature,
         timeout_s=settings.translate_timeout_s,
+        thinking_level=thinking,
     )
     return LiveSetup(
         translator=translator,
         model=chosen,
-        settings={"temperature": settings.gemini_temperature, "timeout_s": settings.translate_timeout_s},
+        settings={
+            "temperature": settings.gemini_temperature,
+            "timeout_s": settings.translate_timeout_s,
+            "thinking_level": thinking or MODEL_DEFAULT,
+        },
         secrets=(settings.google_api_key.get_secret_value(),),
     )
 

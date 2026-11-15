@@ -251,3 +251,21 @@ def test_cors_origins_are_configurable(make_client):
         "/translate", headers={"Origin": "https://signflow.example", "Access-Control-Request-Method": "POST"}
     )
     assert ok.headers["access-control-allow-origin"] == "https://signflow.example"
+
+
+@pytest.mark.parametrize("level", [None, "low"])
+def test_server_builds_the_translator_with_the_configured_thinking_level(
+    make_client, monkeypatch: pytest.MonkeyPatch, level: str | None
+):
+    built: list[dict] = []
+
+    class RecordingGemini(FakeTranslator):
+        def __init__(self, **kwargs: object) -> None:
+            super().__init__("Hello.")
+            built.append(kwargs)
+
+    monkeypatch.setattr("signflow_api.app.GeminiTranslator", RecordingGemini)
+    client = make_client(google_api_key="test-key-not-real", gemini_thinking_level=level)
+    response = client.post("/translate", json={"raw_signs": ["HELLO"], "mode": "chat"})
+    assert response.status_code == 200
+    assert [kwargs["thinking_level"] for kwargs in built] == [level]

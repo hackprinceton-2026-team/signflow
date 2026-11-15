@@ -75,6 +75,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--model", metavar="NAME", help="with --live: Gemini model to use instead of GEMINI_MODEL")
     parser.add_argument(
+        "--thinking-level",
+        choices=["minimal", "low", "medium", "high"],
+        help="with --live: Gemini thinking level instead of GEMINI_THINKING_LEVEL (default: the model's own)",
+    )
+    parser.add_argument(
         "--delay-s",
         type=float,
         default=0.0,
@@ -123,11 +128,15 @@ def _select(args: argparse.Namespace) -> tuple[Dataset, list[EvalCase]]:
 def _source(args: argparse.Namespace) -> Source:
     if not args.live and args.model is not None:
         raise UsageError("--model only applies with --live")
+    if not args.live and args.thinking_level is not None:
+        raise UsageError("--thinking-level only applies with --live")
     if args.delay_s < 0:
         raise UsageError("--delay-s must be zero or more")
     if args.live:
         try:
-            setup = live.build_live_translator(live.load_settings(), model=args.model)
+            setup = live.build_live_translator(
+                live.load_settings(), model=args.model, thinking_level=args.thinking_level
+            )
         except live.LiveUnavailable as exc:
             raise UsageError(str(exc)) from exc
         return Source(

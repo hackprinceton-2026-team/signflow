@@ -82,3 +82,17 @@ def test_env_example_documents_every_setting_without_secrets():
         assert re.search(rf"^#?\s*{name.upper()}=", example, re.MULTILINE), name
     assert re.search(r"^GOOGLE_API_KEY=\s*$", example, re.MULTILINE), "the example key must be empty"
     assert "AIza" not in example and "AKIA" not in example
+
+
+@pytest.mark.parametrize(("raw", "expected"), [("", None), ("  ", None), ("low", "low"), ("minimal", "minimal")])
+def test_gemini_thinking_level(raw: str, expected: str | None):
+    assert make_settings(gemini_thinking_level=raw).gemini_thinking_level == expected
+
+
+def test_gemini_thinking_level_defaults_to_the_model_default():
+    assert make_settings().gemini_thinking_level is None
+
+
+def test_unknown_gemini_thinking_level_is_rejected():
+    with pytest.raises(ValidationError):
+        make_settings(gemini_thinking_level="turbo")
