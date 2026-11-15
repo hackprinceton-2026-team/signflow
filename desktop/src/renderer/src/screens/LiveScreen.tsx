@@ -15,6 +15,9 @@ export function LiveScreen() {
         onToggleMirror={() => setMirrored((m) => !m)}
         recognizerStatus={session.recognizerStatus}
         recognizerName={session.recognizerName}
+        recognizerSimulated={session.recognizerSimulated}
+        recognizerTakesVideo={session.recognizerTakesVideo}
+        keepOverlays={state.draft !== null || state.draftStatus !== 'idle'}
       >
         <SignTicker buffer={state.buffer} latest={state.liveSigns[0]} threshold={state.settings.minConfidence} />
         {/* The confirmation toast takes the hint's place while it's showing. */}

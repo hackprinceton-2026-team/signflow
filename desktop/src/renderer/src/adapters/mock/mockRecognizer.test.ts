@@ -91,4 +91,33 @@ describe('MockSignRecognizer', () => {
     expect(noise.length).toBeGreaterThan(0);
     rec.stop();
   });
+
+  it('ignores frames after stop, so a restart waits for fresh camera frames', async () => {
+    const { rec, signs } = setup({ requireFrames: true, frameStaleMs: 1000, now: () => Date.now() });
+    const started = rec.start();
+    await vi.advanceTimersByTimeAsync(50);
+    await started;
+    rec.pushFrame({ ts: Date.now(), width: 640, height: 480 });
+    await vi.advanceTimersByTimeAsync(100 + 30);
+    expect(signs.length).toBeGreaterThan(0);
+
+    rec.stop();
+    const before = signs.length;
+    rec.pushFrame({ ts: Date.now(), width: 640, height: 480 }); // a late frame after stop
+    const restarted = rec.start();
+    await vi.advanceTimersByTimeAsync(50);
+    await restarted;
+    await vi.advanceTimersByTimeAsync(600);
+    expect(signs.length).toBe(before); // no frames since the restart: nothing emitted
+
+    rec.pushFrame({ ts: Date.now(), width: 640, height: 480 });
+    await vi.advanceTimersByTimeAsync(300);
+    expect(signs.length).toBeGreaterThan(before);
+    rec.stop();
+  });
+
+  it('is marked as simulated', () => {
+    expect(setup().rec.simulated).toBe(true);
+  });
 });
+

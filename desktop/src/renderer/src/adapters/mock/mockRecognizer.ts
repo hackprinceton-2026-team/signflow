@@ -55,6 +55,7 @@ export interface MockRecognizerOptions {
 
 export class MockSignRecognizer implements SignRecognizer {
   readonly name = 'Mock recognizer';
+  readonly simulated = true;
   readonly frameFormat = 'none' as const;
 
   private readonly signs = new Emitter<RecognizedSign>();
@@ -106,10 +107,14 @@ export class MockSignRecognizer implements SignRecognizer {
     this.running = false;
     for (const t of this.timers) clearTimeout(t);
     this.timers.clear();
+    // A restart must see new frames before it emits again.
+    this.lastFrameAt = -Infinity;
     this.status.emit({ state: 'idle' });
   }
 
   pushFrame(frame: VideoFrameInput): void {
+    // Late frames (after stop) must not count as "camera on" for the next start.
+    if (!this.running) return;
     this.lastFrameAt = frame.ts;
   }
 

@@ -242,7 +242,9 @@ export function SettingsScreen() {
             max={SETTINGS_LIMITS.minConfidence[1]}
             step={0.05}
             format={formatPercent}
-            description="Signs below this are shown in Workspace but left out of the sentence."
+            description={`Signs below this are shown in Workspace but left out of the sentence.${
+              session.recognizerSimulated ? ' The demo recognizer’s confidence is simulated.' : ''
+            }`}
             onChange={(minConfidence) => updateSettings({ minConfidence })}
           />
           <RangeField
@@ -256,10 +258,16 @@ export function SettingsScreen() {
             onChange={(pauseMs) => updateSettings({ pauseMs })}
           />
           <InfoRow label="Recognizer">
-            {session.recognizerName} <span className="tag">demo</span>
+            {session.recognizerName}{' '}
+            <span className="tag" data-testid="recognizer-tag">
+              {session.recognizerSimulated ? 'simulated signs' : 'model'}
+            </span>
           </InfoRow>
           <InfoRow label="Translator">
-            {session.translatorName} <span className="tag">demo</span>
+            {session.translatorName}{' '}
+            <span className="tag" data-testid="translator-tag">
+              {session.translatorSource === 'ai' ? 'Gemini' : 'demo rules'}
+            </span>
           </InfoRow>
         </Section>
 

@@ -317,6 +317,11 @@
   padding: var(--space-7);
 }
 
+/* Camera off with a draft still pending: keep the card clear of the draft below. */
+.stage.has-overlay .stage-empty {
+  place-items: start center;
+}
+
 .stage-empty-card {
   display: flex;
   flex-direction: column;
@@ -380,6 +385,13 @@
   justify-content: space-between;
   gap: var(--space-3);
   animation: sf-fade-in var(--dur-slow) var(--ease-out);
+}
+
+.stage-top-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  min-width: 0;
 }
 
 .stage-top-sub {
@@ -542,6 +554,29 @@
   text-overflow: ellipsis;
   font-size: var(--text-2xs);
   color: var(--text-tertiary);
+}
+
+.draft-source {
+  padding: 1px 7px;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  white-space: nowrap;
+}
+
+.draft-source-ai {
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.draft-source-demo,
+.draft-source-mixed {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+.draft-conf-label {
+  font-weight: var(--weight-regular);
 }
 
 .draft-badge {

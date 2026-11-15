@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   ConfidenceMeter,
+  formatPercent,
   Icon,
   ICON_NAMES,
   IconButton,
@@ -132,5 +133,18 @@ describe('StatusPill / Kbd / Card / ConfidenceMeter', () => {
     const meter = screen.getByRole('meter', { name: 'HELLO confidence' });
     expect(meter).toHaveAttribute('aria-valuenow', '42');
     expect(meter).toHaveAttribute('aria-valuetext', '42 percent, below threshold');
+  });
+
+  it('never shows a below-threshold confidence as reaching the threshold', () => {
+    // 59.6% is rejected at a 60% threshold, so it must not read "60%".
+    expect(formatPercent(0.596)).toBe('59%');
+    expect(formatPercent(0.6)).toBe('60%');
+    expect(formatPercent(0.57)).toBe('57%'); // 0.57 * 100 is 56.999… in floating point
+    expect(formatPercent(1)).toBe('100%');
+    expect(formatPercent(1.4)).toBe('100%');
+    expect(formatPercent(-0.2)).toBe('0%');
+    expect(formatPercent(Number.NaN)).toBe('0%');
+    render(<ConfidenceMeter confidence={0.596} threshold={0.6} label="Edge" />);
+    expect(screen.getByRole('meter', { name: 'Edge' })).toHaveAttribute('aria-valuetext', '59 percent, below threshold');
   });
 });

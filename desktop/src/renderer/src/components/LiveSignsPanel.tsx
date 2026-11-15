@@ -10,6 +10,8 @@ interface Props {
   onThresholdChange: (value: number) => void;
   onClearBuffer: () => void;
   onTranslateNow: () => void;
+  /** Demo recognizer: the signs and their confidence are simulated. */
+  simulated?: boolean;
 }
 
 function signState(sign: RecognizedSign, settings: SessionSettings): 'provisional' | 'accepted' | 'rejected' {
@@ -28,11 +30,18 @@ export function LiveSignsPanel({
   onThresholdChange,
   onClearBuffer,
   onTranslateNow,
+  simulated = false,
 }: Props) {
   const threshold = settings.minConfidence;
 
   return (
-    <Card title="Live signs" subtitle="Newest first. Signs below the threshold are shown but not used." className="signs-card">
+    <Card
+      title="Live signs"
+      subtitle={`Newest first, with recognition confidence. Signs below the threshold are shown but not used.${
+        simulated ? ' Simulated by the demo recognizer.' : ''
+      }`}
+      className="signs-card"
+    >
       <div className="phrase" data-testid="phrase-buffer">
         <div className="phrase-head">
           <span className="eyebrow">Current phrase</span>

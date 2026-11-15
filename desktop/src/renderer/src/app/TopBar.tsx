@@ -36,8 +36,12 @@ export function TopBar({ screen, onEnterFocus }: { screen: ScreenId; onEnterFocu
         <StatusPill tone={cameraOn ? 'live' : 'neutral'} pulse={cameraOn} data-testid="status-camera">
           {cameraOn ? 'Camera on' : 'Camera off'}
         </StatusPill>
-        <StatusPill tone={model.tone} title={session.recognizerName}>
+        <StatusPill
+          tone={model.tone}
+          title={session.recognizerSimulated ? `${session.recognizerName}: scripted signs, not real recognition` : session.recognizerName}
+        >
           {model.label}
+          {session.recognizerSimulated ? ' · simulated' : ''}
         </StatusPill>
         {ai && (
           <StatusPill

@@ -23,6 +23,8 @@ export function ConnectedDraft({ variant, showHint = false }: { variant: 'stage'
       onDismissError={session.clearBuffer}
       textRef={draftTextRef}
       onUseDemo={live ? switchToDemo : undefined}
+      translatorSource={session.translatorSource}
+      simulatedSigns={session.recognizerSimulated}
     />
   );
 }

@@ -40,7 +40,8 @@ export function useSignSession(adapters: Pick<Adapters, 'recognizer' | 'translat
     stateRef.current = state;
     onConfirmRef.current = options.onConfirm;
   });
-  const abortRef = useRef<AbortController | null>(null);
+  /** The one translation in flight, if any, and the signs it took from the buffer. */
+  const inflightRef = useRef<{ ctrl: AbortController; signs: RecognizedSign[] } | null>(null);
 
   // Recognizer events → reducer.
   useEffect(() => {
@@ -62,26 +63,46 @@ export function useSignSession(adapters: Pick<Adapters, 'recognizer' | 'translat
   }, [options.active, recognizer]);
 
   // Cancel in-flight translation on unmount.
-  useEffect(() => () => abortRef.current?.abort(), []);
+  useEffect(() => () => inflightRef.current?.ctrl.abort(), []);
+
+  // The translator changed (Demo ↔ Live, or a new translation context): the answer
+  // to a request made with the old one is stale. Abort it, give its signs back so
+  // the new translator drafts them, and drop an error that came from the old one.
+  const translatorRef = useRef(translator);
+  useEffect(() => {
+    if (translatorRef.current === translator) return;
+    translatorRef.current = translator;
+    const inflight = inflightRef.current;
+    if (inflight) {
+      inflightRef.current = null;
+      inflight.ctrl.abort();
+      dispatch({ type: 'translation/cancelled', signs: inflight.signs });
+    }
+    dispatch({ type: 'translation/errorCleared' });
+  }, [translator]);
 
   const translate = useCallback(
     async (signs: RecognizedSign[]) => {
       if (signs.length === 0) return;
       const ctrl = new AbortController();
-      abortRef.current = ctrl;
+      const request = { ctrl, signs };
+      inflightRef.current = request;
+      // Only the current request may change state; a late answer to an abandoned
+      // one is ignored even if the translator doesn't honor the abort signal.
+      const current = () => inflightRef.current === request && !ctrl.signal.aborted;
       dispatch({ type: 'translation/started', signIds: signs.map((s) => s.id) });
       try {
         const draft = await translator.translate(signs, { signal: ctrl.signal });
-        if (!ctrl.signal.aborted) dispatch({ type: 'translation/succeeded', draft });
+        if (current()) dispatch({ type: 'translation/succeeded', draft });
       } catch (err) {
-        if (ctrl.signal.aborted) return;
+        if (!current()) return;
         dispatch({
           type: 'translation/failed',
           error: err instanceof Error ? err.message : 'Translation failed',
           signs,
         });
       } finally {
-        if (abortRef.current === ctrl) abortRef.current = null;
+        if (inflightRef.current === request) inflightRef.current = null;
       }
     },
     [translator],
@@ -106,6 +127,9 @@ export function useSignSession(adapters: Pick<Adapters, 'recognizer' | 'translat
     if (!s.draft) return;
     const at = Date.now();
     const next = sessionReducer(s, { type: 'draft/confirmed', at });
+    // Update the ref now: a second confirm before React re-renders (double click,
+    // shortcut + click) must not confirm, or speak, the same draft twice.
+    stateRef.current = next;
     dispatch({ type: 'draft/confirmed', at });
     const added = next.transcript.length > s.transcript.length ? next.transcript.at(-1) : undefined;
     if (added) onConfirmRef.current?.(added, next.settings, intent);
@@ -125,7 +149,10 @@ export function useSignSession(adapters: Pick<Adapters, 'recognizer' | 'translat
     state,
     recognizerStatus,
     recognizerName: recognizer.name,
+    recognizerSimulated: recognizer.simulated === true,
+    recognizerTakesVideo: recognizer.frameFormat === 'jpeg',
     translatorName: translator.name,
+    translatorSource: translator.source,
     translateNow,
     confirm,
     editDraft,

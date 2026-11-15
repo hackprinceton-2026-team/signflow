@@ -10,8 +10,20 @@ interface Props {
   onToggleMirror: () => void;
   recognizerStatus: AdapterStatus;
   recognizerName: string;
+  /** The demo recognizer plays scripted signs: say so on the stage. */
+  recognizerSimulated?: boolean;
+  /**
+   * The recognizer receives encoded camera frames (`frameFormat: 'jpeg'`), e.g. a
+   * model behind the backend. The privacy note must not claim video stays local then.
+   */
+  recognizerTakesVideo?: boolean;
   /** Overlays anchored to the bottom of the stage (ticker, draft). */
   children?: ReactNode;
+  /**
+   * Keep the overlays visible with the camera off (a draft, translation, or error
+   * is still pending), so stopping the camera never hides text awaiting a decision.
+   */
+  keepOverlays?: boolean;
   /** Extra controls for the top-right cluster (e.g. exit Focus Mode). */
   extraControls?: ReactNode;
 }
@@ -24,13 +36,24 @@ const RECOGNIZER: Record<AdapterStatus['state'], { label: string; tone: StatusTo
 };
 
 /** The camera, edge to edge, with status and controls floating over it. */
-export function CameraStage({ camera, mirrored, onToggleMirror, recognizerStatus, recognizerName, children, extraControls }: Props) {
+export function CameraStage({
+  camera,
+  mirrored,
+  onToggleMirror,
+  recognizerStatus,
+  recognizerName,
+  recognizerSimulated = false,
+  recognizerTakesVideo = false,
+  children,
+  extraControls,
+  keepOverlays = false,
+}: Props) {
   const { status, error, stream, devices, deviceId } = camera;
   const on = status === 'on';
   const rec = RECOGNIZER[recognizerStatus.state];
 
   return (
-    <section className={`stage ${on ? 'is-on' : ''}`} aria-label="Camera">
+    <section className={`stage ${on ? 'is-on' : ''} ${!on && keepOverlays ? 'has-overlay' : ''}`} aria-label="Camera">
       <CameraView stream={stream} mirrored={mirrored} className="stage-video" label="Webcam preview" testId="webcam-video" />
       <div className="stage-vignette" aria-hidden="true" />
       {on && <div className="stage-guides" aria-hidden="true" />}
@@ -72,7 +95,10 @@ export function CameraStage({ camera, mirrored, onToggleMirror, recognizerStatus
                 Start camera
               </Button>
               <p className="stage-empty-note">
-                <Icon name="shield" size={14} /> Video stays on this device in demo mode.
+                <Icon name="shield" size={14} />{' '}
+                {recognizerTakesVideo
+                  ? 'Camera frames are sent to the sign recognition model while the camera is on.'
+                  : 'Video never leaves this device. Live mode sends only text to the SignFlow backend: recognized signs, and confirmed sentences if the cloud voice is on.'}
               </p>
             </div>
           )}
@@ -81,10 +107,22 @@ export function CameraStage({ camera, mirrored, onToggleMirror, recognizerStatus
 
       {on && (
         <div className="stage-top">
-          <StatusPill glass tone={rec.tone} pulse={recognizerStatus.state === 'ready'} data-testid="recognizer-status">
-            {rec.label}
-            <span className="stage-top-sub">· {recognizerName}</span>
-          </StatusPill>
+          <div className="stage-top-pills">
+            <StatusPill glass tone={rec.tone} pulse={recognizerStatus.state === 'ready'} data-testid="recognizer-status">
+              {rec.label}
+              <span className="stage-top-sub">· {recognizerName}</span>
+            </StatusPill>
+            {recognizerSimulated && (
+              <StatusPill
+                glass
+                tone="warning"
+                data-testid="simulated-signs"
+                title="Demo recognizer: plays scripted ASL signs with simulated confidence while the camera runs. It does not read your signing yet."
+              >
+                Simulated signs
+              </StatusPill>
+            )}
+          </div>
           <div className="stage-controls">
             {devices.length > 1 && (
               <SelectField
@@ -105,7 +143,7 @@ export function CameraStage({ camera, mirrored, onToggleMirror, recognizerStatus
         </div>
       )}
 
-      {on && <div className="stage-bottom">{children}</div>}
+      {(on || keepOverlays) && <div className="stage-bottom">{children}</div>}
     </section>
   );
 }

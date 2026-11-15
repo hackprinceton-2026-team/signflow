@@ -59,6 +59,7 @@ export interface MockTranslatorOptions {
 
 export class MockTranslator implements Translator {
   readonly name = 'Mock translator';
+  readonly source = 'demo' as const;
 
   constructor(private readonly opts: MockTranslatorOptions = {}) {}
 
@@ -87,6 +88,7 @@ export class MockTranslator implements Translator {
       glosses,
       confidence: Math.round(confidence * 100) / 100,
       createdAt: Date.now(),
+      source: this.source,
     };
   }
 }

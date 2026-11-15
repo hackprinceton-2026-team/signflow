@@ -240,6 +240,93 @@ describe('live mode: offline and error handling', () => {
   });
 });
 
+describe('stale translations across mode and context switches', () => {
+  /** The next /translate hangs until aborted (a slow backend), then the fake backend answers normally. */
+  function hangNextTranslate(backend: ReturnType<typeof createFakeBackend>) {
+    const signals: AbortSignal[] = [];
+    const real = backend.fetch.getMockImplementation()!;
+    backend.fetch.mockImplementation(async (input, init) => {
+      if (String(input).endsWith('/translate') && signals.length === 0) {
+        backend.calls.push({ method: 'POST', path: '/translate', body: JSON.parse(String(init?.body)) });
+        const signal = init!.signal!;
+        signals.push(signal);
+        return new Promise<Response>((_, reject) => signal.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError'))));
+      }
+      return real(input, init);
+    });
+    return signals;
+  }
+
+  it('Live → Demo while Gemini is still answering: the request is cancelled and the demo drafts the same signs', async () => {
+    const { backend, recognizer } = renderApp();
+    const signals = hangNextTranslate(backend);
+    await goLive();
+    await signPhrase(recognizer, ['HOW', 'YOU']);
+    await waitFor(() => expect(signals).toHaveLength(1));
+    expect(screen.getByTestId('draft-translating')).toHaveTextContent('Drafting with Gemini…');
+
+    go('Settings');
+    radio('Mode', 'Demo');
+    expect(signals[0]!.aborted).toBe(true);
+    go('Live');
+    expect(await screen.findByTestId('draft-text')).toHaveValue('How are you?');
+    expect(screen.getByTestId('draft-source')).toHaveTextContent('Demo rules');
+    expect(backend.callsTo('/translate')).toHaveLength(1);
+  });
+
+  it('changing the context mid-request re-sends the same signs with the new context', async () => {
+    const { backend, recognizer } = renderApp(createFakeBackend({ translate: (g, mode) => `[${mode}] ${g.join(' ').toLowerCase()}` }));
+    const signals = hangNextTranslate(backend);
+    await goLive({ context: 'Everyday' });
+    await signPhrase(recognizer, ['HEADACHE']);
+    await waitFor(() => expect(signals).toHaveLength(1));
+
+    go('Settings');
+    radio('Translation context', 'Medical');
+    go('Live');
+    expect(await screen.findByTestId('draft-text')).toHaveValue('[medical] headache');
+    expect(screen.getByTestId('draft-source')).toHaveTextContent('Gemini');
+    expect(signals[0]!.aborted).toBe(true);
+    expect(backend.callsTo('/translate').map((c) => c.body)).toEqual([
+      { raw_signs: ['HEADACHE'], mode: 'chat' },
+      { raw_signs: ['HEADACHE'], mode: 'medical' },
+    ]);
+  });
+
+  it('a backend error from Live mode does not linger after switching to Demo in Settings', async () => {
+    const { recognizer } = renderApp(createFakeBackend({ offline: true }));
+    await goLive();
+    await signPhrase(recognizer, ['HELLO']);
+    expect(await screen.findByRole('alert')).toHaveTextContent("Can't reach the SignFlow backend");
+    go('Settings');
+    radio('Mode', 'Demo');
+    go('Live');
+    expect(await screen.findByTestId('draft-text')).toHaveValue('Hello.');
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
+  it('stopping the camera keeps a pending draft on the Live screen, and it can still be spoken', async () => {
+    const { recognizer, system } = renderApp();
+    await signPhrase(recognizer, ['THANK-YOU']);
+    expect(await screen.findByTestId('draft-text')).toHaveValue('Thank you.');
+    fireEvent.click(screen.getByRole('button', { name: 'Stop camera' }));
+    expect(screen.getByRole('heading', { name: 'Camera is off' })).toBeInTheDocument();
+    expect(system.spoken).toHaveLength(0); // stopping never speaks
+    fireEvent.click(screen.getByRole('button', { name: /^Speak/ }));
+    expect(system.spoken.map((s) => s.text)).toEqual(['Thank you.']);
+  });
+
+  it('Settings names the real translator: Gemini in Live, demo rules in Demo', () => {
+    renderApp();
+    go('Settings');
+    expect(screen.getByTestId('translator-tag')).toHaveTextContent('demo rules');
+    expect(screen.getByTestId('recognizer-tag')).toHaveTextContent('model'); // the test recognizer isn't the simulated one
+    radio('Mode', 'Live (SignFlow AI)');
+    expect(screen.getByTestId('translator-tag')).toHaveTextContent('Gemini');
+    expect(screen.getByText('SignFlow AI (Gemini)')).toBeInTheDocument();
+  });
+});
+
 describe('connection settings', () => {
   it('context and voice are only editable in live mode; cloud voice disables pitch', () => {
     renderApp();

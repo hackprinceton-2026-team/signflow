@@ -3,6 +3,35 @@ import { act, renderHook } from '@testing-library/react';
 import { useSignSession } from './useSignSession';
 import { FakeRecognizer } from '../test/fakes';
 import { MockTranslator } from '../adapters/mock/mockTranslator';
+import type { EnglishDraft, RecognizedSign, Translator } from '../adapters/types';
+
+/** A translator whose answers the test releases by hand (optionally ignoring abort, like a slow network). */
+class ManualTranslator implements Translator {
+  readonly calls: { glosses: string[]; signal: AbortSignal | undefined; resolve: (text: string) => void; reject: (e: Error) => void }[] = [];
+
+  constructor(
+    readonly name: string,
+    readonly source: 'demo' | 'ai',
+    private readonly honorAbort = true,
+  ) {}
+
+  translate(signs: readonly RecognizedSign[], { signal }: { signal?: AbortSignal } = {}): Promise<EnglishDraft> {
+    return new Promise((resolve, reject) => {
+      const glosses = signs.map((s) => s.gloss);
+      const draft = (text: string): EnglishDraft => ({
+        id: `${this.name}-${this.calls.length}`,
+        text,
+        signIds: signs.map((s) => s.id),
+        glosses,
+        confidence: 0.9,
+        createdAt: 0,
+        source: this.source,
+      });
+      this.calls.push({ glosses, signal, resolve: (text) => resolve(draft(text)), reject });
+      if (this.honorAbort) signal?.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')), { once: true });
+    });
+  }
+}
 
 describe('useSignSession', () => {
   beforeEach(() => vi.useFakeTimers());
@@ -104,5 +133,112 @@ describe('useSignSession', () => {
     expect(result.current.state.draftStatus).toBe('error');
     expect(result.current.state.draftError).toBe('backend unreachable');
     expect(result.current.state.buffer.map((s) => s.gloss)).toEqual(['HELLO']);
+  });
+});
+
+describe('useSignSession: stale translations (Demo/Live or context switches)', () => {
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => vi.useRealTimers());
+
+  function setup(first: Translator) {
+    const recognizer = new FakeRecognizer();
+    const onConfirm = vi.fn();
+    const hook = renderHook(
+      ({ translator }) => useSignSession({ recognizer, translator }, { active: true, onConfirm, initialSettings: { pauseMs: 1000 } }),
+      { initialProps: { translator: first } },
+    );
+    return { recognizer, onConfirm, ...hook };
+  }
+
+  async function signAndWait(recognizer: FakeRecognizer, glosses: string[]) {
+    act(() => glosses.forEach((g) => recognizer.emit(g, 0.9)));
+    await act(() => vi.advanceTimersByTimeAsync(1000));
+  }
+
+  it('switching translators aborts the in-flight request and re-drafts the same signs with the new one', async () => {
+    const demo = new ManualTranslator('demo', 'demo');
+    const ai = new ManualTranslator('ai', 'ai');
+    const { recognizer, rerender, result } = setup(demo);
+    await signAndWait(recognizer, ['HOW', 'YOU']);
+    expect(demo.calls).toHaveLength(1);
+    expect(result.current.state.draftStatus).toBe('translating');
+
+    rerender({ translator: ai });
+    expect(demo.calls[0]!.signal?.aborted).toBe(true);
+    expect(result.current.state.draftStatus).toBe('idle');
+    expect(result.current.state.buffer.map((s) => s.gloss)).toEqual(['HOW', 'YOU']); // given back, in order
+    expect(result.current.translatorSource).toBe('ai');
+
+    await act(() => vi.advanceTimersByTimeAsync(1000));
+    expect(ai.calls.map((c) => c.glosses)).toEqual([['HOW', 'YOU']]);
+    await act(async () => ai.calls[0]!.resolve('How are you?'));
+    expect(result.current.state.draft?.draft).toMatchObject({ text: 'How are you?', source: 'ai' });
+  });
+
+  it('ignores a late answer from the old translator even if it ignored the abort', async () => {
+    const demo = new ManualTranslator('demo', 'demo', false);
+    const ai = new ManualTranslator('ai', 'ai');
+    const { recognizer, rerender, result } = setup(demo);
+    await signAndWait(recognizer, ['HELLO']);
+    rerender({ translator: ai });
+    await act(async () => demo.calls[0]!.resolve('STALE demo text'));
+    expect(result.current.state.draft).toBeNull();
+
+    await act(() => vi.advanceTimersByTimeAsync(1000));
+    await act(async () => ai.calls[0]!.resolve('Hello.'));
+    // A late failure of the abandoned request doesn't surface either.
+    await act(async () => demo.calls[0]!.reject(new Error('old backend down')));
+    expect(result.current.state.draft?.text).toBe('Hello.');
+    expect(result.current.state.draftError).toBeNull();
+  });
+
+  it('a stale error from the old translator is cleared, and its signs are drafted by the new one', async () => {
+    const ai = new ManualTranslator('ai', 'ai');
+    const demo = new ManualTranslator('demo', 'demo');
+    const { recognizer, rerender, result } = setup(ai);
+    await signAndWait(recognizer, ['HELP']);
+    await act(async () => ai.calls[0]!.reject(new Error("Can't reach the SignFlow backend")));
+    expect(result.current.state.draftStatus).toBe('error');
+
+    rerender({ translator: demo });
+    expect(result.current.state.draftStatus).toBe('idle');
+    expect(result.current.state.draftError).toBeNull();
+    await act(() => vi.advanceTimersByTimeAsync(1000));
+    expect(demo.calls.map((c) => c.glosses)).toEqual([['HELP']]);
+  });
+
+  it('a new context (same kind of translator) also re-drafts with the new one', async () => {
+    const chat = new ManualTranslator('ai-chat', 'ai');
+    const medical = new ManualTranslator('ai-medical', 'ai');
+    const { recognizer, rerender, result } = setup(chat);
+    await signAndWait(recognizer, ['HEADACHE']);
+    rerender({ translator: medical });
+    await act(() => vi.advanceTimersByTimeAsync(1000));
+    await act(async () => medical.calls[0]!.resolve('I have a headache.'));
+    await act(async () => chat.calls[0]?.resolve('stale'));
+    expect(result.current.state.draft?.text).toBe('I have a headache.');
+  });
+
+  it('re-rendering with the same translator does not cancel anything', async () => {
+    const demo = new ManualTranslator('demo', 'demo');
+    const { recognizer, rerender, result } = setup(demo);
+    await signAndWait(recognizer, ['HI']);
+    rerender({ translator: demo });
+    expect(demo.calls[0]!.signal?.aborted).toBe(false);
+    await act(async () => demo.calls[0]!.resolve('Hi.'));
+    expect(result.current.state.draft?.text).toBe('Hi.');
+  });
+
+  it('confirming twice before React re-renders confirms (and speaks) once', async () => {
+    const demo = new ManualTranslator('demo', 'demo');
+    const { recognizer, result, onConfirm } = setup(demo);
+    await signAndWait(recognizer, ['HI']);
+    await act(async () => demo.calls[0]!.resolve('Hi.'));
+    act(() => {
+      result.current.confirm({ speak: true });
+      result.current.confirm({ speak: true });
+    });
+    expect(onConfirm).toHaveBeenCalledTimes(1);
+    expect(result.current.state.transcript).toHaveLength(1);
   });
 });

@@ -37,6 +37,45 @@ describe('<CameraStage />', () => {
     expect(screen.queryByTestId('recognizer-status')).not.toBeInTheDocument();
   });
 
+  it('on with the demo recognizer: says the signs are simulated', () => {
+    render(<CameraStage camera={camera({ status: 'on' })} {...stageProps} recognizerSimulated />);
+    const badge = screen.getByTestId('simulated-signs');
+    expect(badge).toHaveTextContent('Simulated signs');
+    expect(badge).toHaveAttribute('title', expect.stringMatching(/does not read your signing/));
+  });
+
+  it('on with a real recognizer: no simulated badge', () => {
+    render(<CameraStage camera={camera({ status: 'on' })} {...stageProps} />);
+    expect(screen.queryByTestId('simulated-signs')).not.toBeInTheDocument();
+  });
+
+  it('off: overlays are hidden, unless something is still awaiting a decision', () => {
+    const { rerender } = render(
+      <CameraStage camera={camera()} {...stageProps}>
+        <p>pending draft</p>
+      </CameraStage>,
+    );
+    expect(screen.queryByText('pending draft')).not.toBeInTheDocument();
+    rerender(
+      <CameraStage camera={camera()} {...stageProps} keepOverlays>
+        <p>pending draft</p>
+      </CameraStage>,
+    );
+    expect(screen.getByText('pending draft')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Camera is off' })).toBeInTheDocument();
+  });
+
+  it('off: the privacy note is accurate for both modes', () => {
+    render(<CameraStage camera={camera()} {...stageProps} />);
+    expect(screen.getByText(/Video never leaves this device\. Live mode sends only text to the SignFlow backend/)).toBeInTheDocument();
+  });
+
+  it('off: does not claim video stays local when the recognizer takes camera frames', () => {
+    render(<CameraStage camera={camera()} {...stageProps} recognizerTakesVideo />);
+    expect(screen.queryByText(/Video never leaves this device/)).not.toBeInTheDocument();
+    expect(screen.getByText(/Camera frames are sent to the sign recognition model/)).toBeInTheDocument();
+  });
+
   it('starting: shows progress and can be stopped', () => {
     const cam = camera({ status: 'starting' });
     render(<CameraStage camera={cam} {...stageProps} />);

@@ -24,6 +24,7 @@ export function WorkspaceScreen() {
           onThresholdChange={(minConfidence) => updateSettings({ minConfidence })}
           onClearBuffer={session.clearBuffer}
           onTranslateNow={session.translateNow}
+          simulated={session.recognizerSimulated}
         />
         <div className="workspace-side">
           <Card

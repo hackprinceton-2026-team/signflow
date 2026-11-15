@@ -39,6 +39,11 @@ export interface VideoFrameInput {
 
 export interface SignRecognizer {
   readonly name: string;
+  /**
+   * True for the demo recognizer: it plays scripted signs (with simulated
+   * confidence) while the camera runs, whatever is actually signed.
+   */
+  readonly simulated?: boolean;
   /** What the frame sampler should send: metadata only, or JPEG-encoded frames. */
   readonly frameFormat: 'none' | 'jpeg';
   start(): Promise<void>;
@@ -48,19 +53,28 @@ export interface SignRecognizer {
   onStatus(cb: (status: AdapterStatus) => void): Unsubscribe;
 }
 
+/** Who wrote a draft: the on-device demo rules, the AI (Gemini via the backend), or both (merged). */
+export type DraftSource = 'demo' | 'ai' | 'mixed';
+
 /** English text generated from a run of signs, awaiting user confirmation. */
 export interface EnglishDraft {
   id: string;
   text: string;
   signIds: string[];
   glosses: string[];
-  /** 0..1 */
+  /**
+   * 0..1: the average *recognition* confidence of the signs in the draft.
+   * Neither translator reports a confidence for the English itself.
+   */
   confidence: number;
   createdAt: number;
+  source: DraftSource;
 }
 
 export interface Translator {
   readonly name: string;
+  /** What produces the English: on-device demo rules or the AI backend. */
+  readonly source: 'demo' | 'ai';
   translate(signs: readonly RecognizedSign[], opts?: { signal?: AbortSignal }): Promise<EnglishDraft>;
 }
 

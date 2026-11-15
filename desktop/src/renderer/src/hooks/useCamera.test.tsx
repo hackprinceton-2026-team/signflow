@@ -1,8 +1,8 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { describeCameraError, useCamera } from './useCamera';
 import { installFakeBridge } from '../test/setup';
-import { installFakeMediaDevices } from '../test/fakes';
+import { FakeMediaStream, installFakeMediaDevices } from '../test/fakes';
 
 describe('describeCameraError', () => {
   it.each([
@@ -75,4 +75,37 @@ describe('useCamera', () => {
     unmount();
     expect(streams[0]?.track.stop).toHaveBeenCalled();
   });
+
+  it('releases a camera that finishes starting after unmount (no camera left on)', async () => {
+    installFakeBridge();
+    let finish: (s: FakeMediaStream) => void = () => undefined;
+    const { getUserMedia } = installFakeMediaDevices({ getUserMedia: () => new Promise((r) => (finish = r)) });
+    const { result, unmount } = renderHook(() => useCamera());
+    let pending: Promise<void> = Promise.resolve();
+    act(() => void (pending = result.current.start()));
+    await waitFor(() => expect(getUserMedia).toHaveBeenCalled());
+    unmount();
+    const late = new FakeMediaStream();
+    finish(late);
+    await pending;
+    expect(late.track.stop).toHaveBeenCalled();
+  });
+
+  it('stopping during the OS permission prompt never opens the camera', async () => {
+    let grant: (v: 'granted') => void = () => undefined;
+    installFakeBridge({ camera: { accessStatus: async () => 'not-determined', requestAccess: () => new Promise((r) => (grant = r)) } });
+    const { getUserMedia } = installFakeMediaDevices();
+    const { result } = renderHook(() => useCamera());
+    let pending: Promise<void> = Promise.resolve();
+    act(() => void (pending = result.current.start()));
+    act(() => result.current.stop());
+    await act(async () => {
+      grant('granted');
+      await pending;
+    });
+    expect(getUserMedia).not.toHaveBeenCalled();
+    expect(result.current.status).toBe('off');
+    expect(vi.isMockFunction(getUserMedia)).toBe(true);
+  });
 });
+

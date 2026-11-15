@@ -1,4 +1,5 @@
 import { useRef, type KeyboardEvent, type RefObject } from 'react';
+import type { DraftSource } from '../adapters/types';
 import type { ActiveDraft, DraftStatus } from '../state/session';
 import { Button, ConfidenceMeter, formatPercent, Icon, Kbd } from '../ui';
 
@@ -24,7 +25,19 @@ export interface DraftOverlayProps {
   textRef?: RefObject<HTMLTextAreaElement | null>;
   /** Live mode: offer to finish this phrase in demo mode after a backend failure. */
   onUseDemo?: (() => void) | undefined;
+  /** Who is translating right now (for the "Drafting…" status). */
+  translatorSource?: 'demo' | 'ai';
+  /** The signs come from the demo recognizer, so their confidence is simulated. */
+  simulatedSigns?: boolean;
 }
+
+const DRAFT_SOURCE: Record<DraftSource, { label: string; title: string }> = {
+  ai: { label: 'Gemini', title: 'English written by Gemini through the SignFlow backend.' },
+  demo: { label: 'Demo rules', title: 'English written by on-device demo rules. No AI involved.' },
+  mixed: { label: 'Demo + Gemini', title: 'Parts of this draft were written by demo rules and parts by Gemini.' },
+};
+
+const DRAFTING = { ai: 'Drafting with Gemini…', demo: 'Drafting (demo rules)…' } as const;
 
 /**
  * The English draft, awaiting the user's decision.
@@ -48,6 +61,8 @@ export function DraftOverlay({
     onDismissError,
     textRef: externalRef,
     onUseDemo,
+    translatorSource = 'demo',
+    simulatedSigns = false,
 }: DraftOverlayProps) {
   const ownRef = useRef<HTMLTextAreaElement>(null);
   const textRef = externalRef ?? ownRef;
@@ -94,9 +109,9 @@ export function DraftOverlay({
   if (!draft) {
     if (status === 'translating') {
       return (
-        <div className={`draft-pill draft-pill-${variant}`} role="status">
+        <div className={`draft-pill draft-pill-${variant}`} role="status" data-testid="draft-translating">
           <span className="ui-spinner" aria-hidden="true" />
-          Translating…
+          {DRAFTING[translatorSource]}
         </div>
       );
     }
@@ -112,6 +127,8 @@ export function DraftOverlay({
   }
 
   const empty = !draft.text.trim();
+  const source = DRAFT_SOURCE[draft.draft.source];
+  const signConfidence = `Average sign confidence${simulatedSigns ? ' (simulated)' : ''}`;
   return (
     <section className={`draft draft-${variant}`} aria-label="English draft" data-testid="draft">
       <p className="sr-only" aria-live="polite">
@@ -119,8 +136,17 @@ export function DraftOverlay({
       </p>
       <div className="draft-meta">
         <span className="eyebrow">Draft</span>
-        <span className="draft-conf tabular" title="Translation confidence">
-          <ConfidenceMeter confidence={draft.draft.confidence} threshold={threshold} size="sm" label="Draft confidence" />
+        <span className={`draft-source draft-source-${draft.draft.source}`} title={source.title} data-testid="draft-source">
+          {source.label}
+        </span>
+        <span
+          className="draft-conf tabular"
+          title={`${signConfidence}: how sure recognition was about these signs. The English itself has no confidence score.`}
+          data-testid="draft-confidence"
+        >
+          <span className="draft-conf-label">Signs</span>
+          <span className="sr-only">(recognition confidence; the English itself has no score)</span>
+          <ConfidenceMeter confidence={draft.draft.confidence} threshold={threshold} size="sm" label={signConfidence} />
           {formatPercent(draft.draft.confidence)}
         </span>
         <span className="draft-glosses mono" title="Recognized signs">
@@ -129,7 +155,7 @@ export function DraftOverlay({
         {draft.edited && <span className="draft-badge">Edited</span>}
         {status === 'translating' && (
           <span className="draft-more" role="status">
-            <span className="ui-spinner" aria-hidden="true" /> adding…
+            <span className="ui-spinner" aria-hidden="true" /> {translatorSource === 'ai' ? 'Gemini is adding…' : 'adding…'}
           </span>
         )}
       </div>

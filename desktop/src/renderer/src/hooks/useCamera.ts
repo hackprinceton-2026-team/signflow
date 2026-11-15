@@ -81,6 +81,7 @@ export function useCamera() {
       setError(null);
       try {
         const access = await window.signflow.camera.requestAccess();
+        if (seq !== requestSeq.current) return; // stopped (or unmounted) while the OS asked for permission
         if (access === 'denied' || access === 'restricted') {
           throw new DOMException('Camera access denied by the operating system', 'NotAllowedError');
         }
@@ -147,8 +148,16 @@ export function useCamera() {
     };
   }, []);
 
-  // Always release the camera on unmount.
-  useEffect(() => () => streamRef.current?.getTracks().forEach((t) => t.stop()), []);
+  // Always release the camera on unmount, including one that is still starting:
+  // bumping the sequence makes a getUserMedia that resolves later stop its tracks.
+  useEffect(
+    () => () => {
+      requestSeq.current += 1;
+      streamRef.current?.getTracks().forEach((t) => t.stop());
+      streamRef.current = null;
+    },
+    [],
+  );
 
   return { status, error, stream, devices, deviceId, start, stop, selectDevice };
 }

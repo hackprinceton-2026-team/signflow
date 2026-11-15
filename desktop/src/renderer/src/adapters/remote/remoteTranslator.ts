@@ -8,7 +8,8 @@ export const MAX_SIGNS_PER_REQUEST = 64;
 
 /** Translation by the SignFlow backend (Gemini). Produces a draft; never audio. */
 export class RemoteTranslator implements Translator {
-  readonly name = 'SignFlow AI';
+  readonly name = 'SignFlow AI (Gemini)';
+  readonly source = 'ai' as const;
 
   constructor(
     private readonly client: BackendClient,
@@ -39,6 +40,7 @@ export class RemoteTranslator implements Translator {
       // The backend reports no confidence; the draft shows how sure recognition was.
       confidence: Math.round(confidence * 100) / 100,
       createdAt: Date.now(),
+      source: this.source,
     };
   }
 }

@@ -17,13 +17,14 @@ const sign = (id: string, gloss: string, confidence = 0.9, final = true): Recogn
   ts: 0,
 });
 
-const draft = (id: string, text: string, signIds: string[], confidence = 0.9): EnglishDraft => ({
+const draft = (id: string, text: string, signIds: string[], confidence = 0.9, source: EnglishDraft['source'] = 'demo'): EnglishDraft => ({
   id,
   text,
   signIds,
   glosses: signIds.map((s) => s.toUpperCase()),
   confidence,
   createdAt: 0,
+  source,
 });
 
 function run(state: SessionState, ...actions: Parameters<typeof sessionReducer>[1][]): SessionState {
@@ -198,3 +199,40 @@ describe('session settings', () => {
     expect(isSessionSettings(null)).toBe(false);
   });
 });
+
+describe('stale translations', () => {
+  it('translation/cancelled gives the signs back (in order, no duplicates) and keeps the draft', () => {
+    const a = sign('a', 'HOW', 0.9);
+    const b = sign('b', 'YOU', 0.9);
+    const c = sign('c', 'NEXT', 0.9);
+    const withDraft = run(initialSessionState(), { type: 'translation/succeeded', draft: draft('d0', 'Hi.', ['x']) });
+    const started = run(
+      withDraft,
+      { type: 'sign/received', sign: a },
+      { type: 'sign/received', sign: b },
+      { type: 'translation/started', signIds: ['a', 'b'] },
+      { type: 'sign/received', sign: c },
+      { type: 'sign/received', sign: b }, // re-emitted while in flight
+    );
+    const after = sessionReducer(started, { type: 'translation/cancelled', signs: [a, b] });
+    expect(after.buffer.map((s) => s.id)).toEqual(['a', 'c', 'b']);
+    expect(after.draftStatus).toBe('idle');
+    expect(after.draft?.text).toBe('Hi.');
+  });
+
+  it('a draft merged from different translators is labeled mixed', () => {
+    const s1 = run(
+      initialSessionState(),
+      { type: 'translation/succeeded', draft: draft('d1', 'Hello.', ['a'], 0.9, 'demo') },
+      { type: 'translation/succeeded', draft: draft('d2', 'How are you?', ['b'], 0.9, 'ai') },
+    );
+    expect(s1.draft?.draft.source).toBe('mixed');
+    const s2 = run(
+      initialSessionState(),
+      { type: 'translation/succeeded', draft: draft('d1', 'Hello.', ['a'], 0.9, 'ai') },
+      { type: 'translation/succeeded', draft: draft('d2', 'Bye.', ['b'], 0.9, 'ai') },
+    );
+    expect(s2.draft?.draft.source).toBe('ai');
+  });
+});
+

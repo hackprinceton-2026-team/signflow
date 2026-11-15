@@ -4,7 +4,7 @@ import { DraftOverlay, type DraftOverlayProps } from './DraftOverlay';
 import type { ActiveDraft } from '../state/session';
 
 const active: ActiveDraft = {
-  draft: { id: 'd', text: 'How are you?', signIds: ['a', 'b'], glosses: ['HOW', 'YOU'], confidence: 0.87, createdAt: 0 },
+  draft: { id: 'd', text: 'How are you?', signIds: ['a', 'b'], glosses: ['HOW', 'YOU'], confidence: 0.87, createdAt: 0, source: 'demo' },
   text: 'How are you?',
   edited: false,
 };
@@ -36,7 +36,10 @@ describe('<DraftOverlay />', () => {
     expect(screen.getByTestId('draft-text')).toHaveValue('How are you?');
     expect(screen.getByLabelText(/Draft text/)).toBe(screen.getByTestId('draft-text'));
     expect(screen.getByText('HOW · YOU')).toBeInTheDocument();
-    expect(screen.getByRole('meter', { name: 'Draft confidence' })).toHaveAttribute('aria-valuenow', '87');
+    // The meter is the signs' average recognition confidence, not a translation score.
+    expect(screen.getByRole('meter', { name: 'Average sign confidence' })).toHaveAttribute('aria-valuenow', '87');
+    expect(screen.getByTestId('draft-confidence')).toHaveTextContent(/^Signs\(recognition confidence; the English itself has no score\)87%$/);
+    expect(screen.getByTestId('draft-confidence')).toHaveAttribute('title', expect.stringMatching(/The English itself has no confidence score/));
     expect(screen.getByText('Draft ready: How are you?')).toBeInTheDocument(); // live region
   });
 
@@ -86,7 +89,7 @@ describe('<DraftOverlay />', () => {
 
   it('shows translating and error states', () => {
     const first = renderDraft({ draft: null, status: 'translating' });
-    expect(screen.getByRole('status')).toHaveTextContent('Translating…');
+    expect(screen.getByRole('status')).toHaveTextContent('Drafting (demo rules)…');
     expect(first.onConfirm).not.toHaveBeenCalled();
     cleanup();
 
@@ -105,5 +108,26 @@ describe('<DraftOverlay />', () => {
     cleanup();
     renderDraft({ draft: null, showHint: true });
     expect(screen.getByTestId('draft-empty')).toHaveTextContent(/Sign a phrase, then pause/);
+  });
+
+  it('labels who wrote the draft: Gemini, demo rules, or both', () => {
+    renderDraft({ draft: { ...active, draft: { ...active.draft, source: 'ai' } } });
+    expect(screen.getByTestId('draft-source')).toHaveTextContent('Gemini');
+    expect(screen.getByTestId('draft-source')).toHaveAttribute('title', expect.stringMatching(/Gemini through the SignFlow backend/));
+    cleanup();
+    renderDraft();
+    expect(screen.getByTestId('draft-source')).toHaveTextContent('Demo rules');
+    expect(screen.getByTestId('draft-source')).toHaveAttribute('title', expect.stringMatching(/No AI involved/));
+    cleanup();
+    renderDraft({ draft: { ...active, draft: { ...active.draft, source: 'mixed' } } });
+    expect(screen.getByTestId('draft-source')).toHaveTextContent('Demo + Gemini');
+  });
+
+  it('says which translator is drafting, and marks simulated sign confidence', () => {
+    renderDraft({ draft: null, status: 'translating', translatorSource: 'ai' });
+    expect(screen.getByTestId('draft-translating')).toHaveTextContent('Drafting with Gemini…');
+    cleanup();
+    renderDraft({ simulatedSigns: true });
+    expect(screen.getByRole('meter', { name: 'Average sign confidence (simulated)' })).toBeInTheDocument();
   });
 });

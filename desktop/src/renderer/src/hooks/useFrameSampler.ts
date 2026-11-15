@@ -10,7 +10,9 @@ export interface FrameSamplerOptions {
 
 /**
  * Samples the <video> at `fps` and hands frames to the recognizer.
- * Frames are JPEG-encoded only if the recognizer asks for them.
+ * Frames are JPEG-encoded only if the recognizer asks for them. Nothing is
+ * pushed after `active` turns false, the recognizer changes, or unmount, even
+ * if a JPEG encode started earlier finishes later.
  */
 export function useFrameSampler(
   videoRef: RefObject<HTMLVideoElement | null>,
@@ -23,13 +25,19 @@ export function useFrameSampler(
 
   useEffect(() => {
     if (!active) return;
+    let alive = true;
+    encoding.current = false; // an encode from a previous run no longer blocks this one
     const interval = setInterval(
       () => {
+        if (!alive) return;
         const video = videoRef.current;
         if (!video || video.readyState < 2 || !video.videoWidth) return;
         const ts = Date.now();
         const { videoWidth: vw, videoHeight: vh } = video;
 
+        // After the camera stops, the element can still hold its last frame: only sample a live stream.
+        const source = video.srcObject as MediaStream | null;
+        if (!source || source.active === false) return;
         if (recognizer.frameFormat !== 'jpeg') {
           recognizer.pushFrame({ ts, width: vw, height: vh });
           return;
@@ -48,6 +56,7 @@ export function useFrameSampler(
         encoding.current = true;
         canvas.toBlob(
           (blob) => {
+            if (!alive) return; // stopped, recognizer swapped, or unmounted while encoding
             encoding.current = false;
             if (blob) recognizer.pushFrame({ ts, width: w, height: h, jpeg: blob });
           },
@@ -57,6 +66,9 @@ export function useFrameSampler(
       },
       Math.max(1, Math.round(1000 / fps)),
     );
-    return () => clearInterval(interval);
+    return () => {
+      alive = false;
+      clearInterval(interval);
+    };
   }, [active, fps, jpegQuality, maxEdge, recognizer, videoRef]);
 }

@@ -87,6 +87,8 @@ export type SessionAction =
   | { type: 'translation/started'; signIds: string[] }
   | { type: 'translation/succeeded'; draft: EnglishDraft }
   | { type: 'translation/failed'; error: string; signs: RecognizedSign[] }
+  /** An in-flight translation was abandoned (e.g. Demo/Live or context switch): its signs go back to the buffer. */
+  | { type: 'translation/cancelled'; signs: RecognizedSign[] }
   /** Clear a failure but keep the signs, so the next pause translates them again. */
   | { type: 'translation/errorCleared' }
   | { type: 'draft/edited'; text: string }
@@ -156,6 +158,7 @@ export function sessionReducer(state: SessionState, action: SessionAction): Sess
         text: `${prev.draft.text} ${incoming.text}`,
         signIds: [...prev.draft.signIds, ...incoming.signIds],
         glosses: [...prev.draft.glosses, ...incoming.glosses],
+        source: prev.draft.source === incoming.source ? prev.draft.source : 'mixed',
         confidence:
           Math.round(
             ((prev.draft.confidence * prev.draft.signIds.length + incoming.confidence * incoming.signIds.length) / n) *
@@ -178,6 +181,16 @@ export function sessionReducer(state: SessionState, action: SessionAction): Sess
         draftStatus: 'error',
         draftError: action.error,
       };
+
+    case 'translation/cancelled': {
+      // Back to the front of the buffer, in order, without duplicating a sign that was re-emitted meanwhile.
+      const queued = new Set(state.buffer.map((s) => s.id));
+      return {
+        ...state,
+        buffer: [...action.signs.filter((s) => !queued.has(s.id)), ...state.buffer],
+        draftStatus: state.draftStatus === 'translating' ? 'idle' : state.draftStatus,
+      };
+    }
 
     case 'translation/errorCleared':
       if (state.draftStatus !== 'error') return state;

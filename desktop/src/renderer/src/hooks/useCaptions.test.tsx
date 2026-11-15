@@ -25,7 +25,7 @@ describe('buildCaptionPayload', () => {
     const withDraft: SessionState = {
       ...withBuffer,
       draft: {
-        draft: { id: 'd', text: 'How are you?', signIds: [], glosses: [], confidence: 1, createdAt: 0 },
+        draft: { id: 'd', text: 'How are you?', signIds: [], glosses: [], confidence: 1, createdAt: 0, source: 'demo' },
         text: ' How are you? ',
         edited: false,
       },

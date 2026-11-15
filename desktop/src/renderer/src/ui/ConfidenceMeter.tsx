@@ -3,8 +3,17 @@ export function confidenceLevel(confidence: number, threshold: number): 'high' |
   return confidence >= 0.85 ? 'high' : 'ok';
 }
 
+/**
+ * Whole percent, truncated (not rounded): a sign at 59.6% is below a 60%
+ * threshold and must not be shown as "60%" next to a "low confidence" label.
+ */
+export function toPercent(confidence: number): number {
+  const clamped = Number.isFinite(confidence) ? Math.min(1, Math.max(0, confidence)) : 0;
+  return Math.floor(clamped * 100 + 1e-9);
+}
+
 export function formatPercent(confidence: number): string {
-  return `${Math.round(Math.min(1, Math.max(0, confidence)) * 100)}%`;
+  return `${toPercent(confidence)}%`;
 }
 
 interface Props {
@@ -18,7 +27,7 @@ interface Props {
 /** Bar meter with a threshold tick. Exposed as role="meter" with a text value. */
 export function ConfidenceMeter({ confidence, threshold, label = 'Confidence', size = 'md' }: Props) {
   const level = confidenceLevel(confidence, threshold);
-  const pct = Math.round(Math.min(1, Math.max(0, confidence)) * 100);
+  const pct = toPercent(confidence);
   return (
     <div
       className={`ui-meter ui-meter-${level} ui-meter-${size}`}
