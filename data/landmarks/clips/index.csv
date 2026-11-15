@@ -1,0 +1,13 @@
+video,label,split,signer_id,frames,hand_rate,hand_rate_in_sign,kept
+bathroom,BATHROOM,own,clips,73,0.904,0.904,1
+drink,DRINK,own,clips,44,0.773,0.773,0
+food,FOOD,own,clips,59,0.898,0.898,1
+help,HELP,own,clips,30,1.0,1.0,1
+hungry,HUNGRY,own,clips,66,0.924,0.924,1
+no,NO,own,clips,74,0.919,0.919,1
+please,PLEASE,own,clips,66,1.0,1.0,1
+ready,READY,own,clips,64,1.0,1.0,1
+sorry,SORRY,own,clips,60,1.0,1.0,1
+stop,STOP,own,clips,32,0.812,0.897,1
+thankyou,THANKYOU,own,clips,48,0.917,0.917,1
+yes,YES,own,clips,66,0.955,0.955,1

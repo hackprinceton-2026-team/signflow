@@ -1,0 +1,130 @@
+DATA  120 WLASL videos, 14 signs, 33 signers
+      manifest sha256 feafa22dbd01de72...  index sha256 7fc4f46a4e621061...
+      external 'phone': 11 videos (BATHROOM, FOOD, HELP, HUNGRY, NO, PLEASE, READY, SORRY, STOP, THANKYOU, YES); file-hash overlap with training videos: 0
+      external 'webcam': 5 videos (HELP); file-hash overlap with training videos: 0
+FOLDS GroupKFold(5, shuffle, seed 0) by signer; test videos per fold: [18, 24, 23, 17, 38]; signer overlap train/test: none (asserted)
+
+BASELINE (features v1 + RandomForest + seed 0)
+  v1_rf_feat1        top-1 79.5% ± 8.7%  top-3 96.8% ± 4.6%  HELP  86% STOP   0%  phone  82%  webcam   0%  (16s)
+  reproduction check vs current sign_model.joblib: max probability difference 0.00e+00 on 136 videos -> IDENTICAL
+
+CANDIDATES (v2)
+  v2_knn_feat1        top-1 70.3% ± 9.4%  top-3 86.3% ± 4.4%  HELP 100% STOP  40%  phone  73%  webcam   0%  (0s)
+  v2_svm_feat1        top-1 76.5% ± 13.4%  top-3 97.2% ± 2.3%  HELP  86% STOP   0%  phone  55%  webcam   0%  (9s)
+  v2_knn_feat2        top-1 77.7% ± 7.6%  top-3 88.3% ± 5.3%  HELP  79% STOP  20%  phone  82%  webcam   0%  (1s)
+  v2_rf_feat2        top-1 91.9% ± 7.4%  top-3 100.0% ± 0.0%  HELP 100% STOP  20%  phone  91%  webcam 100%  (20s)
+  v2_svm_feat2        top-1 78.5% ± 12.1%  top-3 95.5% ± 3.7%  HELP 100% STOP   0%  phone  73%  webcam  40%  (17s)
+  v2_knn_feat2dom     top-1 78.4% ± 3.9%  top-3 90.7% ± 2.6%  HELP  71% STOP  80%  phone  82%  webcam  80%  (1s)
+  v2_rf_feat2dom     top-1 94.0% ± 3.9%  top-3 100.0% ± 0.0%  HELP 100% STOP  80%  phone  82%  webcam  80%  (20s)
+  v2_svm_feat2dom     top-1 77.2% ± 6.3%  top-3 95.5% ± 3.7%  HELP  86% STOP  20%  phone  73%  webcam  80%  (16s)
+  v2_knn_feat2mirror  top-1 78.4% ± 5.2%  top-3 88.6% ± 1.5%  HELP  71% STOP  20%  phone  73%  webcam  20%  (3s)
+  v2_rf_feat2mirror  top-1 92.8% ± 3.8%  top-3 100.0% ± 0.0%  HELP  93% STOP   0%  phone  91%  webcam  20%  (61s)
+  v2_svm_feat2mirror  top-1 79.6% ± 6.9%  top-3 96.4% ± 4.1%  HELP 100% STOP   0%  phone  64%  webcam   0%  (60s)
+  GRU on the best sklearn feature set (feat2dom):
+  v2_gru_feat2dom     top-1 85.7% ± 2.4%  top-3 98.3% ± 2.1%  HELP  93% STOP  20%  phone  73%  webcam 100%  (21s)
+
+================================================================================================================
+COMPARISON  (ranked by held-out-signer top-1; mean ± std over the same 5 signer folds)
+================================================================================================================
+candidate                        top-1         top-3  HELP  STOP H->S S->H   phone  webcam  flags
+v2_rf_feat2dom            94.0% ± 3.9% 100.0% ± 0.0%  100%   80%    0    1     82%     80%  
+v2_rf_feat2mirror         92.8% ± 3.8% 100.0% ± 0.0%   93%    0%    1    5     91%     20%  
+v2_rf_feat2               91.9% ± 7.4% 100.0% ± 0.0%  100%   20%    0    4     91%    100%  
+v2_gru_feat2dom           85.7% ± 2.4%  98.3% ± 2.1%   93%   20%    1    4     73%    100%  worse than v1 on phone
+v2_svm_feat2mirror        79.6% ± 6.9%  96.4% ± 4.1%  100%    0%    0    5     64%      0%  worse than v1 on phone
+v1_rf_feat1               79.5% ± 8.7%  96.8% ± 4.6%   86%    0%    1    4     82%      0%  
+v2_svm_feat2              78.5% ± 12.1%  95.5% ± 3.7%  100%    0%    0    5     73%     40%  worse than v1 on phone
+v2_knn_feat2mirror        78.4% ± 5.2%  88.6% ± 1.5%   71%   20%    2    3     73%     20%  worse than v1 on phone
+v2_knn_feat2dom           78.4% ± 3.9%  90.7% ± 2.6%   71%   80%    1    1     82%     80%  
+v2_knn_feat2              77.7% ± 7.6%  88.3% ± 5.3%   79%   20%    0    3     82%      0%  
+v2_svm_feat2dom           77.2% ± 6.3%  95.5% ± 3.7%   86%   20%    0    4     73%     80%  worse than v1 on phone
+v2_svm_feat1              76.5% ± 13.4%  97.2% ± 2.3%   86%    0%    0    3     55%      0%  worse than v1 on phone
+v2_knn_feat1              70.3% ± 9.4%  86.3% ± 4.4%  100%   40%    0    3     73%      0%  worse than v1 on phone
+HELP/STOP = held-out-signer accuracy on those signs (n=14/5); H->S, S->H = confusion counts. phone n=11, webcam n=5 (webcam = HELP only).
+
+--- v2_rf_feat2dom: per-class held-out-signer accuracy ---
+  BATHROOM 100%  DOCTOR 90%  DRINK 100%  FOOD 86%  HELP 100%  HUNGRY 100%  NO 91%  PLEASE 100%  READY 90%  SORRY 100%  STOP 80%  THANKYOU 86%  THIRSTY 100%  YES 100%
+  confusion matrix (rows = true, cols = predicted):
+             BATH DOCT DRIN FOOD HELP HUNG   NO PLEA READ SORR STOP THAN THIR  YES
+  BATHROOM      7    .    .    .    .    .    .    .    .    .    .    .    .    .
+  DOCTOR        .    9    .    .    .    .    .    .    .    .    .    .    .    1
+  DRINK         .    .   12    .    .    .    .    .    .    .    .    .    .    .
+  FOOD          .    .    .    6    .    .    .    .    .    .    .    1    .    .
+  HELP          .    .    .    .   14    .    .    .    .    .    .    .    .    .
+  HUNGRY        .    .    .    .    .    6    .    .    .    .    .    .    .    .
+  NO            .    .    1    .    .    .   10    .    .    .    .    .    .    .
+  PLEASE        .    .    .    .    .    .    .    7    .    .    .    .    .    .
+  READY         .    .    .    .    1    .    .    .    9    .    .    .    .    .
+  SORRY         .    .    .    .    .    .    .    .    .    6    .    .    .    .
+  STOP          .    .    .    .    1    .    .    .    .    .    4    .    .    .
+  THANKYOU      .    .    .    .    .    .    .    1    .    .    .    6    .    .
+  THIRSTY       .    .    .    .    .    .    .    .    .    .    .    .    6    .
+  YES           .    .    .    .    .    .    .    .    .    .    .    .    .   12
+  confidence threshold (held-out-signer predictions):
+    conf >= 0.3: shown   97%, accuracy of shown 95.7%
+    conf >= 0.4: shown   92%, accuracy of shown 96.4%
+    conf >= 0.5: shown   78%, accuracy of shown 97.8%
+    conf >= 0.6: shown   66%, accuracy of shown 100.0%
+    conf >= 0.7: shown   53%, accuracy of shown 100.0%
+    conf >= 0.8: shown   33%, accuracy of shown 100.0%
+    [phone] bathroom              BATHROOM  -> BATHROOM  0.76  ok
+    [phone] food                  FOOD      -> FOOD      0.54  ok
+    [phone] help                  HELP      -> HELP      0.44  ok
+    [phone] hungry                HUNGRY    -> HUNGRY    0.92  ok
+    [phone] no                    NO        -> NO        0.45  ok
+    [phone] please                PLEASE    -> PLEASE    0.84  ok
+    [phone] ready                 READY     -> READY     0.85  ok
+    [phone] sorry                 SORRY     -> SORRY     0.96  ok
+    [phone] stop                  STOP      -> STOP      0.77  ok
+    [phone] thankyou              THANKYOU  -> PLEASE    0.41  top-3
+    [phone] yes                   YES       -> BATHROOM  0.34  top-3
+    [webcam] HELP-20261114-200810  HELP      -> STOP      0.77  top-3
+    [webcam] HELP-20261114-200819  HELP      -> HELP      0.56  ok
+    [webcam] HELP-20261114-200832  HELP      -> HELP      0.60  ok
+    [webcam] HELP-20261114-200841  HELP      -> HELP      0.57  ok
+    [webcam] HELP-20261114-200848  HELP      -> HELP      0.59  ok
+
+--- v1_rf_feat1: per-class held-out-signer accuracy ---
+  BATHROOM 29%  DOCTOR 60%  DRINK 100%  FOOD 86%  HELP 86%  HUNGRY 100%  NO 55%  PLEASE 100%  READY 100%  SORRY 100%  STOP 0%  THANKYOU 100%  THIRSTY 100%  YES 92%
+  confusion matrix (rows = true, cols = predicted):
+             BATH DOCT DRIN FOOD HELP HUNG   NO PLEA READ SORR STOP THAN THIR  YES
+  BATHROOM      2    .    .    .    .    .    5    .    .    .    .    .    .    .
+  DOCTOR        .    6    .    .    2    .    .    .    .    .    1    .    .    1
+  DRINK         .    .   12    .    .    .    .    .    .    .    .    .    .    .
+  FOOD          .    .    1    6    .    .    .    .    .    .    .    .    .    .
+  HELP          .    1    .    .   12    .    .    .    .    .    1    .    .    .
+  HUNGRY        .    .    .    .    .    6    .    .    .    .    .    .    .    .
+  NO            1    .    1    1    .    .    6    .    .    .    .    1    .    1
+  PLEASE        .    .    .    .    .    .    .    7    .    .    .    .    .    .
+  READY         .    .    .    .    .    .    .    .   10    .    .    .    .    .
+  SORRY         .    .    .    .    .    .    .    .    .    6    .    .    .    .
+  STOP          .    1    .    .    4    .    .    .    .    .    .    .    .    .
+  THANKYOU      .    .    .    .    .    .    .    .    .    .    .    7    .    .
+  THIRSTY       .    .    .    .    .    .    .    .    .    .    .    .    6    .
+  YES           .    .    .    .    .    .    1    .    .    .    .    .    .   11
+  confidence threshold (held-out-signer predictions):
+    conf >= 0.3: shown   95%, accuracy of shown 84.2%
+    conf >= 0.4: shown   86%, accuracy of shown 85.4%
+    conf >= 0.5: shown   75%, accuracy of shown 87.8%
+    conf >= 0.6: shown   56%, accuracy of shown 95.5%
+    conf >= 0.7: shown   46%, accuracy of shown 98.2%
+    conf >= 0.8: shown   27%, accuracy of shown 100.0%
+    [phone] bathroom              BATHROOM  -> BATHROOM  0.71  ok
+    [phone] food                  FOOD      -> FOOD      0.53  ok
+    [phone] help                  HELP      -> HELP      0.84  ok
+    [phone] hungry                HUNGRY    -> HUNGRY    0.94  ok
+    [phone] no                    NO        -> BATHROOM  0.43  top-3
+    [phone] please                PLEASE    -> PLEASE    0.67  ok
+    [phone] ready                 READY     -> READY     0.98  ok
+    [phone] sorry                 SORRY     -> SORRY     0.93  ok
+    [phone] stop                  STOP      -> STOP      0.67  ok
+    [phone] thankyou              THANKYOU  -> THANKYOU  0.40  ok
+    [phone] yes                   YES       -> NO        0.35  top-3
+    [webcam] HELP-20261114-200810  HELP      -> STOP      0.52  top-3
+    [webcam] HELP-20261114-200819  HELP      -> STOP      0.67  top-3
+    [webcam] HELP-20261114-200832  HELP      -> STOP      0.54  top-3
+    [webcam] HELP-20261114-200841  HELP      -> STOP      0.63  top-3
+    [webcam] HELP-20261114-200848  HELP      -> STOP      0.51  top-3
+
+All models + metrics JSON saved in models/ . sign_model.joblib was NOT changed.
+Total run time: 4.1 min

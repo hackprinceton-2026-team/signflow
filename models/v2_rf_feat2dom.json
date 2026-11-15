@@ -1,0 +1,602 @@
+{
+  "version": "v2",
+  "model": "rf",
+  "features": "feat2dom",
+  "prediction_features": "feat2dom",
+  "date": "2026-11-14T20:28:27",
+  "data": {
+    "source": "data/landmarks/wlasl (kept = in-sign hand rate >= 80%)",
+    "manifest_sha256": "feafa22dbd01de722dd16de8d8316c80e3888ce307afd704fd3cc667c030cfca",
+    "index_sha256": "7fc4f46a4e6210617b04c5539eeb783b1800354e0331dd1aba1b7e759ffe9db9",
+    "n_videos": 120,
+    "n_signers": 33,
+    "labels": [
+      "BATHROOM",
+      "DOCTOR",
+      "DRINK",
+      "FOOD",
+      "HELP",
+      "HUNGRY",
+      "NO",
+      "PLEASE",
+      "READY",
+      "SORRY",
+      "STOP",
+      "THANKYOU",
+      "THIRSTY",
+      "YES"
+    ]
+  },
+  "protocol": {
+    "cv": "GroupKFold(5, shuffle=True, random_state=0) by signer_id",
+    "aug_copies": 10,
+    "aug_settings": {
+      "rot_deg": 10,
+      "scale": 0.1,
+      "shift": 0.05,
+      "jitter": 0.01,
+      "gamma": 0.2,
+      "trim": 0.05
+    },
+    "fold_signers": [
+      [
+        "102",
+        "2",
+        "4",
+        "52",
+        "63",
+        "8",
+        "88"
+      ],
+      [
+        "13",
+        "17",
+        "36",
+        "38",
+        "60",
+        "93",
+        "99"
+      ],
+      [
+        "10",
+        "117",
+        "28",
+        "3",
+        "6",
+        "90",
+        "94"
+      ],
+      [
+        "115",
+        "118",
+        "21",
+        "41",
+        "46",
+        "56"
+      ],
+      [
+        "0",
+        "11",
+        "12",
+        "15",
+        "89",
+        "98"
+      ]
+    ]
+  },
+  "cv": {
+    "top1_mean": 0.9399971582836034,
+    "top1_std": 0.039396316440461904,
+    "top3_mean": 1.0,
+    "top3_std": 0.0,
+    "top1_folds": [
+      0.9444444444444444,
+      0.9166666666666666,
+      0.9565217391304348,
+      0.8823529411764706,
+      1.0
+    ],
+    "top3_folds": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "top1_pooled": 0.95,
+    "top3_pooled": 1.0,
+    "per_class": {
+      "BATHROOM": 1.0,
+      "DOCTOR": 0.9,
+      "DRINK": 1.0,
+      "FOOD": 0.8571428571428571,
+      "HELP": 1.0,
+      "HUNGRY": 1.0,
+      "NO": 0.9090909090909091,
+      "PLEASE": 1.0,
+      "READY": 0.9,
+      "SORRY": 1.0,
+      "STOP": 0.8,
+      "THANKYOU": 0.8571428571428571,
+      "THIRSTY": 1.0,
+      "YES": 1.0
+    },
+    "help_stop": {
+      "help_acc": 1.0,
+      "stop_acc": 0.8,
+      "help_as_stop": 0,
+      "stop_as_help": 1,
+      "n_help": 14,
+      "n_stop": 5
+    },
+    "confusion_matrix": {
+      "labels": [
+        "BATHROOM",
+        "DOCTOR",
+        "DRINK",
+        "FOOD",
+        "HELP",
+        "HUNGRY",
+        "NO",
+        "PLEASE",
+        "READY",
+        "SORRY",
+        "STOP",
+        "THANKYOU",
+        "THIRSTY",
+        "YES"
+      ],
+      "rows_true_cols_pred": [
+        [
+          7,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          9,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          12,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          6,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          14,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          6,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          10,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          7,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          9,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          6,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          6,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          6,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          12
+        ]
+      ]
+    },
+    "thresholds": [
+      {
+        "threshold": 0.3,
+        "shown": 0.9666666666666667,
+        "accuracy_when_shown": 0.9568965517241379
+      },
+      {
+        "threshold": 0.4,
+        "shown": 0.9166666666666666,
+        "accuracy_when_shown": 0.9636363636363636
+      },
+      {
+        "threshold": 0.5,
+        "shown": 0.775,
+        "accuracy_when_shown": 0.978494623655914
+      },
+      {
+        "threshold": 0.6,
+        "shown": 0.6583333333333333,
+        "accuracy_when_shown": 1.0
+      },
+      {
+        "threshold": 0.7,
+        "shown": 0.5333333333333333,
+        "accuracy_when_shown": 1.0
+      },
+      {
+        "threshold": 0.8,
+        "shown": 0.3333333333333333,
+        "accuracy_when_shown": 1.0
+      }
+    ]
+  },
+  "external": {
+    "phone": {
+      "n": 11,
+      "top1": 0.8181818181818182,
+      "top3": 1.0,
+      "videos": [
+        {
+          "video": "bathroom",
+          "true": "BATHROOM",
+          "pred": "BATHROOM",
+          "conf": 0.76,
+          "top3": [
+            "BATHROOM",
+            "NO",
+            "YES"
+          ]
+        },
+        {
+          "video": "food",
+          "true": "FOOD",
+          "pred": "FOOD",
+          "conf": 0.54,
+          "top3": [
+            "FOOD",
+            "DOCTOR",
+            "DRINK"
+          ]
+        },
+        {
+          "video": "help",
+          "true": "HELP",
+          "pred": "HELP",
+          "conf": 0.443,
+          "top3": [
+            "HELP",
+            "DOCTOR",
+            "STOP"
+          ]
+        },
+        {
+          "video": "hungry",
+          "true": "HUNGRY",
+          "pred": "HUNGRY",
+          "conf": 0.923,
+          "top3": [
+            "HUNGRY",
+            "PLEASE",
+            "SORRY"
+          ]
+        },
+        {
+          "video": "no",
+          "true": "NO",
+          "pred": "NO",
+          "conf": 0.447,
+          "top3": [
+            "NO",
+            "BATHROOM",
+            "DRINK"
+          ]
+        },
+        {
+          "video": "please",
+          "true": "PLEASE",
+          "pred": "PLEASE",
+          "conf": 0.837,
+          "top3": [
+            "PLEASE",
+            "HUNGRY",
+            "SORRY"
+          ]
+        },
+        {
+          "video": "ready",
+          "true": "READY",
+          "pred": "READY",
+          "conf": 0.85,
+          "top3": [
+            "READY",
+            "HELP",
+            "DOCTOR"
+          ]
+        },
+        {
+          "video": "sorry",
+          "true": "SORRY",
+          "pred": "SORRY",
+          "conf": 0.963,
+          "top3": [
+            "SORRY",
+            "THIRSTY",
+            "HUNGRY"
+          ]
+        },
+        {
+          "video": "stop",
+          "true": "STOP",
+          "pred": "STOP",
+          "conf": 0.773,
+          "top3": [
+            "STOP",
+            "HELP",
+            "DOCTOR"
+          ]
+        },
+        {
+          "video": "thankyou",
+          "true": "THANKYOU",
+          "pred": "PLEASE",
+          "conf": 0.413,
+          "top3": [
+            "PLEASE",
+            "THANKYOU",
+            "DRINK"
+          ]
+        },
+        {
+          "video": "yes",
+          "true": "YES",
+          "pred": "BATHROOM",
+          "conf": 0.343,
+          "top3": [
+            "BATHROOM",
+            "DOCTOR",
+            "YES"
+          ]
+        }
+      ]
+    },
+    "webcam": {
+      "n": 5,
+      "top1": 0.8,
+      "top3": 1.0,
+      "videos": [
+        {
+          "video": "HELP-20261114-200810",
+          "true": "HELP",
+          "pred": "STOP",
+          "conf": 0.773,
+          "top3": [
+            "STOP",
+            "HELP",
+            "PLEASE"
+          ]
+        },
+        {
+          "video": "HELP-20261114-200819",
+          "true": "HELP",
+          "pred": "HELP",
+          "conf": 0.563,
+          "top3": [
+            "HELP",
+            "STOP",
+            "DOCTOR"
+          ]
+        },
+        {
+          "video": "HELP-20261114-200832",
+          "true": "HELP",
+          "pred": "HELP",
+          "conf": 0.603,
+          "top3": [
+            "HELP",
+            "STOP",
+            "DOCTOR"
+          ]
+        },
+        {
+          "video": "HELP-20261114-200841",
+          "true": "HELP",
+          "pred": "HELP",
+          "conf": 0.573,
+          "top3": [
+            "HELP",
+            "STOP",
+            "DOCTOR"
+          ]
+        },
+        {
+          "video": "HELP-20261114-200848",
+          "true": "HELP",
+          "pred": "HELP",
+          "conf": 0.59,
+          "top3": [
+            "HELP",
+            "STOP",
+            "DOCTOR"
+          ]
+        }
+      ]
+    }
+  },
+  "train_seconds": 19.5
+}

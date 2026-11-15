@@ -1,0 +1,25 @@
+# environment / caches
+slenv/
+__pycache__/
+.DS_Store
+
+# videos of people: personal recordings and licensed dataset videos (kept on disk, not in git)
+videos/
+data/webcam/
+data/wlasl/videos/
+# WLASL metadata (academic/non-commercial license; re-download with the Kaggle CLI)
+data/wlasl/WLASL_v0.3.json
+data/wlasl/missing.txt
+data/wlasl/wlasl_class_list.txt
+# unused Kaggle competition files from an earlier dataset
+train.csv.zip
+sign_to_prediction_index_map.json
+
+# regenerable / large model files (all kept on disk; metrics .json files ARE committed)
+data/augmented_train.npz
+models/v2_knn_*.joblib
+models/v2_svm_*.joblib
+models/v2_rf_feat2.joblib
+models/v2_rf_feat2mirror.joblib
+models/v2_gru_*.joblib
+models/sign_model.replaced-*.joblib

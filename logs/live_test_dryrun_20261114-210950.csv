@@ -1,0 +1,11 @@
+trial,prompt,predicted,confidence,shown,correct,outcome
+1,NO,NO,0.71,NO,1,correct
+2,THANKYOU,THANKYOU,0.9,THANKYOU,1,correct
+3,YES,DRINK,0.34,?,0,?
+4,STOP,STOP,0.56,STOP,1,correct
+5,HELP,STOP,0.78,STOP,0,wrong
+6,THANKYOU,THANKYOU,0.72,THANKYOU,1,correct
+7,HELP,HELP,0.57,HELP,1,correct
+8,YES,YES,0.4,?,0,?
+9,NO,NO,0.55,NO,1,correct
+10,STOP,STOP,0.56,STOP,1,correct

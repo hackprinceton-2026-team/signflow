@@ -1,0 +1,6 @@
+video,label,split,signer_id,frames,hand_rate,hand_rate_in_sign,kept
+HELP-20261114-200810,HELP,own,webcam,77,0.701,1.0,1
+HELP-20261114-200819,HELP,own,webcam,77,0.753,1.0,1
+HELP-20261114-200832,HELP,own,webcam,77,0.753,1.0,1
+HELP-20261114-200841,HELP,own,webcam,77,0.883,1.0,1
+HELP-20261114-200848,HELP,own,webcam,77,0.688,1.0,1

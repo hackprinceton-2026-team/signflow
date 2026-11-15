@@ -1,0 +1,19 @@
+  skipped thirsty.mov (THIRSTY is in SKIP_LABELS, src/augment.py)
+Source 'clips': 12 videos -> data/landmarks/clips/
+
+video           label     split   frames  hands% in-sign%
+
+bathroom        BATHROOM  own         73     96%      96%
+drink           DRINK     own         44     84%      84%
+food            FOOD      own         59     88%      88%
+help            HELP      own         30    100%     100%
+hungry          HUNGRY    own         66     92%      92%
+no              NO        own         74     92%      92%
+please          PLEASE    own         66    100%     100%
+ready           READY     own         64    100%     100%
+sorry           SORRY     own         60    100%     100%
+stop            STOP      own         32     88%      90%
+thankyou        THANKYOU  own         48     96%      96%
+yes             YES       own         66     98%      98%
+
+Kept 12 / 12 videos. Index: data/landmarks/clips/index.csv
