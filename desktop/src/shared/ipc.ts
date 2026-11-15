@@ -27,6 +27,16 @@ export const IpcChannels = {
   viewSetFullScreen: 'view:set-fullscreen',
   /** main → main window: fullscreen changed (including via the OS) */
   viewFullScreenChanged: 'view:fullscreen-changed',
+  /** main window → main: Kokoro local voice status */
+  kokoroStatus: 'kokoro:status',
+  /** main window → main: start the Kokoro engine and load the model */
+  kokoroPrepare: 'kokoro:prepare',
+  /** main window → main: synthesize one chunk of confirmed text (returns WAV bytes) */
+  kokoroSynthesize: 'kokoro:synthesize',
+  /** main window → main: drop pending syntheses */
+  kokoroCancel: 'kokoro:cancel',
+  /** main → windows: Kokoro status changed */
+  kokoroStatusChanged: 'kokoro:status-changed',
 } as const;
 
 export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels];

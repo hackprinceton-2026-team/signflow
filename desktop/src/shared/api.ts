@@ -1,4 +1,5 @@
 import type { CaptionPayload } from './captions';
+import type { KokoroStatus, KokoroSynthesizeRequest, KokoroSynthesizeResult } from './kokoro';
 import type { AppInfo, CameraAccessStatus, NotesExportRequest, NotesExportResult } from './ipc';
 
 /**
@@ -27,6 +28,17 @@ export interface SignflowApi {
     getState(): Promise<CaptionPayload>;
     onRender(cb: (payload: CaptionPayload) => void): () => void;
     close(): void;
+  };
+  /** Kokoro-82M local neural voice (runs in a separate local process; never uses the network). */
+  kokoro: {
+    status(): Promise<KokoroStatus>;
+    /** Start the engine and load the model if needed. */
+    prepare(): Promise<KokoroStatus>;
+    /** Synthesize one chunk of confirmed text. Rejects with a coded error (see decodeKokoroError). */
+    synthesize(request: KokoroSynthesizeRequest): Promise<KokoroSynthesizeResult>;
+    /** Drop pending requests: the given ids, or all. */
+    cancel(ids?: string[]): Promise<void>;
+    onStatus(cb: (status: KokoroStatus) => void): () => void;
   };
   view: {
     /** Main window only. Resolves to the requested state. */

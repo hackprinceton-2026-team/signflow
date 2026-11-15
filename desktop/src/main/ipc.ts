@@ -11,6 +11,7 @@ import {
   type NotesExportResult,
 } from '@shared/ipc';
 import { isTrustedSender } from './security';
+import { registerKokoro } from './kokoro';
 
 type Handler<T> = (event: IpcMainInvokeEvent, ...args: unknown[]) => T | Promise<T>;
 
@@ -31,6 +32,8 @@ function cameraStatus(): CameraAccessStatus {
 }
 
 export function registerIpcHandlers(): void {
+  registerKokoro(handle);
+
   handle<AppInfo>(IpcChannels.appInfo, () => ({
     name: app.getName(),
     version: app.getVersion(),
