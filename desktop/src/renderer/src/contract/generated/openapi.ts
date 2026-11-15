@@ -99,7 +99,7 @@ export interface components {
         /**
          * HealthResponse
          * @example {
-         *       "model": "gemini-3.8-flash",
+         *       "model": "gemini-3.5-flash",
          *       "speech": "not_configured",
          *       "speech_engine": "generative",
          *       "speech_voice": "Ruth",
@@ -236,7 +236,7 @@ export interface components {
          * @description English draft for the user to review. No audio: speech happens only after confirmation.
          * @example {
          *       "mode": "medical",
-         *       "model": "gemini-3.8-flash",
+         *       "model": "gemini-3.5-flash",
          *       "translated_text": "I've had a headache since yesterday."
          *     }
          */
@@ -410,5 +410,5 @@ export interface operations {
 
 /** True once types come from the official contract (false in the placeholder). */
 export const CONTRACT_GENERATED = true as const;
-export const CONTRACT_SOURCE_SHA256 = 'ad7203309ead6dfae8fc9040b94937b18091d89bf7b790ff8b367390dc4af902';
+export const CONTRACT_SOURCE_SHA256 = 'c6142e5532ed46208c3afaaeb2e9a1a36f72ee3894bd9443c49e5d24fd793d45';
 export const CONTRACT_OPENAPI_VERSION = '3.1.0';

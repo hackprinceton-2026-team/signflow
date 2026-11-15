@@ -289,7 +289,7 @@
         "title": "HealthResponse",
         "examples": [
           {
-            "model": "gemini-3.8-flash",
+            "model": "gemini-3.5-flash",
             "speech": "not_configured",
             "speech_engine": "generative",
             "speech_voice": "Ruth",
@@ -474,7 +474,7 @@
         "examples": [
           {
             "mode": "medical",
-            "model": "gemini-3.8-flash",
+            "model": "gemini-3.5-flash",
             "translated_text": "I've had a headache since yesterday."
           }
         ]

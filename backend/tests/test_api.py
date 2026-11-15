@@ -174,7 +174,7 @@ def test_health_reports_providers_without_secrets(make_client):
         "version": "0.3.0",
         "translation": "ready",
         "speech": "not_configured",
-        "model": "gemini-3.8-flash",
+        "model": "gemini-3.5-flash",
         "speech_voice": "Ruth",
         "speech_engine": "generative",
     }

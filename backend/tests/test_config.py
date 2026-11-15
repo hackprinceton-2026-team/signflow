@@ -14,7 +14,7 @@ def test_defaults_are_safe():
     s = make_settings()
     assert s.host == "127.0.0.1"
     assert s.cors_origins == ["app://signflow", "http://localhost:5173"]
-    assert s.gemini_model == "gemini-3.8-flash"
+    assert s.gemini_model == "gemini-3.5-flash"
     assert s.translation_configured is False
 
 

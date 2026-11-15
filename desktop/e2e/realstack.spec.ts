@@ -4,8 +4,9 @@
  *
  *   SIGNFLOW_E2E_REALSTACK=1 npx playwright test e2e/realstack.spec.ts
  *
- * Needs `npm run build`, `backend/.venv`, and a Gemini key in backend/.env
- * (GOOGLE_API_KEY) or the environment (GOOGLE_API_KEY / GEMINI_API_KEY).
+ * Needs `npm run build`, `backend/.venv`, and a Gemini key as GOOGLE_API_KEY in
+ * backend/.env or the environment. The backend reads only GOOGLE_API_KEY
+ * (GEMINI_API_KEY is ignored); an environment variable wins over backend/.env.
  * AWS credentials are forced off for the backend, so Amazon Polly can never be
  * called; speech is the macOS system voice. Signs come from the mock recognizer.
  * This speaks out loud.

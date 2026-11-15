@@ -23,7 +23,7 @@ All settings are environment variables, optionally in `backend/.env` (gitignored
 | Setting                      | Default                                  | Notes                                           |
 | ---------------------------- | ---------------------------------------- | ----------------------------------------------- |
 | `GOOGLE_API_KEY`             | (none)                                   | Required for `/translate`. Never logged or returned. A rejected key returns `503 translation_unavailable` with a clear message, and `/health` then reports translation `not_configured`. |
-| `GEMINI_MODEL`               | `gemini-3.8-flash`                       |                                                 |
+| `GEMINI_MODEL`               | `gemini-3.5-flash`                       |                                                 |
 | `AWS_REGION`, `POLLY_ENGINE`, `POLLY_DEFAULT_VOICE` | `us-east-1`, `generative`, `Ruth` | Polly Generative is the most human-like engine; `Danielle` and `Matthew` are the other recommended voices. AWS credentials come from the standard AWS chain (`aws configure`, `AWS_PROFILE`, SSO, env vars), never from this app's config. |
 | `POLLY_FALLBACK_ENGINE`      | `neural`                                 | Retried once if the requested voice doesn't support `POLLY_ENGINE`. Empty disables it. |
 | `CORS_ORIGINS`               | `app://signflow,http://localhost:5173`   | Exact origins; `*` is rejected.                 |

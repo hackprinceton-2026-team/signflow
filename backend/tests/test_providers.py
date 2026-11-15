@@ -124,9 +124,9 @@ def test_clean_output(raw, expected):
 
 
 def test_real_gemini_client_is_constructed_with_config():
-    t = GeminiTranslator(api_key=SecretStr("AIzaSyFAKE"), model="gemini-3.8-flash", temperature=0.1, timeout_s=7)
+    t = GeminiTranslator(api_key=SecretStr("AIzaSyFAKE"), model="gemini-3.5-flash", temperature=0.1, timeout_s=7)
     llm = t._chain.steps[1]
-    assert llm.model.endswith("gemini-3.8-flash")
+    assert llm.model.endswith("gemini-3.5-flash")
     assert llm.temperature == 0.1
     assert llm.max_retries == 1
     assert "AIzaSyFAKE" not in repr(llm)
