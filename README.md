@@ -9,7 +9,7 @@ SignFlow watches your webcam and recognizes signs as you make them. It turns the
 | Path        | Owner     | What lives here                                               |
 | ----------- | --------- | ------------------------------------------------------------- |
 | `desktop/`  | Raimbek   | Electron + React + TypeScript desktop app (UI, webcam, TTS)   |
-| `backend/`  | Muhammad  | API / realtime gateway between the desktop app and the model  |
+| `backend/`  | Raimbek   | API / realtime gateway between the desktop app and the model (originally built by Muhammad) |
 | `ml/`       | Umar      | Sign recognition model: data, training, inference             |
 | `docs/`     | Everyone  | Architecture, interface contracts, demo script                |
 
@@ -47,6 +47,6 @@ See [`desktop/README.md`](desktop/README.md) for scripts and architecture.
 
 ## Team
 
-- **Raimbek**: desktop app
-- **Muhammad**: Backend and AI Engineering
+- **Raimbek**: desktop app; backend and AI engineering since November 14, 2026
+- **Muhammad**: original author of the backend (FastAPI service, Gemini translation) and its Backend and AI Engineering owner until November 14, 2026
 - **Umar**: ML

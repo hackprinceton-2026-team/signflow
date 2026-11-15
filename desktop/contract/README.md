@@ -1,10 +1,10 @@
 # Backend/ML contract → TypeScript
 
-**Source of truth:** Muhammad's canonical **Pydantic models** in `backend/`. The desktop app does not define wire types. It **generates** them from the OpenAPI document those models produce, and tests itself against that document.
+**Source of truth:** the canonical **Pydantic models** in `backend/` (originally written by Muhammad; maintained by Raimbek since 2026-11-14). The desktop app does not define wire types. It **generates** them from the OpenAPI document those models produce, and tests itself against that document.
 
 ```
 backend/ Pydantic models ──► openapi.json ──► npm run contract:generate ──► src/renderer/src/contract/generated/openapi.ts
-         (Muhammad)          (committed)        (openapi-typescript)            (committed, never hand-edited)
+         (backend)           (committed)        (openapi-typescript)            (committed, never hand-edited)
                                    │
                                    └──► contract tests: drift check, concept mapping, example payloads
 ```
