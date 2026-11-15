@@ -39,6 +39,16 @@ export const IpcChannels = {
   kokoroRelease: 'kokoro:release',
   /** main → windows: Kokoro status changed */
   kokoroStatusChanged: 'kokoro:status-changed',
+  /** main window → main: connect to the local ASL recognizer (ws://127.0.0.1:8765) */
+  recognizerStart: 'recognizer:start',
+  /** main window → main: disconnect from it */
+  recognizerStop: 'recognizer:stop',
+  /** main window → main: current connection status */
+  recognizerStatus: 'recognizer:status',
+  /** main → main window: a validated, normalized recognizer event (sign or sentence end) */
+  recognizerEvent: 'recognizer:event',
+  /** main → main window: connection status changed */
+  recognizerStatusChanged: 'recognizer:status-changed',
 } as const;
 
 export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels];

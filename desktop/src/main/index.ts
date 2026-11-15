@@ -11,6 +11,7 @@ import { registerIpcHandlers } from './ipc';
 import { CaptionsController } from './captions';
 import { forwardFullScreenEvents, registerViewControls } from './view';
 import { registerKokoro } from './kokoro';
+import { registerRecognizer } from './recognizer';
 
 // Sandbox every renderer, including any created by Electron internals.
 app.enableSandbox();
@@ -42,6 +43,7 @@ if (!app.requestSingleInstanceLock()) {
     captions.registerIpc();
     registerViewControls(() => mainWindow);
     registerKokoro(() => mainWindow);
+    registerRecognizer(() => mainWindow);
 
     const openMainWindow = () => {
       const win = createMainWindow();

@@ -52,6 +52,14 @@ export function installFakeBridge(overrides: Partial<SignflowApi> = {}): Signflo
       release: vi.fn(async () => undefined),
       onStatus: vi.fn(() => () => undefined),
     },
+    // Default: no recognizer process is running (tests that need one pass a FakeRecognizerBridge).
+    recognizer: {
+      start: vi.fn(async () => ({ state: 'connecting' as const, message: 'Waiting for the SignFlow ASL recognizer' })),
+      stop: vi.fn(async () => undefined),
+      status: vi.fn(async () => ({ state: 'idle' as const })),
+      onEvent: vi.fn(() => () => undefined),
+      onStatus: vi.fn(() => () => undefined),
+    },
     view: {
       setFullScreen: vi.fn(async (v: boolean) => v),
       onFullScreenChange: vi.fn(() => () => undefined),
