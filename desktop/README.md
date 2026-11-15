@@ -26,7 +26,7 @@ Choose in **Settings › Connection**:
 | **Demo** | Mock translator, on the device                         | System voice or **Kokoro** (on-device neural) | Nothing (Kokoro: the model, installed once) |
 | **Live** | SignFlow backend (`POST /translate`, Gemini), with an Everyday / Medical / Emergency context | System voice, **Kokoro**, or **cloud voice** (`POST /speak`, Amazon Polly Generative: Ruth by default, or Danielle / Matthew) with automatic fallback to the on-device voice | The backend running on `http://localhost:8000` (see `backend/README.md`) |
 
-Signs come from the demo recognizer in both modes until the ML model is connected. Switching modes never restarts recognition.
+Signs come from the demo recognizer in both modes unless you choose **Settings › Recognition › Sign recognizer › SignFlow ASL model (local)**: Umar's live recognizer (`live.py`), a separate process that owns the camera. Electron main bridges its loopback WebSocket, and SignFlow then never opens the camera. Setup, the two models (14 signs by default, 116-sign keyword model opt-in), message handling and limitations: [`docs/asl-recognizer.md`](../docs/asl-recognizer.md). Switching Demo/Live never restarts recognition.
 
 Live mode is built to fail gracefully:
 - **Status:** the backend's state shows in the top bar and in Settings (online, not configured, offline), with setup hints and "Check again". It's polled every 15 s, re-checked when the network returns, and refreshed immediately after any failed request.

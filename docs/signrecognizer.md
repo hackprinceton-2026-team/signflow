@@ -2,7 +2,7 @@
 
 For Umar (ML). This is the one interface the desktop app needs from a real model. Everything after recognition (drafting English with Gemini, the editable draft, confirmation, speech, captions, notes) already works and doesn't change.
 
-Today both Demo and Live mode use `MockSignRecognizer` (`desktop/src/renderer/src/adapters/mock/mockRecognizer.ts`), which emits scripted glosses while camera frames are flowing.
+By default both Demo and Live mode use `MockSignRecognizer` (`desktop/src/renderer/src/adapters/mock/mockRecognizer.ts`), which emits scripted glosses while camera frames are flowing. **Umar's live recognizer is now wired in as an opt-in** (Settings › Recognition › SignFlow ASL model): it runs as a separate local process that owns the camera, and Electron main bridges its WebSocket. See [`asl-recognizer.md`](asl-recognizer.md). Two optional `SignRecognizer` members support it: `ownsCamera` (the app then never opens the camera) and `onSentenceEnd` (the session drafts on the recognizer's sentence end instead of a fixed pause).
 
 ## The interface
 
@@ -53,6 +53,8 @@ interface AdapterStatus { state: 'idle' | 'connecting' | 'ready' | 'error'; mess
 - Uppercase is conventional; the backend uppercases anyway.
 
 ## Where it can run
+
+> Implemented for Umar's recognizer: option 3 without a CSP change. The Electron **main process** is the WebSocket client (`ws://127.0.0.1:8765`) and forwards validated events to the renderer over IPC. See [`asl-recognizer.md`](asl-recognizer.md).
 
 1. **Through the backend (recommended).** Serve recognition from the FastAPI app on `localhost:8000`, for example a WebSocket `ws://localhost:8000/ws/recognize` that takes JPEG frames (or landmarks) and streams `RecognizedSign` JSON. The renderer's Content Security Policy already allows `http://localhost:8000` and `ws://localhost:8000`, and nothing else. Add the message shapes to the backend's Pydantic schemas so they land in `openapi.json` and the desktop contract tests.
 2. **In the renderer** (TF.js / MediaPipe in JavaScript). WebAssembly needs `'wasm-unsafe-eval'` in `script-src`, which the CSP doesn't allow today. That's a security-reviewed change (see `CLAUDE.md`).
