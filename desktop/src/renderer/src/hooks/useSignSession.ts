@@ -8,6 +8,13 @@ import {
   type Utterance,
 } from '../state/session';
 
+/**
+ * With a recognizer that reports sentence ends, the buffer is drafted on that
+ * signal; this is only the fallback if the signal never comes (e.g. the
+ * recognizer disconnected mid-sentence).
+ */
+export const SENTENCE_END_FALLBACK_MS = 6000;
+
 /** What the user asked for when confirming: plain confirm, or confirm and speak. */
 export interface ConfirmIntent {
   speak?: boolean;
@@ -42,14 +49,25 @@ export function useSignSession(adapters: Pick<Adapters, 'recognizer' | 'translat
   });
   /** The one translation in flight, if any, and the signs it took from the buffer. */
   const inflightRef = useRef<{ ctrl: AbortController; signs: RecognizedSign[] } | null>(null);
+  /** Sentence ends reported by the recognizer, and how many of them have been acted on. */
+  const [sentenceEnds, setSentenceEnds] = useState(0);
+  const handledSentenceEnds = useRef(0);
+  const segmentsSentences = typeof recognizer.onSentenceEnd === 'function';
 
   // Recognizer events → reducer.
   useEffect(() => {
     const offSign = recognizer.onSign((sign) => dispatch({ type: 'sign/received', sign }));
     const offStatus = recognizer.onStatus(setRecognizerStatus);
+    // A sentence end matters only if accepted signs are waiting (now, or behind a
+    // translation in flight). With nothing accepted, ignore it: it must not make
+    // the first sign of the next sentence draft on its own.
+    const offEnd = recognizer.onSentenceEnd?.(() => {
+      if (stateRef.current.buffer.length > 0) setSentenceEnds((n) => n + 1);
+    });
     return () => {
       offSign();
       offStatus();
+      offEnd?.();
     };
   }, [recognizer]);
 
@@ -108,13 +126,20 @@ export function useSignSession(adapters: Pick<Adapters, 'recognizer' | 'translat
     [translator],
   );
 
-  // After `pauseMs` without a new accepted sign, translate what we have.
+  // After `pauseMs` without a new accepted sign, translate what we have. With a
+  // recognizer that reports sentence ends, translate when the sentence ends
+  // instead (a fixed pause would split a sentence between slow signs).
   const { buffer, draftStatus, settings } = state;
   useEffect(() => {
     if (buffer.length === 0 || draftStatus !== 'idle') return;
-    const t = setTimeout(() => void translate(buffer), settings.pauseMs);
+    const ended = segmentsSentences && sentenceEnds > handledSentenceEnds.current;
+    const delay = !segmentsSentences ? settings.pauseMs : ended ? 0 : SENTENCE_END_FALLBACK_MS;
+    const t = setTimeout(() => {
+      handledSentenceEnds.current = sentenceEnds;
+      void translate(buffer);
+    }, delay);
     return () => clearTimeout(t);
-  }, [buffer, draftStatus, settings.pauseMs, translate]);
+  }, [buffer, draftStatus, segmentsSentences, sentenceEnds, settings.pauseMs, translate]);
 
   const translateNow = useCallback(() => {
     const s = stateRef.current;

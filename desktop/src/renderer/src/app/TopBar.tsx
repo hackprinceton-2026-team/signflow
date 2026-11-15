@@ -20,7 +20,7 @@ const BACKEND: Record<Exclude<BackendStatus, 'disabled'>, { label: string; tone:
 };
 
 export function TopBar({ screen, onEnterFocus }: { screen: ScreenId; onEnterFocus: () => void }) {
-  const { cameraOn, session, speech, captions, captureToNotes, backend } = useSignFlow();
+  const { cameraOn, recognition, session, speech, captions, captureToNotes, backend } = useSignFlow();
   const meta = SCREENS[screen];
   const model = RECOGNIZER[session.recognizerStatus.state];
   const ai = backend.health.status === 'disabled' ? null : BACKEND[backend.health.status];
@@ -33,9 +33,20 @@ export function TopBar({ screen, onEnterFocus }: { screen: ScreenId; onEnterFocu
       </div>
 
       <div className="topbar-status" role="group" aria-label="Status">
-        <StatusPill tone={cameraOn ? 'live' : 'neutral'} pulse={cameraOn} data-testid="status-camera">
-          {cameraOn ? 'Camera on' : 'Camera off'}
-        </StatusPill>
+        {recognition.external ? (
+          <StatusPill
+            tone={recognition.on ? 'live' : 'neutral'}
+            pulse={recognition.on}
+            data-testid="status-camera"
+            title="The SignFlow ASL recognizer uses the camera; SignFlow doesn't open it."
+          >
+            {recognition.on ? 'Recognition on' : 'Recognition off'}
+          </StatusPill>
+        ) : (
+          <StatusPill tone={cameraOn ? 'live' : 'neutral'} pulse={cameraOn} data-testid="status-camera">
+            {cameraOn ? 'Camera on' : 'Camera off'}
+          </StatusPill>
+        )}
         <StatusPill
           tone={model.tone}
           title={session.recognizerSimulated ? `${session.recognizerName}: scripted signs, not real recognition` : session.recognizerName}

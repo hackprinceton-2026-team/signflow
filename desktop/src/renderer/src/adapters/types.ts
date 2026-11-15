@@ -19,6 +19,13 @@ export interface RecognizedSign {
   ts: number;
   /** false = provisional; a later event with the same id replaces it. */
   final: boolean;
+  /**
+   * The model itself flagged this sign as not confident: it is shown in the live
+   * feed but never used for a draft, whatever its confidence.
+   */
+  uncertain?: boolean;
+  /** Other candidates the model considered, most likely first (display only). */
+  alternatives?: { gloss: string; confidence: number }[];
 }
 
 export type AdapterState = 'idle' | 'connecting' | 'ready' | 'error';
@@ -46,6 +53,18 @@ export interface SignRecognizer {
   readonly simulated?: boolean;
   /** What the frame sampler should send: metadata only, or JPEG-encoded frames. */
   readonly frameFormat: 'none' | 'jpeg';
+  /**
+   * The recognizer captures the camera itself (a separate local process). The
+   * app then never opens the camera while it is in use: one capture session,
+   * one camera permission.
+   */
+  readonly ownsCamera?: boolean;
+  /**
+   * The recognizer knows when a sentence ends (e.g. hands down for 1.5 s). The
+   * session then drafts on that signal instead of after a fixed pause, so a
+   * sentence isn't split while the signer is still signing.
+   */
+  onSentenceEnd?(cb: () => void): Unsubscribe;
   start(): Promise<void>;
   stop(): void;
   pushFrame(frame: VideoFrameInput): void;
