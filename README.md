@@ -50,3 +50,16 @@ See [`desktop/README.md`](desktop/README.md) for scripts and architecture.
 - **Raimbek**: desktop app; backend and AI engineering since November 14, 2026
 - **Muhammad**: original author of the backend (FastAPI service, Gemini translation) and its Backend and AI Engineering owner until November 14, 2026
 - **Umar**: ML
+
+## Additional Engineering Contributions — Raimbek
+
+Beyond the desktop UI, Raimbek worked on integrating and improving SignFlow's full application stack:
+
+- **Desktop application:** Built the Electron, React, and TypeScript interface, including Live Mode, Workspace, Notes, floating captions, camera controls, accessibility features, and the translation confirmation workflow.
+- **Backend integration:** Connected Muhammad's original FastAPI and Gemini backend to the desktop application, improved error handling and reliability, and added real-stack integration tests.
+- **AI evaluation:** Developed an offline-first evaluation system with 25 synthetic ASL gloss scenarios, translation fidelity checks, automated tests, and reproducible reports.
+- **AI performance engineering:** Added latency measurements, token usage reporting, thinking-token instrumentation, and optional Gemini thinking-level configuration.
+- **Neural text-to-speech:** Integrated Kokoro-82M for natural, fully local speech generation on Apple Silicon, including multiple voices, secure process isolation, fallback handling, natural speed control, and reliable stop/cancel behavior.
+- **Real ASL integration (in review, PR #7):** Built the desktop bridge connecting Umar's recognition model to SignFlow through a local WebSocket, preserving the existing translation, confirmation, and speech workflow. Integration has been tested with recorded data; live-signing accuracy still requires validation.
+
+These improvements were developed alongside the team's existing backend and ML work.
