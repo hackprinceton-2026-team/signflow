@@ -1,6 +1,6 @@
 # Interface contract (draft v0)
 
-> **Status: proposal.** This is the shape the desktop app's mock adapters follow today. Muhammad (backend) and Umar (ML) own the final shapes. Edit this doc in a PR, and the desktop adapters will follow it.
+> **Status: proposal.** This is the shape the desktop app's mock adapters follow today. Raimbek (backend, since 2026-11-14; originally Muhammad) and Umar (ML) own the final shapes. Edit this doc in a PR, and the desktop adapters will follow it.
 
 ## Transport
 

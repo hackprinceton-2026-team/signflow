@@ -1,0 +1,44 @@
+{
+  "$comment": "Frontend side of the backend contract. The source of truth is the backend's Pydantic models, exported to backend/openapi.json. `source` is this app's pinned byte-for-byte copy of it (refresh with `npm run contract:sync`); when `upstream` exists, the contract tests require the two to be identical. Concepts map what the UI needs to the official schema names.",
+  "source": "contract/openapi.json",
+  "upstream": "../backend/openapi.json",
+  "examplesDir": "contract/examples",
+  "output": "src/renderer/src/contract/generated/openapi.ts",
+  "concepts": {
+    "translationRequest": {
+      "schema": "TranslationRequest",
+      "required": true,
+      "description": "Signs sent for translation (POST /translate)."
+    },
+    "translationResponse": {
+      "schema": "TranslationResponse",
+      "required": true,
+      "description": "English draft for confirmation (UI type EnglishDraft). Text only, never audio."
+    },
+    "speechRequest": {
+      "schema": "SpeechRequest",
+      "required": true,
+      "description": "Confirmed text to speak (POST /speak), sent only after the user confirms."
+    },
+    "speechResponse": {
+      "schema": "SpeechResponse",
+      "required": true,
+      "description": "Audio for the confirmed text."
+    },
+    "health": {
+      "schema": "HealthResponse",
+      "required": true,
+      "description": "Backend liveness and provider configuration (connection status in the UI)."
+    },
+    "errorResponse": {
+      "schema": "ErrorResponse",
+      "required": true,
+      "description": "Shape of every backend error; its message is shown to the user."
+    },
+    "recognizedSign": {
+      "schema": null,
+      "required": false,
+      "description": "One recognized sign. Not served by the backend yet; recognition stays on the demo recognizer until ml/ provides it."
+    }
+  }
+}

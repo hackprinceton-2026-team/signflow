@@ -1,0 +1,484 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "SignFlow API",
+    "description": "ASL gloss → English translation, and speech for text the user has confirmed. `/translate` never produces audio; the desktop app calls `/speak` only after confirmation.",
+    "version": "0.3.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "summary": "Health",
+        "description": "Liveness plus which providers are configured. Never includes secrets.",
+        "operationId": "health",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/translate": {
+      "post": {
+        "tags": [
+          "translation"
+        ],
+        "summary": "Translate",
+        "description": "Translate ASL glosses into an English draft. Returns text only, never audio.",
+        "operationId": "translate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TranslationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TranslationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "The AI or speech provider failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The provider is not configured on the server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "The provider timed out",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/speak": {
+      "post": {
+        "tags": [
+          "speech"
+        ],
+        "summary": "Speak",
+        "description": "Synthesize speech for text the user has **already confirmed** in the app.",
+        "operationId": "speak",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SpeechRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpeechResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "The AI or speech provider failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The provider is not configured on the server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "The provider timed out",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ErrorDetail": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "invalid_request",
+              "not_found",
+              "method_not_allowed",
+              "translation_unavailable",
+              "speech_unavailable",
+              "upstream_error",
+              "upstream_timeout",
+              "internal_error"
+            ],
+            "title": "Code"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "Human-readable, safe to show to the user. Never contains secrets or stack traces."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "title": "ErrorDetail"
+      },
+      "ErrorResponse": {
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorDetail"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "title": "ErrorResponse",
+        "description": "Every non-2xx response has this shape.",
+        "examples": [
+          {
+            "error": {
+              "code": "translation_unavailable",
+              "message": "Translation is not configured on the server."
+            }
+          }
+        ]
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "const": "ok",
+            "title": "Status",
+            "default": "ok"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "translation": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "not_configured"
+            ],
+            "title": "Translation"
+          },
+          "speech": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "not_configured"
+            ],
+            "title": "Speech"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "speech_voice": {
+            "type": "string",
+            "title": "Speech Voice",
+            "description": "Default voice for `/speak` when the request names none."
+          },
+          "speech_engine": {
+            "type": "string",
+            "enum": [
+              "generative",
+              "long-form",
+              "neural",
+              "standard"
+            ],
+            "title": "Speech Engine",
+            "description": "Engine `/speak` tries first."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "version",
+          "translation",
+          "speech",
+          "model",
+          "speech_voice",
+          "speech_engine"
+        ],
+        "title": "HealthResponse",
+        "examples": [
+          {
+            "model": "gemini-3.5-flash",
+            "speech": "not_configured",
+            "speech_engine": "generative",
+            "speech_voice": "Ruth",
+            "status": "ok",
+            "translation": "ready",
+            "version": "0.3.0"
+          }
+        ]
+      },
+      "SpeechRequest": {
+        "properties": {
+          "text": {
+            "type": "string",
+            "maxLength": 1500,
+            "minLength": 1,
+            "title": "Text",
+            "description": "Confirmed text to speak."
+          },
+          "voice_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z]{2,32}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Voice Id",
+            "description": "Amazon Polly voice, e.g. `Ruth`, `Danielle` or `Matthew` (Generative). The server default if omitted."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "title": "SpeechRequest",
+        "description": "Text the user has already confirmed (and possibly edited) in the app.",
+        "examples": [
+          {
+            "text": "I've had a headache since yesterday.",
+            "voice_id": "Ruth"
+          },
+          {
+            "text": "Nice to meet you."
+          }
+        ]
+      },
+      "SpeechResponse": {
+        "properties": {
+          "audio_base64": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Audio Base64",
+            "description": "Base64-encoded audio."
+          },
+          "audio_format": {
+            "type": "string",
+            "const": "mp3",
+            "title": "Audio Format",
+            "default": "mp3"
+          },
+          "voice_id": {
+            "type": "string",
+            "title": "Voice Id",
+            "description": "Voice that spoke the audio."
+          },
+          "engine": {
+            "type": "string",
+            "enum": [
+              "generative",
+              "long-form",
+              "neural",
+              "standard"
+            ],
+            "title": "Engine",
+            "description": "Polly engine that produced the audio: the configured one, or the fallback if the voice lacks it."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "audio_base64",
+          "voice_id",
+          "engine"
+        ],
+        "title": "SpeechResponse",
+        "examples": [
+          {
+            "audio_base64": "SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4",
+            "audio_format": "mp3",
+            "engine": "generative",
+            "voice_id": "Ruth"
+          }
+        ]
+      },
+      "TranslationRequest": {
+        "properties": {
+          "raw_signs": {
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9#][A-Za-z0-9#'+.\\-]{0,39}$"
+            },
+            "type": "array",
+            "maxItems": 64,
+            "minItems": 1,
+            "title": "Raw Signs",
+            "description": "ASL glosses in signing order."
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "chat",
+              "medical",
+              "emergency"
+            ],
+            "title": "Mode",
+            "description": "Context that sets the tone of the translation.",
+            "default": "chat"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "raw_signs"
+        ],
+        "title": "TranslationRequest",
+        "description": "A run of recognized signs to turn into English.",
+        "examples": [
+          {
+            "mode": "medical",
+            "raw_signs": [
+              "HEADACHE",
+              "SINCE",
+              "YESTERDAY"
+            ]
+          },
+          {
+            "raw_signs": [
+              "HELLO",
+              "NICE",
+              "MEET",
+              "YOU"
+            ]
+          }
+        ]
+      },
+      "TranslationResponse": {
+        "properties": {
+          "translated_text": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Translated Text",
+            "description": "Fluent English for the glosses."
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "chat",
+              "medical",
+              "emergency"
+            ],
+            "title": "Mode"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "description": "Model that produced the translation."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "translated_text",
+          "mode",
+          "model"
+        ],
+        "title": "TranslationResponse",
+        "description": "English draft for the user to review. No audio: speech happens only after confirmation.",
+        "examples": [
+          {
+            "mode": "medical",
+            "model": "gemini-3.5-flash",
+            "translated_text": "I've had a headache since yesterday."
+          }
+        ]
+      }
+    }
+  }
+}

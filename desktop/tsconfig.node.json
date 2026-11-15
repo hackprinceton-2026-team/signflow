@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "lib": ["ES2023"],
+    "types": ["node"],
+    "allowImportingTsExtensions": true,
+    "paths": { "@shared/*": ["./src/shared/*"] }
+  },
+  "include": [
+    "electron.vite.config.mts",
+    "vitest.config.mts",
+    "playwright.config.mts",
+    "src/main/**/*",
+    "src/preload/**/*",
+    "src/shared/**/*",
+    "contract/**/*",
+    "src/renderer/src/**/*.node.test.ts",
+    "src/renderer/src/adapters/remote/guards.ts",
+    "src/renderer/src/contract/**/*"
+  ],
+  "exclude": ["contract/fixtures/**"]
+}

@@ -1,0 +1,112 @@
+:root {
+  color-scheme: dark;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  background: transparent;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font);
+  color: #fff;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+.captions {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  overflow: hidden;
+  /* The whole overlay is draggable; buttons opt out below. */
+  -webkit-app-region: drag;
+}
+
+.captions-chrome {
+  position: absolute;
+  inset: 0 0 auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px 0 12px;
+  font-size: 11px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.captions:hover .captions-chrome {
+  opacity: 1;
+}
+
+.captions-grip {
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: 0.3px;
+}
+
+.captions-close {
+  -webkit-app-region: no-drag;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.captions-close:hover {
+  background: rgba(255, 107, 107, 0.8);
+}
+
+.captions-close:focus-visible {
+  outline: 2px solid #6ea8ff;
+}
+
+.captions-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 22px 22px 14px;
+  gap: 0.15em;
+}
+
+.caption-line {
+  margin: 0;
+  font-size: 1em;
+  font-weight: 600;
+  line-height: 1.25;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  overflow-wrap: anywhere;
+}
+
+.caption-line:not(:last-child) {
+  /* Older lines step back by size and tone, but stay well above AA contrast. */
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 0.85em;
+}
+
+.caption-live {
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.caption-idle {
+  color: rgba(255, 255, 255, 0.88);
+  font-weight: 500;
+  font-size: 0.7em;
+}

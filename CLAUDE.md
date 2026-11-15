@@ -7,7 +7,7 @@ Guidance for Claude Code (and humans) working in this repository.
 SignFlow is a HackPrinceton 2026 project that turns sign language into English in real time. It is a monorepo with one owner per area:
 
 - `desktop/` (Raimbek): Electron + React + TypeScript app
-- `backend/` (Muhammad): realtime gateway / API
+- `backend/` (Raimbek since 2026-11-14; originally built by Muhammad): realtime gateway / API, Gemini translation
 - `ml/` (Umar): sign recognition model
 - `docs/` (shared): architecture and interface contracts
 

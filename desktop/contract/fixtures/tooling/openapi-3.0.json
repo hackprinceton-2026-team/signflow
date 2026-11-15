@@ -1,0 +1,17 @@
+{
+  "openapi": "3.0.3",
+  "info": { "title": "Tooling fixture 3.0 (not SignFlow)", "version": "0.0.0" },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "ToolingLegacy": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "note": { "type": "string", "nullable": true }
+        },
+        "required": ["id", "note"]
+      }
+    }
+  }
+}

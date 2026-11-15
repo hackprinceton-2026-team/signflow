@@ -1,7 +1,11 @@
-fastapi
-uvicorn
-langchain
-langchain-aws
-boto3
-pydantic
-python-dotenv
+# Runtime dependencies (pinned for reproducible installs).
+fastapi==0.162.0
+uvicorn[standard]==0.54.0
+pydantic==2.14.2
+pydantic-settings==2.16.2
+python-dotenv==1.2.4
+# Translation: Gemini through LangChain
+langchain-core==1.7.3
+langchain-google-genai==4.4.2
+# Speech: Amazon Polly
+boto3==1.43.123
