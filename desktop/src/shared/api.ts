@@ -38,6 +38,8 @@ export interface SignflowApi {
     synthesize(request: KokoroSynthesizeRequest): Promise<KokoroSynthesizeResult>;
     /** Drop pending requests: the given ids, or all. */
     cancel(ids?: string[]): Promise<void>;
+    /** Stop the engine and free the model's memory (it reloads on next use). */
+    release(): Promise<void>;
     onStatus(cb: (status: KokoroStatus) => void): () => void;
   };
   view: {

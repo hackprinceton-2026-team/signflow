@@ -166,6 +166,30 @@ describe('KokoroService', () => {
     expect(workers).toHaveLength(2);
   });
 
+  it('release frees the engine (pending work is cancelled, not a crash) and the next use starts fresh', async () => {
+    const { service, workers, statuses } = setup();
+    void service.prepare();
+    workers[0]!.emit({ type: 'loaded', loadMs: 10 });
+    const a = service.synthesize(req('a'));
+    await vi.waitFor(() => expect(workers[0]!.synthIds()).toEqual(['a']));
+    service.release();
+    expect(await codeOf(a)).toBe('cancelled');
+    expect(workers[0]!.killed).toBe(true);
+    expect(service.status()).toEqual({ state: 'installed' });
+    expect(statuses.at(-1)).toEqual({ state: 'installed' });
+    workers[0]!.exit(0); // the killed process exiting is not a crash
+    expect(service.status().state).toBe('installed');
+
+    const b = service.synthesize(req('b'));
+    expect(workers).toHaveLength(2);
+    workers[1]!.emit({ type: 'loaded', loadMs: 10 });
+    await vi.waitFor(() => expect(workers[1]!.synthIds()).toEqual(['b']));
+    workers[1]!.emit(result('b'));
+    await expect(b).resolves.toMatchObject({ id: 'b' });
+    service.release();
+    service.release(); // idempotent
+  });
+
   it('refuses work beyond the pending limit instead of queueing without bound', async () => {
     const { service, workers } = setup();
     void service.prepare();

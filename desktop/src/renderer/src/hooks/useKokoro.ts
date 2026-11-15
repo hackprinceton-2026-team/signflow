@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { isKokoroStatus, type KokoroStatus } from '@shared/kokoro';
 import type { KokoroBridge } from '../adapters/kokoroSpeech';
 
@@ -12,10 +12,18 @@ export interface KokoroController {
 /**
  * Tracks the Kokoro engine's status. While `active` (Kokoro is the selected
  * engine), the model is loaded in the background right away, so the first
- * confirmed sentence doesn't wait for it.
+ * confirmed sentence doesn't wait for it. Switching away from Kokoro stops the
+ * engine and frees the model's memory.
  */
 export function useKokoro(bridge: KokoroBridge | undefined, active: boolean): KokoroController {
   const [status, setStatus] = useState<KokoroStatus | null>(null);
+  const wasActive = useRef(false);
+
+  useEffect(() => {
+    // Only on an actual switch away (not on mount, and safe under StrictMode re-runs).
+    if (bridge && wasActive.current && !active) void bridge.release().catch(() => undefined);
+    wasActive.current = active;
+  }, [bridge, active]);
 
   useEffect(() => {
     if (!bridge) return;

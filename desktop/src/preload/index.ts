@@ -42,6 +42,7 @@ const api: SignflowApi = {
     prepare: () => ipcRenderer.invoke(IpcChannels.kokoroPrepare),
     synthesize: (request) => ipcRenderer.invoke(IpcChannels.kokoroSynthesize, request),
     cancel: (ids) => ipcRenderer.invoke(IpcChannels.kokoroCancel, ids),
+    release: () => ipcRenderer.invoke(IpcChannels.kokoroRelease),
     onStatus: (cb) => subscribe<KokoroStatus>(IpcChannels.kokoroStatusChanged, cb),
   },
   view: {

@@ -97,6 +97,10 @@ export function registerKokoro(getMainWindow: () => BrowserWindow | null): Kokor
     else throw new TypeError('Invalid Kokoro cancel request');
   });
 
+  handle<void>(IpcChannels.kokoroRelease, () => service.release());
+
+  // Nothing can speak with every window closed (macOS keeps the app running): free the model.
+  app.on('window-all-closed', () => service.release());
   app.on('will-quit', () => service.dispose());
   return service;
 }

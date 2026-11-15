@@ -74,6 +74,21 @@ describe('Kokoro speech engine in the app', () => {
     );
   });
 
+  it('switching back to the system voice frees Kokoro; choosing it again reloads it', async () => {
+    const { kokoro, system } = renderApp();
+    await chooseKokoro();
+    await waitFor(() => expect(kokoro.prepare).toHaveBeenCalledTimes(1));
+    expect(kokoro.release).not.toHaveBeenCalled();
+    radio('Speech engine', 'System voice');
+    await waitFor(() => expect(kokoro.release).toHaveBeenCalledTimes(1));
+    fireEvent.click(screen.getByRole('button', { name: 'Test voice' }));
+    expect(system.spoken.map((s) => s.text)).toEqual([TEST_PHRASE]);
+    expect(kokoro.synthesize).not.toHaveBeenCalled();
+    radio('Speech engine', KOKORO);
+    await waitFor(() => expect(kokoro.prepare).toHaveBeenCalledTimes(2));
+    expect(kokoro.release).toHaveBeenCalledTimes(1);
+  });
+
   it('voice selection is applied to Test voice and persisted', async () => {
     const { kokoro, unmount } = renderApp();
     await chooseKokoro();

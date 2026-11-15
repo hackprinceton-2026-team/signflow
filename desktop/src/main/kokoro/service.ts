@@ -107,6 +107,18 @@ export class KokoroService {
     for (const id of targets) this.settle(id, kokoroError('cancelled', 'Cancelled'));
   }
 
+  /**
+   * Stop the engine and free the model's memory (~0.6-0.8 GB) when Kokoro isn't
+   * in use. Pending requests reject with `cancelled`; the next request or
+   * `prepare()` starts a fresh engine. Not counted as a crash.
+   */
+  release(): void {
+    this.cancel();
+    if (!this.worker) return;
+    this.stopWorker();
+    this.setStatus(this.diskStatus());
+  }
+
   dispose(): void {
     this.cancel();
     this.stopWorker();

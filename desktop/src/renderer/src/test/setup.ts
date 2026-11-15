@@ -49,6 +49,7 @@ export function installFakeBridge(overrides: Partial<SignflowApi> = {}): Signflo
         throw new Error(encodeKokoroError('missing', 'The Kokoro voice model is not installed.'));
       }),
       cancel: vi.fn(async () => undefined),
+      release: vi.fn(async () => undefined),
       onStatus: vi.fn(() => () => undefined),
     },
     view: {

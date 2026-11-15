@@ -35,6 +35,8 @@ export const IpcChannels = {
   kokoroSynthesize: 'kokoro:synthesize',
   /** main window → main: drop pending syntheses */
   kokoroCancel: 'kokoro:cancel',
+  /** main window → main: stop the engine and free the model's memory (Kokoro deselected) */
+  kokoroRelease: 'kokoro:release',
   /** main → windows: Kokoro status changed */
   kokoroStatusChanged: 'kokoro:status-changed',
 } as const;

@@ -158,6 +158,10 @@ export class FakeKokoro implements KokoroBridge {
       if (!ids || ids.includes(p.req.id)) this.fail(p.req.id, 'cancelled', 'Cancelled');
     }
   });
+  release: Mock<KokoroBridge['release']> = vi.fn(async () => {
+    await this.cancel();
+    if (this.current.state === 'ready' || this.current.state === 'loading') this.setStatus({ state: 'installed' });
+  });
   onStatus: Mock<KokoroBridge['onStatus']> = vi.fn((cb: (s: KokoroStatus) => void) => {
     this.listeners.add(cb);
     return () => void this.listeners.delete(cb);
