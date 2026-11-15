@@ -40,6 +40,8 @@ export interface ExternalRecognition {
   stop: () => void;
   /** Fall back to the demo recognizer (shown while the recognizer can't be reached). */
   onUseDemo?: () => void;
+  /** The recognizer's own camera preview (SignFlow's launcher sends it), as an <img> source. */
+  preview?: { src: string; width: number; height: number } | null;
 }
 
 const RECOGNIZER: Record<AdapterStatus['state'], { label: string; tone: StatusTone }> = {
@@ -192,17 +194,31 @@ function ExternalStage({
   extraControls?: ReactNode;
   children?: ReactNode;
 }) {
-  const { on } = external;
+  const { on, preview } = external;
   const rec = RECOGNIZER[recognizerStatus.state];
   const unreachable = recognizerStatus.state === 'connecting' || recognizerStatus.state === 'error';
+  const showPreview = on && Boolean(preview);
   return (
     <section
-      className={`stage stage-external ${on ? 'is-on' : ''} ${!on && keepOverlays ? 'has-overlay' : ''}`}
+      className={`stage stage-external ${on ? 'is-on' : ''} ${showPreview ? 'has-preview' : ''} ${!on && keepOverlays ? 'has-overlay' : ''}`}
       aria-label="Sign recognition"
       data-testid="external-stage"
     >
+      {showPreview && preview && (
+        // The recognizer's camera, as it sees it (mirrored, with hand tracking). It owns the camera;
+        // these are small JPEG frames it sends over loopback. SignFlow never opens the camera.
+        <img
+          className="stage-video stage-preview"
+          src={preview.src}
+          width={preview.width}
+          height={preview.height}
+          alt="Camera preview from the sign recognizer, with hand tracking"
+          data-testid="recognizer-preview"
+        />
+      )}
+      <div className="stage-vignette" aria-hidden="true" />
       <div className="stage-empty">
-        {on ? (
+        {showPreview ? null : on ? (
           <div className="stage-empty-card" role="status">
             <span className={`stage-empty-icon ${recognizerStatus.state === 'error' ? 'is-danger' : ''}`}>
               {recognizerStatus.state === 'ready' ? <Icon name="camera" size={26} /> : <span className="ui-spinner" aria-hidden="true" />}

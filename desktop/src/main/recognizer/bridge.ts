@@ -3,6 +3,7 @@ import {
   RECOGNIZER_HOST,
   type RecognizerEvent,
   type RecognizerModel,
+  type RecognizerPreview,
   type RecognizerStatus,
 } from '@shared/recognizer';
 
@@ -21,7 +22,11 @@ export interface RecognizerBridgeOptions {
   connect: (url: string) => SocketLike;
   onEvent: (event: RecognizerEvent) => void;
   onStatus: (status: RecognizerStatus) => void;
+  /** Camera preview frames from SignFlow's recognizer launcher (throttled). */
+  onPreview?: (frame: RecognizerPreview) => void;
   now?: () => number;
+  /** At most one preview frame per this many ms reaches the window. */
+  previewIntervalMs?: number;
   /** Reconnect delays: start, then doubling up to the max. */
   retryMinMs?: number;
   retryMaxMs?: number;
@@ -52,6 +57,7 @@ export class RecognizerBridge {
   private status: RecognizerStatus = { state: 'idle' };
   private model: RecognizerModel | undefined;
   private rejected = 0;
+  private lastPreviewAt = -Infinity;
   private readonly opts: Required<RecognizerBridgeOptions>;
 
   constructor(options: RecognizerBridgeOptions) {
@@ -60,6 +66,8 @@ export class RecognizerBridge {
       retryMinMs: 500,
       retryMaxMs: 3000,
       log: (m) => console.warn(`[recognizer] ${m}`),
+      onPreview: () => undefined,
+      previewIntervalMs: 80,
       ...options,
     };
     this.retryMs = this.opts.retryMinMs;
@@ -144,6 +152,14 @@ export class RecognizerBridge {
     if (!parsed.ok) {
       this.rejected++;
       if (this.rejected <= 5 || this.rejected % 50 === 0) this.opts.log(`dropped message (${parsed.reason}); ${this.rejected} so far`);
+      return;
+    }
+    if ('preview' in parsed) {
+      const now = this.opts.now();
+      if (now - this.lastPreviewAt < this.opts.previewIntervalMs) return; // throttle
+      this.lastPreviewAt = now;
+      if (this.status.state !== 'ready' && this.status.state !== 'error') this.setStatus({ state: 'ready', ...(this.model ? { model: this.model } : {}) });
+      this.opts.onPreview(parsed.preview);
       return;
     }
     const { event } = parsed;

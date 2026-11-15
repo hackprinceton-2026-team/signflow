@@ -194,3 +194,50 @@ describe('Sentence mode (Gemini composes, spoken automatically)', () => {
     expect(backend.callsTo('/translate')[0]!.body).toMatchObject({ raw_signs: ['HELP', 'DOCTOR'] });
   });
 });
+
+describe('embedded camera preview (from the recognizer, never a second capture)', () => {
+  it('shows the recognizer’s frames on the stage and drops them when they stop', async () => {
+    const { bridge } = renderApp();
+    const media = installFakeMediaDevices();
+    fireEvent.click(within(screen.getByRole('navigation', { name: 'Main' })).getByRole('button', { name: 'Settings' }));
+    fireEvent.click(within(screen.getByRole('radiogroup', { name: 'Sign recognizer' })).getByRole('radio', { name: 'SignFlow ASL model (local)' }));
+    fireEvent.click(within(screen.getByRole('navigation', { name: 'Main' })).getByRole('button', { name: 'Live' }));
+    mode('Sentence (Gemini)');
+    fireEvent.click(screen.getByRole('button', { name: 'Start recognition' }));
+    await waitFor(() => expect(bridge.listening).toBe(true));
+    expect(screen.queryByTestId('recognizer-preview')).toBeNull(); // plain live.py: external-preview card
+    act(() => bridge.sendPreview({ jpeg: '/9j/AAAA', width: 320, height: 180 }));
+    const img = screen.getByTestId('recognizer-preview');
+    expect(img).toHaveAttribute('src', 'data:image/jpeg;base64,/9j/AAAA');
+    expect(screen.getByTestId('sentence-panel')).toBeInTheDocument(); // glosses and sentence alongside
+    expect(media.getUserMedia).not.toHaveBeenCalled();
+    await act(() => new Promise((r) => setTimeout(r, 2100)));
+    expect(screen.queryByTestId('recognizer-preview')).toBeNull();
+  });
+});
+
+describe('switching Words → Sentence with the ASL recognizer', () => {
+  it('a sentence end from Words mode does not cut the next sentence short', async () => {
+    const backend = createFakeBackend({ translate: (g) => g.join(' ') });
+    const { bridge } = renderApp(backend);
+    fireEvent.click(within(screen.getByRole('navigation', { name: 'Main' })).getByRole('button', { name: 'Settings' }));
+    fireEvent.click(within(screen.getByRole('radiogroup', { name: 'Sign recognizer' })).getByRole('radio', { name: 'SignFlow ASL model (local)' }));
+    fireEvent.click(within(screen.getByRole('navigation', { name: 'Main' })).getByRole('button', { name: 'Live' }));
+    mode('Words');
+    fireEvent.click(screen.getByRole('button', { name: 'Start recognition' }));
+    await waitFor(() => expect(bridge.listening).toBe(true));
+    const ts = Date.now() / 1000;
+    act(() => {
+      bridge.send({ type: 'sign', sign: 'HELP', confidence: 0.9, ts });
+      bridge.send({ type: 'end_of_sentence', signs: ['HELP'], ts });
+    });
+    mode('Sentence (Gemini)');
+    act(() => void bridge.send({ type: 'sign', sign: 'I', confidence: 0.9, ts: ts + 0.1 }));
+    act(() => void bridge.send({ type: 'sign', sign: 'HUNGRY', confidence: 0.9, ts: ts + 0.2 }));
+    await act(() => new Promise((r) => setTimeout(r, 200)));
+    expect(backend.callsTo('/translate')).toHaveLength(0);
+    act(() => void bridge.send({ type: 'end_of_sentence', signs: ['I', 'HUNGRY'], ts: ts + 0.3 }));
+    await waitFor(() => expect(backend.callsTo('/translate')).toHaveLength(1));
+    expect(backend.callsTo('/translate')[0]!.body).toMatchObject({ raw_signs: ['I', 'HUNGRY'] });
+  });
+});

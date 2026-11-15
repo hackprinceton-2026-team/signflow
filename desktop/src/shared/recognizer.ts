@@ -20,6 +20,18 @@ export const RECOGNIZER_DEFAULT_PORT = 8765;
 /** Real messages are ~200-400 bytes; anything far larger is not from the recognizer. */
 export const RECOGNIZER_MAX_MESSAGE_CHARS = 8192;
 export const RECOGNIZER_MAX_CANDIDATES = 10;
+/**
+ * Preview frames (SignFlow's recognizer launcher, desktop/scripts/asl/): a small JPEG
+ * of what the recognizer's camera sees. ~320 px wide is ~15-30 KB of base64.
+ */
+export const RECOGNIZER_MAX_PREVIEW_CHARS = 200_000;
+
+/** A camera preview frame from the recognizer (base64 JPEG), shown in place of a local camera. */
+export interface RecognizerPreview {
+  jpeg: string;
+  width: number;
+  height: number;
+}
 
 export type RecognizerModel = 'demo14' | 'keyword116';
 
@@ -62,7 +74,21 @@ export interface RecognizerStatus {
   model?: RecognizerModel;
 }
 
-export type ParseResult = { ok: true; event: RecognizerEvent } | { ok: false; reason: string };
+export type ParseResult =
+  | { ok: true; event: RecognizerEvent }
+  | { ok: true; preview: RecognizerPreview }
+  | { ok: false; reason: string };
+
+const BASE64 = /^[A-Za-z0-9+/]+={0,2}$/;
+const isDim = (v: unknown): v is number => typeof v === 'number' && Number.isInteger(v) && v >= 16 && v <= 1280;
+
+function parsePreview(o: Record<string, unknown>): ParseResult {
+  const jpeg = o['jpeg'];
+  // "/9j/" is the base64 of the JPEG start-of-image marker (FF D8 FF).
+  if (typeof jpeg !== 'string' || !jpeg.startsWith('/9j/') || !BASE64.test(jpeg)) return { ok: false, reason: 'preview is not a JPEG' };
+  if (!isDim(o['width']) || !isDim(o['height'])) return { ok: false, reason: 'preview has bad dimensions' };
+  return { ok: true, preview: { jpeg, width: o['width'], height: o['height'] } };
+}
 
 /** The same pattern SignFlow's backend enforces on glosses for POST /translate. */
 const GLOSS_PATTERN = /^[A-Z0-9#][A-Z0-9#'+.-]{0,39}$/;
@@ -119,7 +145,7 @@ const round = (p: number) => Math.round(p * 1000) / 1000;
  */
 export function parseRecognizerMessage(text: unknown, now: number): ParseResult {
   if (typeof text !== 'string') return { ok: false, reason: 'not a text message' };
-  if (text.length > RECOGNIZER_MAX_MESSAGE_CHARS) return { ok: false, reason: 'message too large' };
+  if (text.length > RECOGNIZER_MAX_PREVIEW_CHARS) return { ok: false, reason: 'message too large' };
   let msg: unknown;
   try {
     msg = JSON.parse(text);
@@ -128,6 +154,9 @@ export function parseRecognizerMessage(text: unknown, now: number): ParseResult 
   }
   if (!msg || typeof msg !== 'object' || Array.isArray(msg)) return { ok: false, reason: 'not an object' };
   const o = msg as Record<string, unknown>;
+  if (o['type'] === 'preview') return parsePreview(o);
+  // Only preview frames may be large.
+  if (text.length > RECOGNIZER_MAX_MESSAGE_CHARS) return { ok: false, reason: 'message too large' };
 
   if (o['type'] === 'end_of_sentence') {
     const keyword = Array.isArray(o['confident']);

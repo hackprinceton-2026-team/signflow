@@ -1649,3 +1649,9 @@
   padding-left: 18px;
   font-size: var(--text-sm);
 }
+
+/* The recognizer's camera preview (frames it sends; the app never opens the camera). */
+.stage-preview {
+  object-fit: contain;
+  background: #000;
+}

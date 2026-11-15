@@ -18,6 +18,7 @@ const parse = (msg: unknown) => parseRecognizerMessage(typeof msg === 'string' ?
 const ok = (msg: unknown): RecognizerEvent => {
   const r = parse(msg);
   if (!r.ok) throw new Error(`expected ok, got ${r.reason}`);
+  if (!('event' in r)) throw new Error('expected an event, got a preview');
   return r.event;
 };
 
@@ -160,5 +161,25 @@ describe('helpers', () => {
     expect(recognizerPort('9123')).toBe(9123);
     expect(recognizerPort('80')).toBe(RECOGNIZER_DEFAULT_PORT);
     expect(recognizerPort('abc')).toBe(RECOGNIZER_DEFAULT_PORT);
+  });
+});
+
+describe('preview frames (SignFlow recognizer launcher)', () => {
+  const jpeg = '/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/';
+  it('accepts a small JPEG with sane dimensions', () => {
+    expect(parse({ type: 'preview', jpeg, width: 320, height: 180, ts: T })).toEqual({ ok: true, preview: { jpeg, width: 320, height: 180 } });
+  });
+  it.each([
+    ['not a JPEG (PNG)', { type: 'preview', jpeg: 'iVBORw0KGgo=', width: 320, height: 180 }],
+    ['not base64', { type: 'preview', jpeg: '/9j/<script>', width: 320, height: 180 }],
+    ['bad dimensions', { type: 'preview', jpeg, width: 99999, height: 180 }],
+    ['missing dimensions', { type: 'preview', jpeg }],
+  ])('drops %s', (_label, msg) => {
+    expect(parse(msg).ok).toBe(false);
+  });
+  it('only previews may be large; even they are capped', () => {
+    const big = `/9j/${'A'.repeat(150_000)}`;
+    expect(parse({ type: 'preview', jpeg: big, width: 320, height: 180 }).ok).toBe(true);
+    expect(parse({ type: 'preview', jpeg: `/9j/${'A'.repeat(250_000)}`, width: 320, height: 180 })).toEqual({ ok: false, reason: 'message too large' });
   });
 });

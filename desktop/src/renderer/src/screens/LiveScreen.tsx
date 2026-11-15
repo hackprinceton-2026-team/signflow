@@ -30,6 +30,7 @@ export function LiveScreen() {
                 start: () => void recognition.start(),
                 stop: recognition.stop,
                 onUseDemo: () => updateRecognizerSettings({ source: 'demo' }),
+                preview: recognition.preview,
               }
             : undefined
         }

@@ -13,6 +13,7 @@ import { useCamera } from '../hooks/useCamera';
 import { useCaptions } from '../hooks/useCaptions';
 import { useFrameSampler } from '../hooks/useFrameSampler';
 import { useKokoro } from '../hooks/useKokoro';
+import { useRecognizerPreview } from '../hooks/useRecognizerPreview';
 import { useNotes } from '../hooks/useNotes';
 import { usePersistentState } from '../hooks/usePersistentState';
 import { useSignSession, type ConfirmIntent } from '../hooks/useSignSession';
@@ -137,6 +138,7 @@ export function useSignFlowController({ adapters, initialSettings, backendClient
     if (externalCamera && camera.status !== 'off') stopCamera();
   }, [camera.status, externalCamera, stopCamera]);
   const recognitionOn = externalCamera ? externalOnFor === recognizer : cameraOn;
+  const recognizerPreview = useRecognizerPreview(recognizerBridge, externalCamera && recognitionOn);
   const recognition = useMemo(
     () => ({
       on: recognitionOn,
@@ -144,8 +146,10 @@ export function useSignFlowController({ adapters, initialSettings, backendClient
       external: externalCamera,
       start: externalCamera ? async () => setExternalOnFor(recognizer) : camera.start,
       stop: externalCamera ? () => setExternalOnFor(null) : camera.stop,
+      /** The recognizer's camera preview frames, when its launcher sends them. */
+      preview: recognizerPreview,
     }),
-    [camera.start, camera.stop, externalCamera, recognitionOn, recognizer],
+    [camera.start, camera.stop, externalCamera, recognitionOn, recognizer, recognizerPreview],
   );
   // Live mode swaps the translator (and optionally speech) for the backend's. The
   // recognizer is the same object in both modes, so switching never restarts it.

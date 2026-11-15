@@ -59,6 +59,7 @@ export function installFakeBridge(overrides: Partial<SignflowApi> = {}): Signflo
       status: vi.fn(async () => ({ state: 'idle' as const })),
       onEvent: vi.fn(() => () => undefined),
       onStatus: vi.fn(() => () => undefined),
+      onPreview: vi.fn(() => () => undefined),
     },
     view: {
       setFullScreen: vi.fn(async (v: boolean) => v),

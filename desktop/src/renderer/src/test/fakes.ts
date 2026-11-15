@@ -1,7 +1,7 @@
 import { encodeKokoroError, type KokoroErrorCode, type KokoroStatus, type KokoroSynthesizeRequest, type KokoroSynthesizeResult } from '@shared/kokoro';
 import type { KokoroBridge } from '../adapters/kokoroSpeech';
 import type { RecognizerBridge } from '../adapters/external/aslRecognizer';
-import { parseRecognizerMessage, type RecognizerEvent, type RecognizerStatus } from '@shared/recognizer';
+import { parseRecognizerMessage, type RecognizerEvent, type RecognizerPreview, type RecognizerStatus } from '@shared/recognizer';
 import type { AudioLike } from '../adapters/remote/cloudSpeech';
 import { vi, type Mock } from 'vitest';
 import { Emitter } from '../adapters/emitter';
@@ -204,6 +204,7 @@ export class FakeKokoro implements KokoroBridge {
 export class FakeRecognizerBridge implements RecognizerBridge {
   private readonly events = new Set<(e: RecognizerEvent) => void>();
   private readonly statuses = new Set<(s: RecognizerStatus) => void>();
+  private readonly previews = new Set<(f: RecognizerPreview) => void>();
   current: RecognizerStatus = { state: 'idle' };
   /** What start() connects to. */
   startResult: RecognizerStatus = { state: 'ready', model: 'demo14' };
@@ -227,6 +228,16 @@ export class FakeRecognizerBridge implements RecognizerBridge {
     return () => void this.statuses.delete(cb);
   });
 
+  onPreview: Mock<RecognizerBridge['onPreview']> = vi.fn((cb: (f: RecognizerPreview) => void) => {
+    this.previews.add(cb);
+    return () => void this.previews.delete(cb);
+  });
+
+  /** Deliver a preview frame (already validated, as the main process forwards it). */
+  sendPreview(frame: RecognizerPreview): void {
+    for (const cb of this.previews) cb(frame);
+  }
+
   get listening(): boolean {
     return this.events.size > 0;
   }
@@ -243,7 +254,7 @@ export class FakeRecognizerBridge implements RecognizerBridge {
   /** Deliver one raw recognizer message (as live.py sends it). Returns false if the parser dropped it. */
   send(raw: string | Record<string, unknown>, now = Date.now()): boolean {
     const parsed = parseRecognizerMessage(typeof raw === 'string' ? raw : JSON.stringify(raw), now);
-    if (!parsed.ok) return false;
+    if (!parsed.ok || !('event' in parsed)) return false;
     this.emit(parsed.event);
     return true;
   }
