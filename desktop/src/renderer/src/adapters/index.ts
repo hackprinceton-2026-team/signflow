@@ -30,6 +30,11 @@ export function isE2eRun(): boolean {
   return typeof location !== 'undefined' && new URLSearchParams(location.search).get('e2e') === '1';
 }
 
+/** E2E runs are silent unless launched with SIGNFLOW_E2E_SPEECH=system (real system voices). */
+export function isSilentE2eRun(): boolean {
+  return isE2eRun() && new URLSearchParams(location.search).get('speech') !== 'system';
+}
+
 function hasSpeechSynthesis(): boolean {
   return typeof window !== 'undefined' && 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
 }

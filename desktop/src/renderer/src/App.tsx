@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { createAdapters, isE2eRun } from './adapters';
+import { createAdapters, isSilentE2eRun } from './adapters';
 import type { BackendClient } from './adapters/remote/backendClient';
 import type { Adapters } from './adapters/types';
 import { AppShell } from './app/AppShell';
@@ -16,7 +16,7 @@ interface AppProps {
 }
 
 export function App({ adapters: injected, initialSettings, backendClient }: AppProps) {
-  const [silentSpeech] = useState(isE2eRun);
+  const [silentSpeech] = useState(isSilentE2eRun);
   const [adapters] = useState<Adapters>(() => injected ?? createAdapters('mock', { silentSpeech }));
   const flow = useSignFlowController({ adapters, initialSettings, backendClient, silentSpeech });
   return (

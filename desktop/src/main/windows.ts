@@ -36,8 +36,10 @@ export function recordPrefsForE2e(win: BrowserWindow, prefs: WebPreferences): vo
 /** URL for a renderer HTML entry, in dev (Vite server) or prod (app://). */
 export function rendererUrl(entry: 'index' | 'captions'): string {
   const devUrl = process.env['ELECTRON_RENDERER_URL'];
-  // E2E runs tell the renderer to use silent speech (no audio during tests).
-  const query = process.env['SIGNFLOW_E2E'] === '1' ? '?e2e=1' : '';
+  // E2E runs tell the renderer to use silent speech (no audio during tests), unless
+  // SIGNFLOW_E2E_SPEECH=system asks for the real system voices (manual verification).
+  const e2e = process.env['SIGNFLOW_E2E'] === '1';
+  const query = e2e ? `?e2e=1${process.env['SIGNFLOW_E2E_SPEECH'] === 'system' ? '&speech=system' : ''}` : '';
   if (devUrl) return `${devUrl}/${entry}.html${query}`;
   return `${APP_ORIGIN}/${entry}.html${query}`;
 }

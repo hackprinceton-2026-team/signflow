@@ -43,6 +43,17 @@ Live mode is built to fail gracefully:
 
 The backend URL is fixed to `http://localhost:8000` because it's the only backend origin the renderer's CSP allows (`src/shared/csp.ts`).
 
+### Real-stack check (real backend, real Gemini, macOS voices)
+
+Opt-in, and it speaks out loud. It starts the real FastAPI app from `../backend/.venv` with AWS credentials forced off (so Amazon Polly can't be called) and drives the built app with the system voices:
+
+```bash
+npm run build
+SIGNFLOW_E2E_REALSTACK=1 npx playwright test e2e/realstack.spec.ts
+```
+
+It needs a Gemini key in `backend/.env` (`GOOGLE_API_KEY`) or the environment, and port 8000 free. `SIGNFLOW_E2E_SPEECH=system` is what makes an E2E launch use real system voices instead of the silent test engine.
+
 ## Speech and confirmation safety
 
 - Nothing is **spoken or saved** until you confirm it.
