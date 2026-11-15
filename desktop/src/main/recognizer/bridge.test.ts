@@ -109,6 +109,17 @@ describe('RecognizerBridge', () => {
     expect(on.statuses.at(-1)).toEqual({ state: 'ready', model: 'keyword116' });
   });
 
+  it('while waiting, tells how to start the recognizer with the model the user allows', () => {
+    const keyword = setup();
+    keyword.bridge.start({ allowKeyword: true });
+    keyword.last().fail();
+    expect(keyword.statuses.at(-1)).toMatchObject({ state: 'connecting', message: expect.stringContaining('python src/live.py --keyword') });
+    const demo = setup();
+    demo.bridge.start({ allowKeyword: false });
+    demo.last().fail();
+    expect(demo.statuses.at(-1)?.message).not.toContain('--keyword');
+  });
+
   it('keeps reconnecting with backoff while started (recognizer not up yet, or restarted)', () => {
     const { bridge, sockets, statuses, last } = setup();
     bridge.start({ allowKeyword: false });

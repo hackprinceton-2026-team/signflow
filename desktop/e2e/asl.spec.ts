@@ -95,7 +95,18 @@ test('a low-confidence sign is shown as "not used" and drafts nothing', async ()
   await expect(page.getByTestId('draft-text')).toHaveCount(0);
 });
 
-test('keyword-model messages are refused until the user opts in', async () => {
+test('the keyword model is allowed by default; turned off, its messages are refused', async () => {
+  // Turn it off (this restarts recognition with only the 14-sign model allowed).
+  await go('Settings');
+  const keywordSwitch = page.getByRole('switch', { name: /Allow the 116-sign keyword model/ });
+  await expect(keywordSwitch).toHaveAttribute('aria-checked', 'true');
+  await keywordSwitch.click();
+  await expect(keywordSwitch).toHaveAttribute('aria-checked', 'false');
+  await go('Live');
+  await page.getByRole('button', { name: 'Start recognition' }).click();
+  await expect(page.getByTestId('recognizer-status')).toContainText('Recognizing', { timeout: 10_000 });
+  await expect.poll(() => recognizer.clientCount, { timeout: 10_000 }).toBe(1);
+
   recognizer.send(asl.keyword([['HEADACHE', 0.62], ['HOT', 0.14]], true));
   await expect(page.getByTestId('recognizer-status')).toContainText('Recognizer error');
   await expect(page.getByTestId('external-stage-message')).toContainText('116-sign keyword model');
@@ -103,7 +114,7 @@ test('keyword-model messages are refused until the user opts in', async () => {
 });
 
 test('the recognizer restarts: the app waits, reconnects, and keeps going', async () => {
-  // Opt in now (this restarts recognition with the keyword model allowed).
+  // Turn the keyword model back on (this restarts recognition with it allowed).
   await go('Settings');
   await page.getByRole('switch', { name: /Allow the 116-sign keyword model/ }).click();
   await go('Live');

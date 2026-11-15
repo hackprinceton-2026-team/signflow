@@ -64,7 +64,7 @@ describe('14-sign demo model messages (the recognizer default, as in its README)
   });
 });
 
-describe('116-sign keyword model messages (opt-in)', () => {
+describe('116-sign keyword model messages', () => {
   it('a confident top-1 becomes the sign, with the calibrated probability as confidence', () => {
     const e = ok({
       type: 'sign',

@@ -266,20 +266,22 @@ export function SettingsScreen() {
                 <div className="recognizer-help" data-testid="asl-help">
                   <p className="subtle">
                     Isolated ASL signs from Umar&apos;s recognizer (MediaPipe + a small classifier), running as a separate local
-                    app that owns the camera. Start it first: <code>python src/live.py</code> in the ML checkout (see{' '}
+                    app that owns the camera. Start it first: <code>python src/live.py --keyword</code> in <code>ml/</code> (see{' '}
                     <code>docs/asl-recognizer.md</code>). SignFlow connects to it on this device only (
                     <code>ws://127.0.0.1:8765</code>).
                   </p>
                   <p className="subtle">
-                    The default 14-sign model knows BATHROOM, DOCTOR, DRINK, FOOD, HELP, HUNGRY, NO, PLEASE, READY, SORRY, STOP,
-                    THANK-YOU, THIRSTY and YES. Anything else comes out as the closest of those, or nothing. Confidence is the
-                    model&apos;s estimate, not a guarantee; you always review the English before it&apos;s spoken.
+                    With <code>--keyword</code> it recognizes 116 signs (listed in <code>ml/models/vocab_116.json</code>) and
+                    sends its top five guesses for each one. Without it, it runs the smaller 14-sign model: BATHROOM, DOCTOR,
+                    DRINK, FOOD, HELP, HUNGRY, NO, PLEASE, READY, SORRY, STOP, THANK-YOU, THIRSTY and YES. Anything else comes
+                    out as the closest known sign, or nothing. Confidence is the model&apos;s estimate, not a guarantee; you
+                    always review the English before it&apos;s spoken.
                   </p>
                   <Switch
                     checked={recognizerSettings.allowKeyword}
                     onChange={(allowKeyword) => updateRecognizerSettings({ allowKeyword })}
-                    label="Allow the 116-sign keyword model (experimental)"
-                    description="Only if the recognizer runs with --keyword. On unseen signers its top sign is right about 75% of the time, and unknown gestures still come out as a sign. Signs it isn't confident about are shown with their alternatives but never used."
+                    label="Allow the 116-sign keyword model"
+                    description="On by default (start the recognizer with --keyword). On unseen signers its top sign is right about 75% of the time and the right sign is in its top five about 91% of the time; unknown gestures still come out as a sign. Signs it isn't confident about are shown with their alternatives but never used. Turn this off to accept only the 14-sign model."
                   />
                 </div>
               ) : (

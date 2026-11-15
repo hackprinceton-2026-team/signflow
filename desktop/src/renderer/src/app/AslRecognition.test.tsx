@@ -78,7 +78,7 @@ describe('the local ASL recognizer in the app', () => {
     go('Settings');
     expect(screen.getByTestId('camera-external-note')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Start camera' })).toBeNull();
-    expect(JSON.parse(localStorage.getItem('signflow.recognizer') ?? '{}')).toEqual({ source: 'asl', allowKeyword: false });
+    expect(JSON.parse(localStorage.getItem('signflow.recognizer') ?? '{}')).toEqual({ source: 'asl', allowKeyword: true });
   });
 
   it('switching to the ASL recognizer releases a camera the app already had open', async () => {
@@ -141,11 +141,25 @@ describe('the local ASL recognizer in the app', () => {
     expect(screen.queryByTestId('draft-text')).toBeNull();
   });
 
-  it('the 116-sign keyword model is opt-in; uncertain top-5 candidates are shown, never used', async () => {
+  it('the 116-sign keyword model can be turned off; then only the 14-sign model is accepted', async () => {
     const { bridge } = renderApp();
     go('Settings');
     radio('Sign recognizer', ASL);
-    fireEvent.click(screen.getByRole('switch', { name: /Allow the 116-sign keyword model/ }));
+    const keywordSwitch = screen.getByRole('switch', { name: /Allow the 116-sign keyword model/ });
+    expect(keywordSwitch).toHaveAttribute('aria-checked', 'true');
+    fireEvent.click(keywordSwitch);
+    expect(keywordSwitch).toHaveAttribute('aria-checked', 'false');
+    go('Live');
+    await startRecognition(bridge);
+    expect(bridge.allowKeyword).toBe(false);
+    expect(JSON.parse(localStorage.getItem('signflow.recognizer') ?? '{}')).toEqual({ source: 'asl', allowKeyword: false });
+  });
+
+  it('the 116-sign keyword model is allowed by default; uncertain top-5 candidates are shown, never used', async () => {
+    const { bridge } = renderApp();
+    go('Settings');
+    radio('Sign recognizer', ASL);
+    expect(screen.getByRole('switch', { name: /Allow the 116-sign keyword model/ })).toHaveAttribute('aria-checked', 'true');
     go('Live');
     await startRecognition(bridge);
     expect(bridge.allowKeyword).toBe(true);

@@ -7,7 +7,7 @@
  * Wire format (one JSON text message per event), from the recognizer's README:
  *   14-sign demo model (default):
  *     {"type":"sign","sign":"HELP","confidence":0.91,"candidates":[["HELP",0.91],["STOP",0.05]],"ts":1794708452.9}
- *   116-sign keyword model (--keyword, opt-in here):
+ *   116-sign keyword model (--keyword; allowed by default here, can be turned off):
  *     {"type":"sign","candidates":[["HEADACHE",0.62],["HOT",0.14],...],"top1":"HEADACHE","confident":true,"ts":...}
  *   both:
  *     {"type":"end_of_sentence","signs":["HELP","DOCTOR"],"ts":...}   (keyword adds "confident":[...])
@@ -174,7 +174,7 @@ export function parseRecognizerMessage(text: unknown, now: number): ParseResult 
 // ---------- IPC (renderer → main) ----------
 
 export interface RecognizerStartRequest {
-  /** The user opted in to the 116-sign keyword model; otherwise its messages are refused. */
+  /** The 116-sign keyword model is allowed (the default); if false, its messages are refused. */
   allowKeyword: boolean;
 }
 

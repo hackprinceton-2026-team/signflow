@@ -38,7 +38,8 @@ const DEDUPE_WINDOW = 64;
  * - Every message is untrusted: size-limited, parsed, validated and normalized
  *   by `parseRecognizerMessage`; anything else is dropped (and counted).
  * - The same sign delivered twice (same id) is forwarded once.
- * - Keyword-model (116-sign) messages are refused unless the user opted in.
+ * - Keyword-model (116-sign) messages are refused if the user turned that model
+ *   off (the app allows it by default; until start() says so, nothing is allowed).
  * - While started, it reconnects with backoff (the recognizer may start later
  *   than the app, or restart); `stop()` closes and stops reconnecting.
  */
@@ -131,7 +132,7 @@ export class RecognizerBridge {
     if (reason) this.opts.log(`connect failed: ${reason}`);
     this.setStatus({
       state: 'connecting',
-      message: `Waiting for the SignFlow ASL recognizer on ${this.url}. Start it with: python src/live.py`,
+      message: `Waiting for the SignFlow ASL recognizer on ${this.url}. Start it with: python src/live.py${this.allowKeyword ? ' --keyword' : ''}`,
     });
     this.timer = setTimeout(() => {
       this.timer = null;
