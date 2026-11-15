@@ -1,0 +1,29 @@
+{
+  "release": "v2_rf_feat2dom",
+  "frozen": "2026-11-14",
+  "live_file": "models/sign_model.joblib",
+  "versioned_file": "models/v2_rf_feat2dom.joblib",
+  "metrics_file": "models/v2_rf_feat2dom.json",
+  "sha256": "a638badd926c97c1418c26101d1e4a9b58eb2ad9aec3490fe4a1ac2fd8be01bf",
+  "sha256_matches_versioned": true,
+  "data_manifest_sha256": "feafa22dbd01de722dd16de8d8316c80e3888ce307afd704fd3cc667c030cfca",
+  "data_index_sha256": "7fc4f46a4e6210617b04c5539eeb783b1800354e0331dd1aba1b7e759ffe9db9",
+  "labels": [
+    "BATHROOM",
+    "DOCTOR",
+    "DRINK",
+    "FOOD",
+    "HELP",
+    "HUNGRY",
+    "NO",
+    "PLEASE",
+    "READY",
+    "SORRY",
+    "STOP",
+    "THANKYOU",
+    "THIRSTY",
+    "YES"
+  ],
+  "conf_threshold": 0.5,
+  "webcam_test_17_clips": "14/17 correct (data/webcam_eval_v2_rf_feat2dom.log)"
+}

@@ -28,13 +28,14 @@ const isDeviceSpeechEngine = (v: unknown): v is DeviceSpeechEngine => v === 'sys
 /**
  * Where signs come from: the scripted demo recognizer (default, always works),
  * or the local ASL model (Umar's live.py, a separate process that owns the
- * camera). The 116-sign keyword model is opt-in.
+ * camera). With the ASL model, the 116-sign keyword model (`live.py --keyword`)
+ * is allowed by default; turning it off accepts only the 14-sign model.
  */
 export interface RecognizerSettings {
   source: 'demo' | 'asl';
   allowKeyword: boolean;
 }
-export const DEFAULT_RECOGNIZER_SETTINGS: RecognizerSettings = { source: 'demo', allowKeyword: false };
+export const DEFAULT_RECOGNIZER_SETTINGS: RecognizerSettings = { source: 'demo', allowKeyword: true };
 export function isRecognizerSettings(v: unknown): v is RecognizerSettings {
   if (!v || typeof v !== 'object') return false;
   const o = v as Record<string, unknown>;

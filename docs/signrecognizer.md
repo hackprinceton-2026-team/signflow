@@ -2,7 +2,7 @@
 
 For Umar (ML). This is the one interface the desktop app needs from a real model. Everything after recognition (drafting English with Gemini, the editable draft, confirmation, speech, captions, notes) already works and doesn't change.
 
-By default both Demo and Live mode use `MockSignRecognizer` (`desktop/src/renderer/src/adapters/mock/mockRecognizer.ts`), which emits scripted glosses while camera frames are flowing. **Umar's live recognizer is now wired in as an opt-in** (Settings › Recognition › SignFlow ASL model): it runs as a separate local process that owns the camera, and Electron main bridges its WebSocket. See [`asl-recognizer.md`](asl-recognizer.md). Two optional `SignRecognizer` members support it: `ownsCamera` (the app then never opens the camera) and `onSentenceEnd` (the session drafts on the recognizer's sentence end instead of a fixed pause).
+By default both Demo and Live mode use `MockSignRecognizer` (`desktop/src/renderer/src/adapters/mock/mockRecognizer.ts`), which emits scripted glosses while camera frames are flowing. **Umar's live recognizer is now wired in as an opt-in** (Settings › Recognition › SignFlow ASL model): it runs as a separate local process (`ml/src/live.py --keyword`, 116 signs by default) that owns the camera, and Electron main bridges its WebSocket. See [`asl-recognizer.md`](asl-recognizer.md). Two optional `SignRecognizer` members support it: `ownsCamera` (the app then never opens the camera) and `onSentenceEnd` (the session drafts on the recognizer's sentence end instead of a fixed pause).
 
 ## The interface
 
