@@ -6,12 +6,14 @@ import asyncio
 import logging
 import re
 from collections.abc import Sequence
-from typing import TYPE_CHECKING, Protocol
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, Any, Protocol
 
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from pydantic import SecretStr
 
+from .config import ThinkingLevel
 from .errors import TranslationRejected, UpstreamError, UpstreamTimeout
 from .schemas import TranslationMode
 
@@ -76,6 +78,50 @@ def classify_provider_error(exc: BaseException, model: str) -> Exception:
     return UpstreamError()
 
 
+@dataclass(frozen=True)
+class TokenUsage:
+    """Token counts Gemini reported for one translation. Counts only: never content."""
+
+    input_tokens: int
+    output_tokens: int
+    #: Thinking tokens, part of ``output_tokens``. Generated before the answer, so they add latency.
+    #: ``None`` means not reported, which is not the same as zero (see ``token_usage``).
+    reasoning_tokens: int | None
+
+    def to_dict(self) -> dict[str, int | None]:
+        return {
+            "input_tokens": self.input_tokens,
+            "output_tokens": self.output_tokens,
+            "reasoning_tokens": self.reasoning_tokens,
+        }
+
+
+def token_usage(message: Any) -> TokenUsage | None:
+    """The usage LangChain attached to a model reply, or ``None`` when the provider sent none.
+
+    ``reasoning_tokens`` is ``None`` unless a thinking count is actually present.
+    langchain-google-genai only adds ``output_token_details.reasoning`` when Gemini's
+    ``thoughts_token_count`` is above zero. A missing key can mean zero or not reported,
+    so it is recorded as unknown rather than as zero.
+    """
+    usage = getattr(message, "usage_metadata", None)
+    if not usage:
+        return None
+    details = usage.get("output_token_details") or {}
+    reasoning = details.get("reasoning")
+    return TokenUsage(
+        input_tokens=int(usage.get("input_tokens") or 0),
+        output_tokens=int(usage.get("output_tokens") or 0),
+        reasoning_tokens=None if reasoning is None else int(reasoning),
+    )
+
+
+@dataclass(frozen=True)
+class Translation:
+    text: str
+    usage: TokenUsage | None = None
+
+
 class Translator(Protocol):
     model_name: str
 
@@ -90,28 +136,38 @@ class GeminiTranslator:
         model: str,
         temperature: float,
         timeout_s: float,
+        thinking_level: ThinkingLevel | None = None,
         llm: BaseChatModel | None = None,
     ) -> None:
         if llm is None:
             from langchain_google_genai import ChatGoogleGenerativeAI
 
+            # Only sent when configured: unset keeps the model's own default thinking level.
+            thinking = {} if thinking_level is None else {"thinking_level": thinking_level}
             llm = ChatGoogleGenerativeAI(
                 model=model,
                 google_api_key=api_key,
                 temperature=temperature,
                 timeout=timeout_s,
                 max_retries=1,
+                **thinking,
             )
         self.model_name = model
         self._timeout_s = timeout_s
-        self._chain = PROMPT | llm | StrOutputParser()
+        self._chain = PROMPT | llm
+        self._parser = StrOutputParser()
 
     async def translate(self, glosses: Sequence[str], mode: TranslationMode) -> str:
+        return (await self.translate_detailed(glosses, mode)).text
+
+    async def translate_detailed(self, glosses: Sequence[str], mode: TranslationMode) -> Translation:
+        """``translate`` plus the token usage Gemini reported (used by the evaluation harness)."""
         try:
-            raw = await asyncio.wait_for(
+            message = await asyncio.wait_for(
                 self._chain.ainvoke({"glosses": " ".join(glosses), "mode": mode}),
                 timeout=self._timeout_s,
             )
+            raw = self._parser.invoke(message)
         except TimeoutError as exc:
             raise UpstreamTimeout() from exc
         except Exception as exc:
@@ -125,4 +181,4 @@ class GeminiTranslator:
         text = clean_output(raw)
         if not text:
             raise UpstreamError("The AI service returned an empty translation. Try again.")
-        return text
+        return Translation(text, token_usage(message))

@@ -69,6 +69,7 @@ def create_app(
                 model=settings.gemini_model,
                 temperature=settings.gemini_temperature,
                 timeout_s=settings.translate_timeout_s,
+                thinking_level=settings.gemini_thinking_level,
             )
         return providers["translator"]  # type: ignore[return-value]
 

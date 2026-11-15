@@ -29,9 +29,15 @@ class FakeGemini:
     built: list[dict] = []
     reply_with_key = False
 
-    def __init__(self, *, api_key, model: str, temperature: float, timeout_s: float) -> None:
+    def __init__(self, *, api_key, model: str, temperature: float, timeout_s: float, thinking_level=None) -> None:
         FakeGemini.built.append(
-            {"api_key": api_key.get_secret_value(), "model": model, "temperature": temperature, "timeout_s": timeout_s}
+            {
+                "api_key": api_key.get_secret_value(),
+                "model": model,
+                "temperature": temperature,
+                "timeout_s": timeout_s,
+                "thinking_level": thinking_level,
+            }
         )
         self.model_name = model
 
@@ -116,7 +122,13 @@ def test_live_run_uses_server_settings_and_reports_errors(
     code, out, err = run_cli("--live", "--out-dir", str(tmp_path))
 
     assert FakeGemini.built == [
-        {"api_key": FAKE_KEY, "model": "gemini-3.5-flash", "temperature": 0.1, "timeout_s": 20.0}
+        {
+            "api_key": FAKE_KEY,
+            "model": "gemini-3.5-flash",
+            "temperature": 0.1,
+            "timeout_s": 20.0,
+            "thinking_level": None,
+        }
     ]
     assert "LIVE: 25 real Gemini API call(s) to gemini-3.5-flash" in err
     assert code == cli.EXIT_FAILURES, "the simulated quota error fails the run"
@@ -126,7 +138,7 @@ def test_live_run_uses_server_settings_and_reports_errors(
     report = json.loads(json_path.read_text(encoding="utf-8"))
     assert report["run"]["live"] is True
     assert report["run"]["provider"] == "gemini" and report["run"]["model"] == "gemini-3.5-flash"
-    assert report["run"]["settings"] == {"temperature": 0.1, "timeout_s": 20.0}
+    assert report["run"]["settings"] == {"temperature": 0.1, "timeout_s": 20.0, "thinking_level": "model default"}
     assert report["summary"]["errors"] == 1 and report["summary"]["passed"] == 24
     [errored] = [case for case in report["cases"] if case["status"] == "error"]
     assert errored["error"] == {
@@ -188,3 +200,25 @@ def test_live_setup_repr_hides_the_key(settings_with_key: None, monkeypatch: pyt
     setup = live.build_live_translator(live.load_settings())
     assert FAKE_KEY not in repr(setup)
     assert setup.secrets == (FAKE_KEY,)
+
+
+def test_thinking_level_override_is_used_and_recorded(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, settings_with_key: None
+):
+    monkeypatch.setattr(live, "GeminiTranslator", FakeGemini)
+    run_cli("--live", "--thinking-level", "low", "--case", "neg-never-smoked", "--out-dir", str(tmp_path))
+    assert FakeGemini.built[-1]["thinking_level"] == "low"
+    [json_path] = tmp_path.glob("translation-eval-gemini-*.json")
+    assert json.loads(json_path.read_text(encoding="utf-8"))["run"]["settings"]["thinking_level"] == "low"
+
+
+def test_thinking_level_comes_from_server_settings(monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(live, "GeminiTranslator", FakeGemini)
+    setup = live.build_live_translator(make_settings(google_api_key=FAKE_KEY, gemini_thinking_level="minimal"))
+    assert FakeGemini.built[-1]["thinking_level"] == "minimal"
+    assert setup.settings["thinking_level"] == "minimal"
+
+
+def test_thinking_level_needs_live():
+    code, _, err = run_cli("--thinking-level", "low")
+    assert code == cli.EXIT_USAGE and "--thinking-level only applies with --live" in err

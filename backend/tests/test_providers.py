@@ -15,7 +15,14 @@ from pydantic import SecretStr
 
 from signflow_api.errors import SpeechUnavailable, TranslationRejected, UpstreamError, UpstreamTimeout
 from signflow_api.speech import PollySynthesizer, SynthesisResult, aws_credentials_available
-from signflow_api.translation import GeminiTranslator, classify_provider_error, clean_output
+from signflow_api.translation import (
+    GeminiTranslator,
+    TokenUsage,
+    Translation,
+    classify_provider_error,
+    clean_output,
+    token_usage,
+)
 
 # ---------- Gemini translator ----------
 
@@ -258,3 +265,83 @@ def test_aws_credentials_detection_is_local_and_honest(monkeypatch, tmp_path):
     monkeypatch.setenv("AWS_ACCESS_KEY_ID", "AKIATEST")
     monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "secret")
     assert aws_credentials_available("us-east-1") is True
+
+
+# ---------- Token usage ----------
+
+
+def test_translate_detailed_reports_token_usage_including_thinking():
+    reply = AIMessage(
+        content="I have never smoked.",
+        usage_metadata={
+            "input_tokens": 96,
+            "output_tokens": 412,
+            "total_tokens": 508,
+            "output_token_details": {"reasoning": 405},
+        },
+    )
+    translation = asyncio.run(translator_with(lambda _: reply).translate_detailed(["NEVER", "SMOKE"], "medical"))
+    assert translation.text == "I have never smoked."
+    assert translation.usage == TokenUsage(input_tokens=96, output_tokens=412, reasoning_tokens=405)
+
+
+def test_translate_detailed_without_usage_metadata():
+    translation = asyncio.run(translator_with(lambda _: AIMessage(content="Hi.")).translate_detailed(["HI"], "chat"))
+    assert translation == Translation("Hi.", None)
+
+
+def test_missing_thinking_count_is_unknown_not_zero():
+    """Regression: langchain-google-genai omits output_token_details when thoughts_token_count is 0 or absent,
+    so a missing count must not be reported as zero thinking."""
+    reply = AIMessage(content="Hi.", usage_metadata={"input_tokens": 5, "output_tokens": 2, "total_tokens": 7})
+    assert token_usage(reply) == TokenUsage(input_tokens=5, output_tokens=2, reasoning_tokens=None)
+    assert token_usage(reply).to_dict()["reasoning_tokens"] is None
+
+
+def test_details_without_a_reasoning_key_are_unknown_too():
+    reply = AIMessage(
+        content="Hi.",
+        usage_metadata={"input_tokens": 5, "output_tokens": 2, "total_tokens": 7, "output_token_details": {}},
+    )
+    assert token_usage(reply).reasoning_tokens is None
+
+
+def test_an_explicit_zero_thinking_count_stays_zero():
+    reply = AIMessage(
+        content="Hi.",
+        usage_metadata={
+            "input_tokens": 5,
+            "output_tokens": 2,
+            "total_tokens": 7,
+            "output_token_details": {"reasoning": 0},
+        },
+    )
+    assert token_usage(reply).reasoning_tokens == 0
+
+
+def test_translate_still_returns_plain_text():
+    reply = AIMessage(content=" Hi. ", usage_metadata={"input_tokens": 5, "output_tokens": 2, "total_tokens": 7})
+    assert asyncio.run(translator_with(lambda _: reply).translate(["HI"], "chat")) == "Hi."
+
+
+# ---------- Thinking level (built offline: constructing the client sends no request) ----------
+
+
+def real_gemini(**kwargs) -> GeminiTranslator:
+    return GeminiTranslator(
+        api_key=SecretStr("unused"), model="gemini-3.5-flash", temperature=0.2, timeout_s=20, **kwargs
+    )
+
+
+def test_thinking_level_is_not_sent_unless_configured():
+    llm = real_gemini()._chain.last
+    assert llm.reasoning_effort is None
+    assert llm._prepare_params(None).thinking_config is None, "the model's own default applies"
+    assert llm.max_retries == 1 and llm.timeout == 20
+
+
+@pytest.mark.parametrize("level", ["minimal", "low", "medium", "high"])
+def test_configured_thinking_level_reaches_the_gemini_request(level: str):
+    config = real_gemini(thinking_level=level)._chain.last._prepare_params(None).thinking_config
+    assert config.thinking_level.value == level.upper()
+    assert config.thinking_budget is None

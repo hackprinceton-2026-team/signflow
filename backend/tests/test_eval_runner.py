@@ -33,6 +33,7 @@ from evals.runner import (
     translator_responder,
 )
 from signflow_api.errors import UpstreamTimeout
+from signflow_api.translation import TokenUsage, Translation
 
 from .conftest import FakeTranslator
 
@@ -272,7 +273,75 @@ def test_markdown_report_lists_failures_and_escapes_tables():
     assert "I know \\| and more." in markdown
     assert "Offline latencies measure the harness" in markdown
     table_rows = [line for line in markdown.splitlines() if line.startswith("| `unit`")]
-    assert len(table_rows) == 1 and table_rows[0].count(" | ") == 6
+    assert len(table_rows) == 1 and table_rows[0].count(" | ") == 7
+    assert "## Tokens" not in markdown, "offline runs have no token usage"
+
+
+# ---------- Token usage ----------
+
+
+class DetailedTranslator(FakeTranslator):
+    """A translator that also reports token usage, like ``GeminiTranslator.translate_detailed``."""
+
+    def __init__(self, usage: TokenUsage | None) -> None:
+        super().__init__("Hello.")
+        self.usage = usage
+
+    async def translate_detailed(self, glosses, mode) -> Translation:
+        return Translation(await self.translate(glosses, mode), self.usage)
+
+
+def test_live_responder_records_token_usage_when_the_translator_reports_it():
+    translator = DetailedTranslator(TokenUsage(input_tokens=90, output_tokens=420, reasoning_tokens=400))
+    [result] = asyncio.run(run_cases([make_case()], translator_responder(translator)))
+    assert translator.calls == [(["HELLO"], "chat")], "one request per case, nothing added"
+    assert result.status == "pass"
+    assert result.to_dict()["usage"] == {"input_tokens": 90, "output_tokens": 420, "reasoning_tokens": 400}
+
+
+def test_translators_without_usage_still_work():
+    [result] = asyncio.run(run_cases([make_case()], translator_responder(FakeTranslator("Hello."))))
+    assert result.status == "pass" and result.to_dict()["usage"] is None
+
+
+def test_token_summary_and_markdown():
+    translator = DetailedTranslator(TokenUsage(input_tokens=90, output_tokens=420, reasoning_tokens=400))
+    results = asyncio.run(run_cases([make_case()], translator_responder(translator)))
+    report = build_report(results, run_info(live=True))
+    assert report["summary"]["tokens"] == {
+        "count": 1,
+        "mean_input": 90.0,
+        "mean_output": 420.0,
+        "reasoning_reported": 1,
+        "mean_reasoning": 400.0,
+        "max_reasoning": 400,
+    }
+    markdown = render_markdown(report)
+    assert "## Tokens" in markdown and "| 1 | 90.0 | 420.0 | 1/1 | 400.0 | 400 |" in markdown
+    [row] = [line for line in markdown.splitlines() if line.startswith("| `unit`")]
+    assert row.split(" | ")[4] == "400", "thinking tokens column"
+
+
+def test_token_summary_is_empty_without_usage():
+    results = asyncio.run(run_cases([make_case()], reference_responder()))
+    assert summarize(results)["tokens"]["count"] == 0
+
+
+def test_recorded_usage_survives_rescoring(tmp_path: Path):
+    usage = {"input_tokens": 90, "output_tokens": 420, "reasoning_tokens": 400}
+    report = {"cases": [{"id": "a", "output": "Hi.", "latency_ms": 640.2, "usage": usage}]}
+    path = tmp_path / "report.json"
+    path.write_text(json.dumps(report), encoding="utf-8")
+    assert load_recorded(path).replies == {"a": Reply("Hi.", 640.2, TokenUsage(90, 420, 400))}
+
+
+@pytest.mark.parametrize(
+    "usage", [None, "lots", {"input_tokens": 1}, {"input_tokens": -1, "output_tokens": 1, "reasoning_tokens": 0}]
+)
+def test_malformed_recorded_usage_is_ignored(tmp_path: Path, usage: object):
+    path = tmp_path / "report.json"
+    path.write_text(json.dumps({"cases": [{"id": "a", "output": "Hi.", "usage": usage}]}), encoding="utf-8")
+    assert load_recorded(path).replies == {"a": Reply("Hi.")}
 
 
 # ---------- CLI (offline) ----------
@@ -345,3 +414,42 @@ def test_cli_usage_errors_exit_2(argv: list[str], message: str, tmp_path: Path):
     code, _, err = run_cli(*argv, "--out-dir", str(tmp_path))
     assert code == cli.EXIT_USAGE
     assert message in err
+
+
+def test_unreported_thinking_is_shown_as_not_reported_and_left_out_of_means():
+    """Regression: an unknown thinking count must not count as zero in the summary or the table."""
+    cases = [make_case(id="known"), make_case(id="unknown")]
+    usages = {"known": TokenUsage(90, 420, 400), "unknown": TokenUsage(80, 10, None)}
+
+    async def respond(case):
+        return Reply("Hello.", usage=usages[case.id])
+
+    results = asyncio.run(run_cases(cases, respond))
+    report = build_report(results, run_info(live=True))
+    tokens = report["summary"]["tokens"]
+    assert tokens["count"] == 2 and tokens["reasoning_reported"] == 1
+    assert tokens["mean_reasoning"] == 400.0 and tokens["max_reasoning"] == 400
+    assert report["cases"][1]["usage"]["reasoning_tokens"] is None
+    markdown = render_markdown(report)
+    [row] = [line for line in markdown.splitlines() if line.startswith("| `unknown`")]
+    assert row.split(" | ")[4] == "not reported"
+    assert "| 2 | 85.0 | 215.0 | 1/2 | 400.0 | 400 |" in markdown
+
+
+def test_no_thinking_reported_at_all():
+    async def respond(case):
+        return Reply("Hello.", usage=TokenUsage(80, 10, None))
+
+    results = asyncio.run(run_cases([make_case()], respond))
+    tokens = summarize(results)["tokens"]
+    assert tokens["reasoning_reported"] == 0 and tokens["mean_reasoning"] is None and tokens["max_reasoning"] is None
+    assert "| 1 | 80.0 | 10.0 | 0/1 | not reported | not reported |" in render_markdown(
+        build_report(results, run_info(live=True))
+    )
+
+
+def test_recorded_unknown_thinking_stays_unknown(tmp_path: Path):
+    usage = {"input_tokens": 80, "output_tokens": 10, "reasoning_tokens": None}
+    path = tmp_path / "report.json"
+    path.write_text(json.dumps({"cases": [{"id": "a", "output": "Hi.", "usage": usage}]}), encoding="utf-8")
+    assert load_recorded(path).replies == {"a": Reply("Hi.", None, TokenUsage(80, 10, None))}

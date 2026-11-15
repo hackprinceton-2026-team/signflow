@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import Literal
 
 from signflow_api.errors import ApiError
-from signflow_api.translation import Translator, clean_output
+from signflow_api.translation import TokenUsage, Translator, clean_output
 
 from .checks import Flag, check_output, failing, reference_overlap
 from .dataset import EvalCase
@@ -34,6 +34,8 @@ class Reply:
 
     text: str
     latency_ms: float | None = None
+    #: Token counts reported by the provider (live runs, or recorded from one).
+    usage: TokenUsage | None = None
 
 
 Responder = Callable[[EvalCase], Awaitable[Reply]]
@@ -51,6 +53,7 @@ class CaseResult:
     flags: list[Flag] = field(default_factory=list)
     error: dict[str, str] | None = None
     overlap: float | None = None
+    usage: TokenUsage | None = None
 
     @property
     def status(self) -> Status:
@@ -71,6 +74,7 @@ class CaseResult:
             "reference_overlap": self.overlap,
             "flags": [flag.to_dict() for flag in self.flags],
             "error": self.error,
+            "usage": None if self.usage is None else self.usage.to_dict(),
         }
 
 
@@ -98,9 +102,17 @@ def recorded_responder(replies: dict[str, Reply]) -> Responder:
 
 
 def translator_responder(translator: Translator) -> Responder:
-    """Calls a production ``Translator`` exactly as ``POST /translate`` does."""
+    """Calls a production ``Translator`` exactly as ``POST /translate`` does.
+
+    When the translator can report token usage (``GeminiTranslator.translate_detailed``),
+    it is recorded too: the same request, with nothing added to it.
+    """
+    detailed = getattr(translator, "translate_detailed", None)
 
     async def respond(case: EvalCase) -> Reply:
+        if detailed is not None:
+            translation = await detailed(case.production_glosses(), case.mode)
+            return Reply(translation.text, usage=translation.usage)
         return Reply(await translator.translate(case.production_glosses(), case.mode))
 
     return respond
@@ -113,13 +125,28 @@ class Recorded:
     model: str | None = None
 
 
+def _recorded_usage(value: object) -> TokenUsage | None:
+    """Token usage saved in a report, when present and well formed (older reports have none)."""
+    if not isinstance(value, dict):
+        return None
+
+    def count(item: object) -> bool:
+        return isinstance(item, int) and not isinstance(item, bool) and item >= 0
+
+    input_tokens, output_tokens = value.get("input_tokens"), value.get("output_tokens")
+    reasoning = value.get("reasoning_tokens")
+    if not (count(input_tokens) and count(output_tokens) and (reasoning is None or count(reasoning))):
+        return None
+    return TokenUsage(input_tokens, output_tokens, reasoning)  # type: ignore[arg-type]
+
+
 def load_recorded(path: Path) -> Recorded:
     """Read outputs to re-score: a report written by this tool, or a plain JSON object
     mapping case id to output text (or to ``{"output": ..., "latency_ms": ...}``)."""
     data = json.loads(path.read_text(encoding="utf-8"))
     if isinstance(data, dict) and isinstance(data.get("cases"), list):
         replies = {
-            entry["id"]: Reply(entry["output"], entry.get("latency_ms"))
+            entry["id"]: Reply(entry["output"], entry.get("latency_ms"), _recorded_usage(entry.get("usage")))
             for entry in data["cases"]
             if isinstance(entry, dict) and isinstance(entry.get("output"), str)
         }
@@ -174,7 +201,7 @@ async def run_case(
     flags = check_output(case, output)
     if elapsed > latency_budget_ms:
         flags.append(Flag("latency_over_budget", f"{elapsed:.0f} ms > {latency_budget_ms:.0f} ms"))
-    return CaseResult(case, output, elapsed, flags, None, reference_overlap(output, case.references))
+    return CaseResult(case, output, elapsed, flags, None, reference_overlap(output, case.references), reply.usage)
 
 
 async def run_cases(

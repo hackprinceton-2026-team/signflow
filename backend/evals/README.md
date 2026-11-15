@@ -24,6 +24,7 @@ Each run prints one line per case and a summary, and writes a JSON and a Markdow
 | `--responses FILE` | Re-score saved outputs offline: a report from an earlier run, or `{"case-id": "output"}` (or `{"case-id": {"output": "...", "latency_ms": 640}}`). Recorded latencies are kept. |
 | `--live` | Call the real Gemini API. Mutually exclusive with `--responses`. |
 | `--model NAME` | With `--live`: use this model instead of `GEMINI_MODEL`. |
+| `--thinking-level LEVEL` | With `--live`: `minimal`, `low`, `medium` or `high` instead of `GEMINI_THINKING_LEVEL`. The report's `settings.thinking_level` records what was sent (`model default` when nothing was). |
 | `--delay-s S` | With `--live`: pause between calls (free-tier keys are rate limited). |
 | `--case ID`, `--category NAME`, `--mode MODE` | Run a subset. Each is repeatable; filters combine. |
 | `--latency-budget-ms MS` | Flag slower translations (default 3000). A warning, not a failure. |
@@ -117,14 +118,18 @@ The tests pin that every reference passes its own case and every counterexample 
     "fidelity": { "negation": { "checked": 25, "flagged": 1, "pass_rate": 0.96 }, "numbers": {…}, "time": {…}, "medical": {…}, "content": {…} },
     "by_mode": {…}, "by_category": {…},
     "latency_ms": { "count": 25, "min": …, "mean": …, "p50": …, "p90": …, "p95": …, "max": … },
-    "latency_over_budget": 0, "mean_reference_overlap": 0.81
+    "latency_over_budget": 0, "mean_reference_overlap": 0.81,
+    "tokens": { "count": 25, "mean_input": …, "mean_output": …, "reasoning_reported": 25, "mean_reasoning": …, "max_reasoning": … }
   },
   "cases": [ { "id", "category", "mode", "glosses", "status", "output", "references",
-               "latency_ms", "reference_overlap", "flags": [{ "code", "family", "severity", "detail" }], "error" } ]
+               "latency_ms", "reference_overlap", "flags": [{ "code", "family", "severity", "detail" }], "error",
+               "usage": { "input_tokens", "output_tokens", "reasoning_tokens" } } ]
 }
 ```
 
-The Markdown report has the same content for people: run details, fidelity and latency tables, results by mode and category, each failure with its glosses, output, expected references and flags, and a table of all cases.
+The Markdown report has the same content for people: run details, fidelity and latency tables, token usage (live runs), results by mode and category, each failure with its glosses, output, expected references and flags, and a table of all cases.
+
+`usage` holds the token counts Gemini reported for that request (`null` offline and for errors). `reasoning_tokens` are thinking tokens: the model generates them before the answer, so they add directly to latency. They are part of `output_tokens`. `reasoning_tokens` is `null` when no thinking count came back. langchain-google-genai only passes the count on when it is above zero, so a missing count is "not reported", not zero. The summary's `reasoning_reported` says how many cases had one, and the thinking mean and max use only those cases. Recording usage adds nothing to the request. It reads the metadata already on Gemini's reply, and only counts are kept, never content. `--responses` keeps recorded usage when re-scoring a report.
 
 Compare runs only when `dataset.sha256` matches. `prompt_sha256` tells you whether the production prompt changed between them. Latency percentiles use the nearest-rank method over successful translations only.
 
