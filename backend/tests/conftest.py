@@ -1,0 +1,62 @@
+from __future__ import annotations
+
+from collections.abc import Callable, Sequence
+
+import pytest
+from fastapi.testclient import TestClient
+
+from signflow_api.app import create_app
+from signflow_api.config import Settings
+
+
+class FakeTranslator:
+    model_name = "fake-model"
+
+    def __init__(self, result: str = "Hello, nice to meet you.", error: Exception | None = None) -> None:
+        self.result = result
+        self.error = error
+        self.calls: list[tuple[list[str], str]] = []
+
+    async def translate(self, glosses: Sequence[str], mode: str) -> str:
+        self.calls.append((list(glosses), mode))
+        if self.error:
+            raise self.error
+        return self.result
+
+
+class FakeSynthesizer:
+    def __init__(self, audio: bytes = b"ID3fake-mp3", error: Exception | None = None) -> None:
+        self.audio = audio
+        self.error = error
+        self.calls: list[tuple[str, str]] = []
+
+    async def synthesize(self, text: str, voice_id: str) -> bytes:
+        self.calls.append((text, voice_id))
+        if self.error:
+            raise self.error
+        return self.audio
+
+
+def make_settings(**overrides: object) -> Settings:
+    """Settings isolated from the developer's environment and backend/.env."""
+    return Settings(_env_file=None, **overrides)  # type: ignore[call-arg]
+
+
+@pytest.fixture
+def make_client() -> Callable[..., TestClient]:
+    def _make(
+        *,
+        translator: FakeTranslator | None = None,
+        synthesizer: FakeSynthesizer | None = None,
+        speech_configured: bool = True,
+        **settings: object,
+    ) -> TestClient:
+        app = create_app(
+            make_settings(**settings),
+            translator=translator,
+            synthesizer=synthesizer,
+            speech_configured=lambda: speech_configured,
+        )
+        return TestClient(app, raise_server_exceptions=False)
+
+    return _make
