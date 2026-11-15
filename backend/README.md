@@ -1,8 +1,8 @@
 # backend/
 
-**Owner: Raimbek Alish** (backend and AI engineering, since November 14, 2026)
+**Owner: Muhammad Fardeen** (backend and AI engineering)
 
-**Original author: Muhammad Fardeen Ahsan**, who built this FastAPI backend and owned backend engineering until then.
+**Original author: Muhammad Fardeen Ahsan**, who built this FastAPI backend and owned backend engineering.
 
 The FastAPI service between the SignFlow desktop app and the AI providers: ASL gloss → English translation (Gemini, through LangChain), and speech for confirmed text (Amazon Polly).
 
