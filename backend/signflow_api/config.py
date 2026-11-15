@@ -30,6 +30,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=BACKEND_DIR / ".env", env_file_encoding="utf-8", extra="ignore")
 
     # --- Translation (Gemini via LangChain) ---
+    #: Only GOOGLE_API_KEY. (A GEMINI_API_KEY alias let a stale shell variable override backend/.env.)
     google_api_key: SecretStr | None = None
     gemini_model: str = Field("gemini-3.8-flash", min_length=1)
     gemini_temperature: float = Field(0.2, ge=0, le=1)

@@ -41,6 +41,13 @@ class FakeSynthesizer:
         return SynthesisResult(self.audio, self.engine)
 
 
+@pytest.fixture(autouse=True)
+def _no_developer_keys(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Tests never see (or use) API keys from the developer's shell."""
+    for name in ("GOOGLE_API_KEY", "GEMINI_API_KEY"):
+        monkeypatch.delenv(name, raising=False)
+
+
 def make_settings(**overrides: object) -> Settings:
     """Settings isolated from the developer's environment and backend/.env."""
     return Settings(_env_file=None, **overrides)  # type: ignore[call-arg]

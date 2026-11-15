@@ -18,7 +18,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from . import __version__
 from .config import Settings, get_settings
-from .errors import ApiError, SpeechUnavailable, TranslationUnavailable, install_error_handlers
+from .errors import ApiError, SpeechUnavailable, TranslationRejected, TranslationUnavailable, install_error_handlers
 from .schemas import (
     ErrorResponse,
     HealthResponse,
@@ -55,6 +55,8 @@ def create_app(
     instead of crashing at startup."""
     settings = settings or get_settings()
     providers: dict[str, object] = {}
+    #: Set when Gemini rejects the key or model; /health then says "not_configured".
+    translation_rejected = False
 
     def get_translator() -> Translator:
         if translator is not None:
@@ -117,7 +119,9 @@ def create_app(
         """Liveness plus which providers are configured. Never includes secrets."""
         return HealthResponse(
             version=__version__,
-            translation="ready" if (translator is not None or settings.translation_configured) else "not_configured",
+            translation="ready"
+            if (translator is not None or settings.translation_configured) and not translation_rejected
+            else "not_configured",
             speech="ready" if is_speech_configured() else "not_configured",
             model=translator.model_name if translator is not None else settings.gemini_model,
             speech_voice=settings.polly_default_voice,
@@ -133,8 +137,14 @@ def create_app(
     )
     async def translate(request: TranslationRequest) -> TranslationResponse:
         """Translate ASL glosses into an English draft. Returns text only, never audio."""
+        nonlocal translation_rejected
         engine = get_translator()
-        text = await engine.translate([g.upper() for g in request.raw_signs], request.mode)
+        try:
+            text = await engine.translate([g.upper() for g in request.raw_signs], request.mode)
+        except TranslationRejected:
+            translation_rejected = True
+            raise
+        translation_rejected = False
         log.info("translated %d signs (%s) → %d chars", len(request.raw_signs), request.mode, len(text))
         return TranslationResponse(translated_text=text, mode=request.mode, model=engine.model_name)
 

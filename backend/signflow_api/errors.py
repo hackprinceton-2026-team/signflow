@@ -36,6 +36,15 @@ class TranslationUnavailable(ApiError):
     message = "Translation is not configured on the server (missing GOOGLE_API_KEY)."
 
 
+class TranslationRejected(TranslationUnavailable):
+    """Gemini rejected the configuration (bad key, disabled API, unknown model).
+
+    Not transient: ``/health`` reports translation as not configured afterwards.
+    """
+
+    message = "The Gemini API key was rejected. Check GOOGLE_API_KEY in backend/.env and restart the backend."
+
+
 class SpeechUnavailable(ApiError):
     status_code = 503
     code: ErrorCode = "speech_unavailable"

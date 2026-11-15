@@ -4,7 +4,7 @@ import base64
 
 import pytest
 
-from signflow_api.errors import SpeechUnavailable, UpstreamError, UpstreamTimeout
+from signflow_api.errors import SpeechUnavailable, TranslationRejected, UpstreamError, UpstreamTimeout
 
 from .conftest import FakeSynthesizer, FakeTranslator
 
@@ -184,6 +184,19 @@ def test_health_reports_providers_without_secrets(make_client):
 def test_health_reports_the_configured_voice_and_engine(make_client):
     body = make_client(polly_default_voice="Matthew", polly_engine="neural").get("/health").json()
     assert (body["speech_voice"], body["speech_engine"]) == ("Matthew", "neural")
+
+
+def test_a_rejected_key_turns_health_to_not_configured_until_translation_works(make_client):
+    translator = FakeTranslator(error=TranslationRejected())
+    client = make_client(translator=translator)
+    assert client.get("/health").json()["translation"] == "ready"
+    response = client.post("/translate", json={"raw_signs": ["HELLO"]})
+    assert_error(response, 503, "translation_unavailable")
+    assert "key was rejected" in response.json()["error"]["message"]
+    assert client.get("/health").json()["translation"] == "not_configured"
+    translator.error = None
+    assert client.post("/translate", json={"raw_signs": ["HELLO"]}).status_code == 200
+    assert client.get("/health").json()["translation"] == "ready"
 
 
 def test_health_when_unconfigured(make_client):

@@ -13,9 +13,9 @@ from langchain_core.messages import AIMessage
 from langchain_core.runnables import RunnableLambda
 from pydantic import SecretStr
 
-from signflow_api.errors import SpeechUnavailable, UpstreamError, UpstreamTimeout
+from signflow_api.errors import SpeechUnavailable, TranslationRejected, UpstreamError, UpstreamTimeout
 from signflow_api.speech import PollySynthesizer, SynthesisResult, aws_credentials_available
-from signflow_api.translation import GeminiTranslator, clean_output
+from signflow_api.translation import GeminiTranslator, classify_provider_error, clean_output
 
 # ---------- Gemini translator ----------
 
@@ -52,6 +52,58 @@ def test_translator_provider_exception_is_an_upstream_error():
 
     with pytest.raises(UpstreamError):
         asyncio.run(translator_with(broken).translate(["HELLO"], "chat"))
+
+
+class FakeGoogleError(Exception):
+    """Shape of google.genai.errors.ClientError: an int ``code`` and the API message."""
+
+    def __init__(self, code: int, message: str) -> None:
+        super().__init__(f"{code} {message}")
+        self.code = code
+
+
+def wrapped(code: int, message: str) -> Exception:
+    """A LangChain error caused by a Google API error, as langchain-google-genai raises them."""
+    try:
+        try:
+            raise FakeGoogleError(code, message)
+        except FakeGoogleError as inner:
+            raise RuntimeError("Error calling model 'gemini-test'") from inner
+    except RuntimeError as outer:
+        return outer
+
+
+@pytest.mark.parametrize(
+    ("code", "message", "expected", "says"),
+    [
+        (
+            400,
+            "INVALID_ARGUMENT. API key not valid. Please pass a valid API key.",
+            TranslationRejected,
+            "key was rejected",
+        ),
+        (400, "reason: API_KEY_INVALID", TranslationRejected, "key was rejected"),
+        (403, "PERMISSION_DENIED", TranslationRejected, "key was rejected"),
+        (404, "models/gemini-test is not found", TranslationRejected, "GEMINI_MODEL"),
+        (429, "RESOURCE_EXHAUSTED", UpstreamError, "quota"),
+        (500, "INTERNAL", UpstreamError, "Try again"),
+        (400, "Request contains an invalid argument.", UpstreamError, "Try again"),
+    ],
+)
+def test_provider_errors_are_classified_with_actionable_messages(code, message, expected, says):
+    error = classify_provider_error(wrapped(code, message), "gemini-test")
+    assert type(error) is expected
+    assert says in error.message
+    assert "AIza" not in error.message and message not in error.message
+
+
+def test_translator_rejected_key_is_reported_as_unavailable():
+    def rejected(_):
+        raise wrapped(400, "API key not valid. key=AIzaSySECRET")
+
+    with pytest.raises(TranslationRejected) as info:
+        asyncio.run(translator_with(rejected).translate(["HELLO"], "chat"))
+    assert "AIza" not in info.value.message
 
 
 def test_translator_timeout():

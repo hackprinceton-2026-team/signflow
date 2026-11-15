@@ -38,6 +38,15 @@ def test_reads_environment(monkeypatch):
     assert s.cors_origins == ["app://signflow", "https://demo.example"]
 
 
+def test_dotenv_key_is_not_overridden_by_a_shell_gemini_api_key(tmp_path, monkeypatch):
+    monkeypatch.setenv("GEMINI_API_KEY", "AIzaSySTALESHELLKEY")
+    env = tmp_path / ".env"
+    env.write_text("GOOGLE_API_KEY=from-file\n")
+    s = Settings(_env_file=env)  # type: ignore[call-arg]
+    assert s.google_api_key is not None and s.google_api_key.get_secret_value() == "from-file"
+    assert Settings(_env_file=None).google_api_key is None  # type: ignore[call-arg]
+
+
 def test_reads_dotenv_file(tmp_path):
     env = tmp_path / ".env"
     env.write_text("GOOGLE_API_KEY=from-file\nPOLLY_DEFAULT_VOICE=Matthew\n")
