@@ -58,9 +58,22 @@ These checks are objective. They don't replace listening.
 - `kokoro-js` 1.2.1's `stream()` never finishes for plain-string input (its sentence splitter is never closed). SignFlow doesn't use it: it splits sentences itself and calls `generate()` per sentence.
 - Kokoro's own quality grades: Heart **A**, Bella **A-**, Michael **C+**. Heart is the default.
 
+## Reliability audit (pre-PR)
+
+- **Reproducible install:** a fresh worktree with `npm ci` from the committed lockfile resolves a single deduped `@huggingface/transformers@4.3.2` (pinned integrity), and passes typecheck, lint, all unit tests, the build, and the real-model Kokoro E2E. `npm ls --all` reports missing optional `@emnapi/*` packages for wasm32-only builds (rolldown, sharp) that never load on macOS. `main` shows the same report. `npm audit --omit=dev`: 0 vulnerabilities.
+- **kokoro-js 1.2.1 with transformers.js 4.3.2:** kokoro-js uses `StyleTextToSpeech2Model`, `AutoTokenizer` (with `truncation: true`), `Tensor`, and `RawAudio`, and all still work. Tokenizer truncation still caps input at 512 tokens, so very long input is cut, not crashed. That's why the IPC limit is 400 characters and the renderer sends ≤ 220-character chunks.
+- **Offline:** the full stack (kokoro-js, transformers.js, ONNX Runtime, phonemizer) ran the whole benchmark under a macOS sandbox profile denying all outbound network, with identical timings. In the built app, `lsof` saw no socket from the Kokoro process during load and 40 syntheses, and the network guard logged no attempt. (Running the whole Electron app under that sandbox isn't possible: Chromium's own sandbox can't initialize inside it.)
+- **Isolation:** the utility process gets a minimal environment (verified: a child forked this way sees no `GOOGLE_API_KEY` or AWS variables). IPC is main-window only (E2E: the captions overlay is refused), and payloads and the pending queue are bounded.
+- **Cancellation and cleanup:** E2E with the real model confirms that Stop during synthesis and Stop mid-sentence play nothing afterwards, and trigger no fallback voice. Deselecting Kokoro ends its process. No Electron or Kokoro process survives quitting. Over 40 consecutive syntheses, memory plateaued (Kokoro 0.89–0.94 GB, then back to 0.51 GB; renderer 143–178 MB) with no growth.
+- **System and cloud modes:** unchanged and green. Real macOS speech (Samantha) speaks the Test voice with Kokoro never started. Live mode runs against the contract-validating local stand-in backend, never AWS or Gemini.
+
 ## Known limits
 
 - One synthesis runs at a time (ONNX Runtime already uses all performance cores). A sentence already inside the model can't be interrupted, but Stop drops its result and everything queued.
 - Kokoro truncates input over ~510 tokens, so the app splits long sentences at commas and spaces (≤ 220 characters per chunk).
-- The fp32 model costs ~0.6–0.8 GB of RAM while Kokoro is selected.
+- The fp32 model costs ~0.5–0.9 GB of RAM while Kokoro is selected (freed when deselected).
+- `onnxruntime-node` 1.30 ships macOS binaries for Apple Silicon only. On an Intel Mac, Kokoro fails to load and the system voice speaks instead.
+- A long sentence costs ~0.23 s of synthesis per second of speech before it starts. A 220-character chunk (the longest the app sends) waits ~3 s. Typical confirmed sentences wait 0.3–0.7 s.
+- Changing the Kokoro voice affects the next text; sentences of an utterance already queued keep the voice they were requested with.
+- Not tested as a packaged, signed `.app` (the repo has no packaging step); verified in `npm run dev` and the built `out/` app.
 - The npm packages add ~500 MB to `desktop/node_modules` (ONNX Runtime native and web builds). The repo itself carries no weights.
