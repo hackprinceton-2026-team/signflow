@@ -2,6 +2,10 @@
 
 SignFlow can take its signs from Umar's live ASL recognizer (`live.py`, branch `keyword-model-v5`) instead of the scripted demo recognizer. The recognizer runs as its own local process and owns the camera. SignFlow connects to it over a loopback WebSocket. Everything after recognition (drafting English with Gemini or the demo rules, the editable draft, confirmation, Kokoro or system speech) is unchanged.
 
+> **Tested recognizer version:** branch `keyword-model-v5` at commit **`d911607`** (`d911607869bd3d5ac8051093b8c2f63bc384dd1f`, "Ignore large models and caches; add live test logs"). The setup below pins that commit.
+>
+> **Verification status:** recorded-data tests passed (the built app against a WebSocket stand-in replaying the recognizer's message format, and Umar's real engine fed recorded landmark rows from his branch). **Accuracy with a live human signer has not been verified yet.**
+
 > `keyword-model-v5` has **unrelated Git history** (no common ancestor with `main`). Never merge or rebase it into `main`. Check it out separately (below). SignFlow's repo contains none of its code, models, landmarks or data.
 
 ## Run it
@@ -11,7 +15,7 @@ SignFlow can take its signs from Umar's live ASL recognizer (`live.py`, branch `
 ```bash
 # from the signflow repo: a separate, read-only checkout of Umar's branch
 git fetch origin keyword-model-v5
-git worktree add --detach ../signflow-ml origin/keyword-model-v5
+git worktree add --detach ../signflow-ml d911607869bd3d5ac8051093b8c2f63bc384dd1f
 cd ../signflow-ml
 python3.11 -m venv slenv
 ./slenv/bin/pip install -r requirements.txt
