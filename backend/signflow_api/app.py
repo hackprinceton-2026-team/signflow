@@ -75,7 +75,10 @@ def create_app(
             return synthesizer
         if "synthesizer" not in providers:
             providers["synthesizer"] = PollySynthesizer(
-                region=settings.aws_region, engine=settings.polly_engine, timeout_s=settings.speak_timeout_s
+                region=settings.aws_region,
+                engine=settings.polly_engine,
+                fallback_engine=settings.polly_fallback_engine,
+                timeout_s=settings.speak_timeout_s,
             )
         return providers["synthesizer"]  # type: ignore[return-value]
 
@@ -117,6 +120,8 @@ def create_app(
             translation="ready" if (translator is not None or settings.translation_configured) else "not_configured",
             speech="ready" if is_speech_configured() else "not_configured",
             model=translator.model_name if translator is not None else settings.gemini_model,
+            speech_voice=settings.polly_default_voice,
+            speech_engine=settings.polly_engine,
         )
 
     @app.post(
@@ -144,13 +149,17 @@ def create_app(
         """Synthesize speech for text the user has **already confirmed** in the app."""
         voice_id = request.voice_id or settings.polly_default_voice
         try:
-            audio = await get_synthesizer().synthesize(request.text, voice_id)
+            result = await get_synthesizer().synthesize(request.text, voice_id)
         except ApiError:
             raise
         except Exception as exc:  # provider construction failures, e.g. a broken AWS profile
             log.warning("Speech synthesizer unavailable: %s", type(exc).__name__)
             raise SpeechUnavailable() from exc
-        log.info("spoke %d chars with %s → %d bytes", len(request.text), voice_id, len(audio))
-        return SpeechResponse(audio_base64=base64.b64encode(audio).decode("ascii"), voice_id=voice_id)
+        log.info(
+            "spoke %d chars with %s (%s) → %d bytes", len(request.text), voice_id, result.engine, len(result.audio)
+        )
+        return SpeechResponse(
+            audio_base64=base64.b64encode(result.audio).decode("ascii"), voice_id=voice_id, engine=result.engine
+        )
 
     return app

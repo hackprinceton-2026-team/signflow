@@ -113,16 +113,22 @@ def test_speak_returns_audio_for_the_exact_text(make_client):
     body = response.json()
     assert base64.b64decode(body["audio_base64"]) == b"ID3audio"
     assert body["audio_format"] == "mp3"
-    assert body["voice_id"] == "Joanna"
-    assert synth.calls == [("I've had a headache since yesterday, edited.", "Joanna")]
+    assert body["voice_id"] == "Ruth"
+    assert body["engine"] == "generative"
+    assert synth.calls == [("I've had a headache since yesterday, edited.", "Ruth")]
+
+
+def test_speak_reports_the_engine_actually_used(make_client):
+    body = make_client(synthesizer=FakeSynthesizer(engine="neural")).post("/speak", json={"text": "Hi."}).json()
+    assert body["engine"] == "neural"
 
 
 def test_speak_uses_requested_or_configured_voice(make_client):
     synth = FakeSynthesizer()
     client = make_client(synthesizer=synth, polly_default_voice="Matthew")
     client.post("/speak", json={"text": "Hi."})
-    client.post("/speak", json={"text": "Hi.", "voice_id": "Ruth"})
-    assert [voice for _, voice in synth.calls] == ["Matthew", "Ruth"]
+    client.post("/speak", json={"text": "Hi.", "voice_id": "Danielle"})
+    assert [voice for _, voice in synth.calls] == ["Matthew", "Danielle"]
 
 
 @pytest.mark.parametrize(
@@ -165,12 +171,19 @@ def test_health_reports_providers_without_secrets(make_client):
     response = client.get("/health")
     assert response.json() == {
         "status": "ok",
-        "version": "0.2.0",
+        "version": "0.3.0",
         "translation": "ready",
         "speech": "not_configured",
         "model": "gemini-3.8-flash",
+        "speech_voice": "Ruth",
+        "speech_engine": "generative",
     }
     assert "SECRET" not in response.text
+
+
+def test_health_reports_the_configured_voice_and_engine(make_client):
+    body = make_client(polly_default_voice="Matthew", polly_engine="neural").get("/health").json()
+    assert (body["speech_voice"], body["speech_engine"]) == ("Matthew", "neural")
 
 
 def test_health_when_unconfigured(make_client):

@@ -3,7 +3,7 @@
   "info": {
     "title": "SignFlow API",
     "description": "ASL gloss → English translation, and speech for text the user has confirmed. `/translate` never produces audio; the desktop app calls `/speak` only after confirmation.",
-    "version": "0.2.0"
+    "version": "0.3.0"
   },
   "paths": {
     "/health": {
@@ -258,6 +258,22 @@
           "model": {
             "type": "string",
             "title": "Model"
+          },
+          "speech_voice": {
+            "type": "string",
+            "title": "Speech Voice",
+            "description": "Default voice for `/speak` when the request names none."
+          },
+          "speech_engine": {
+            "type": "string",
+            "enum": [
+              "generative",
+              "long-form",
+              "neural",
+              "standard"
+            ],
+            "title": "Speech Engine",
+            "description": "Engine `/speak` tries first."
           }
         },
         "additionalProperties": false,
@@ -266,16 +282,20 @@
           "version",
           "translation",
           "speech",
-          "model"
+          "model",
+          "speech_voice",
+          "speech_engine"
         ],
         "title": "HealthResponse",
         "examples": [
           {
             "model": "gemini-3.8-flash",
             "speech": "not_configured",
+            "speech_engine": "generative",
+            "speech_voice": "Ruth",
             "status": "ok",
             "translation": "ready",
-            "version": "0.2.0"
+            "version": "0.3.0"
           }
         ]
       },
@@ -299,7 +319,7 @@
               }
             ],
             "title": "Voice Id",
-            "description": "Amazon Polly voice; the server default if omitted."
+            "description": "Amazon Polly voice, e.g. `Ruth`, `Danielle` or `Matthew` (Generative). The server default if omitted."
           }
         },
         "additionalProperties": false,
@@ -312,7 +332,10 @@
         "examples": [
           {
             "text": "I've had a headache since yesterday.",
-            "voice_id": "Joanna"
+            "voice_id": "Ruth"
+          },
+          {
+            "text": "Nice to meet you."
           }
         ]
       },
@@ -332,21 +355,35 @@
           },
           "voice_id": {
             "type": "string",
-            "title": "Voice Id"
+            "title": "Voice Id",
+            "description": "Voice that spoke the audio."
+          },
+          "engine": {
+            "type": "string",
+            "enum": [
+              "generative",
+              "long-form",
+              "neural",
+              "standard"
+            ],
+            "title": "Engine",
+            "description": "Polly engine that produced the audio: the configured one, or the fallback if the voice lacks it."
           }
         },
         "additionalProperties": false,
         "type": "object",
         "required": [
           "audio_base64",
-          "voice_id"
+          "voice_id",
+          "engine"
         ],
         "title": "SpeechResponse",
         "examples": [
           {
             "audio_base64": "SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4",
             "audio_format": "mp3",
-            "voice_id": "Joanna"
+            "engine": "generative",
+            "voice_id": "Ruth"
           }
         ]
       },

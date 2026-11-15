@@ -6,7 +6,8 @@ import pytest
 from fastapi.testclient import TestClient
 
 from signflow_api.app import create_app
-from signflow_api.config import Settings
+from signflow_api.config import PollyEngine, Settings
+from signflow_api.speech import SynthesisResult
 
 
 class FakeTranslator:
@@ -25,16 +26,19 @@ class FakeTranslator:
 
 
 class FakeSynthesizer:
-    def __init__(self, audio: bytes = b"ID3fake-mp3", error: Exception | None = None) -> None:
+    def __init__(
+        self, audio: bytes = b"ID3fake-mp3", error: Exception | None = None, engine: PollyEngine = "generative"
+    ) -> None:
         self.audio = audio
         self.error = error
+        self.engine: PollyEngine = engine
         self.calls: list[tuple[str, str]] = []
 
-    async def synthesize(self, text: str, voice_id: str) -> bytes:
+    async def synthesize(self, text: str, voice_id: str) -> SynthesisResult:
         self.calls.append((text, voice_id))
         if self.error:
             raise self.error
-        return self.audio
+        return SynthesisResult(self.audio, self.engine)
 
 
 def make_settings(**overrides: object) -> Settings:

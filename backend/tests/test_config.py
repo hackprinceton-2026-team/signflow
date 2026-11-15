@@ -18,6 +18,16 @@ def test_defaults_are_safe():
     assert s.translation_configured is False
 
 
+def test_speech_defaults_to_the_generative_ruth_voice():
+    s = make_settings()
+    assert (s.polly_engine, s.polly_default_voice, s.polly_fallback_engine) == ("generative", "Ruth", "neural")
+
+
+def test_empty_fallback_engine_disables_the_retry(monkeypatch):
+    monkeypatch.setenv("POLLY_FALLBACK_ENGINE", "")
+    assert Settings(_env_file=None).polly_fallback_engine is None  # type: ignore[call-arg]
+
+
 def test_reads_environment(monkeypatch):
     monkeypatch.setenv("GOOGLE_API_KEY", "AIzaSyTESTKEY")
     monkeypatch.setenv("GEMINI_MODEL", "gemini-flash-latest")
@@ -44,7 +54,13 @@ def test_secrets_never_appear_in_repr():
 
 @pytest.mark.parametrize(
     "overrides",
-    [{"cors_origins": ["*"]}, {"port": 0}, {"gemini_temperature": 3}, {"polly_default_voice": "bad voice"}],
+    [
+        {"cors_origins": ["*"]},
+        {"port": 0},
+        {"gemini_temperature": 3},
+        {"polly_default_voice": "bad voice"},
+        {"polly_engine": "turbo"},
+    ],
 )
 def test_rejects_unsafe_or_invalid_values(overrides):
     with pytest.raises(ValidationError):

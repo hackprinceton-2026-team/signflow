@@ -11,7 +11,7 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
-from .config import VOICE_ID_PATTERN
+from .config import VOICE_ID_PATTERN, PollyEngine
 
 TranslationMode = Literal["chat", "medical", "emergency"]
 
@@ -73,11 +73,21 @@ class SpeechRequest(_Strict):
 
     model_config = ConfigDict(
         extra="forbid",
-        json_schema_extra={"examples": [{"text": "I've had a headache since yesterday.", "voice_id": "Joanna"}]},
+        json_schema_extra={
+            "examples": [
+                {"text": "I've had a headache since yesterday.", "voice_id": "Ruth"},
+                {"text": "Nice to meet you."},
+            ]
+        },
     )
 
     text: str = Field(min_length=1, max_length=1500, description="Confirmed text to speak.")
-    voice_id: VoiceId | None = Field(None, description="Amazon Polly voice; the server default if omitted.")
+    voice_id: VoiceId | None = Field(
+        None,
+        description=(
+            "Amazon Polly voice, e.g. `Ruth`, `Danielle` or `Matthew` (Generative). The server default if omitted."
+        ),
+    )
 
 
 class SpeechResponse(_Strict):
@@ -85,14 +95,22 @@ class SpeechResponse(_Strict):
         extra="forbid",
         json_schema_extra={
             "examples": [
-                {"audio_base64": "SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4", "audio_format": "mp3", "voice_id": "Joanna"}
+                {
+                    "audio_base64": "SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4",
+                    "audio_format": "mp3",
+                    "voice_id": "Ruth",
+                    "engine": "generative",
+                }
             ]
         },
     )
 
     audio_base64: str = Field(min_length=1, description="Base64-encoded audio.")
     audio_format: Literal["mp3"] = "mp3"
-    voice_id: str
+    voice_id: str = Field(description="Voice that spoke the audio.")
+    engine: PollyEngine = Field(
+        description="Polly engine that produced the audio: the configured one, or the fallback if the voice lacks it."
+    )
 
 
 ProviderStatus = Literal["ready", "not_configured"]
@@ -105,10 +123,12 @@ class HealthResponse(_Strict):
             "examples": [
                 {
                     "status": "ok",
-                    "version": "0.2.0",
+                    "version": "0.3.0",
                     "translation": "ready",
                     "speech": "not_configured",
                     "model": "gemini-3.8-flash",
+                    "speech_voice": "Ruth",
+                    "speech_engine": "generative",
                 }
             ]
         },
@@ -119,6 +139,8 @@ class HealthResponse(_Strict):
     translation: ProviderStatus
     speech: ProviderStatus
     model: str
+    speech_voice: str = Field(description="Default voice for `/speak` when the request names none.")
+    speech_engine: PollyEngine = Field(description="Engine `/speak` tries first.")
 
 
 ErrorCode = Literal[

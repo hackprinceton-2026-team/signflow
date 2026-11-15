@@ -14,7 +14,7 @@ from langchain_core.runnables import RunnableLambda
 from pydantic import SecretStr
 
 from signflow_api.errors import SpeechUnavailable, UpstreamError, UpstreamTimeout
-from signflow_api.speech import PollySynthesizer, aws_credentials_available
+from signflow_api.speech import PollySynthesizer, SynthesisResult, aws_credentials_available
 from signflow_api.translation import GeminiTranslator, clean_output
 
 # ---------- Gemini translator ----------
@@ -87,20 +87,75 @@ def polly_client():
     return boto3.client("polly", region_name="us-east-1", aws_access_key_id="x", aws_secret_access_key="x")
 
 
-def test_polly_returns_audio_bytes():
+def audio_response(data: bytes = b"ID3mp3") -> dict:
+    return {"AudioStream": StreamingBody(io.BytesIO(data), len(data)), "ContentType": "audio/mpeg"}
+
+
+def synth_params(engine: str, voice: str = "Ruth") -> dict:
+    return {"Text": "Hi.", "OutputFormat": "mp3", "VoiceId": voice, "Engine": engine}
+
+
+def test_polly_returns_generative_audio():
     client = polly_client()
     with Stubber(client) as stub:
-        stub.add_response(
+        stub.add_response("synthesize_speech", audio_response(), synth_params("generative"))
+        result = asyncio.run(
+            PollySynthesizer(
+                region="us-east-1", engine="generative", fallback_engine="neural", timeout_s=5, client=client
+            ).synthesize("Hi.", "Ruth")
+        )
+        stub.assert_no_pending_responses()
+    assert result == SynthesisResult(b"ID3mp3", "generative")
+
+
+def test_polly_retries_with_the_fallback_engine_when_the_voice_lacks_generative():
+    client = polly_client()
+    with Stubber(client) as stub:
+        stub.add_client_error(
             "synthesize_speech",
-            {"AudioStream": StreamingBody(io.BytesIO(b"ID3mp3"), 6), "ContentType": "audio/mpeg"},
-            {"Text": "Hi.", "OutputFormat": "mp3", "VoiceId": "Joanna", "Engine": "neural"},
+            service_error_code="EngineNotSupportedException",
+            http_status_code=400,
+            expected_params=synth_params("generative", "Joey"),
         )
-        audio = asyncio.run(
-            PollySynthesizer(region="us-east-1", engine="neural", timeout_s=5, client=client).synthesize(
-                "Hi.", "Joanna"
+        stub.add_response("synthesize_speech", audio_response(b"ID3neural"), synth_params("neural", "Joey"))
+        result = asyncio.run(
+            PollySynthesizer(
+                region="us-east-1", engine="generative", fallback_engine="neural", timeout_s=5, client=client
+            ).synthesize("Hi.", "Joey")
+        )
+        stub.assert_no_pending_responses()
+    assert result == SynthesisResult(b"ID3neural", "neural")
+
+
+@pytest.mark.parametrize("fallback", [None, "generative"])
+def test_polly_without_a_distinct_fallback_engine_does_not_retry(fallback):
+    client = polly_client()
+    with Stubber(client) as stub:
+        stub.add_client_error(
+            "synthesize_speech", service_error_code="EngineNotSupportedException", http_status_code=400
+        )
+        with pytest.raises(UpstreamError):
+            asyncio.run(
+                PollySynthesizer(
+                    region="us-east-1", engine="generative", fallback_engine=fallback, timeout_s=5, client=client
+                ).synthesize("Hi.", "Joey")
             )
+        stub.assert_no_pending_responses()
+
+
+def test_polly_other_client_errors_are_not_retried_with_the_fallback():
+    client = polly_client()
+    with Stubber(client) as stub:
+        stub.add_client_error(
+            "synthesize_speech", service_error_code="TextLengthExceededException", http_status_code=400
         )
-    assert audio == b"ID3mp3"
+        with pytest.raises(UpstreamError):
+            asyncio.run(
+                PollySynthesizer(
+                    region="us-east-1", engine="generative", fallback_engine="neural", timeout_s=5, client=client
+                ).synthesize("Hi.", "Ruth")
+            )
+        stub.assert_no_pending_responses()
 
 
 def test_polly_client_error_is_an_upstream_error():

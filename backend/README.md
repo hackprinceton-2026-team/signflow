@@ -24,7 +24,8 @@ All settings are environment variables, optionally in `backend/.env` (gitignored
 | ---------------------------- | ---------------------------------------- | ----------------------------------------------- |
 | `GOOGLE_API_KEY`             | (none)                                   | Required for `/translate`. Never logged or returned. |
 | `GEMINI_MODEL`               | `gemini-3.8-flash`                       |                                                 |
-| `AWS_REGION`, `POLLY_ENGINE`, `POLLY_DEFAULT_VOICE` | `us-east-1`, `neural`, `Joanna` | AWS credentials come from the standard AWS chain (`aws configure`, `AWS_PROFILE`, SSO, env vars), never from this app's config. |
+| `AWS_REGION`, `POLLY_ENGINE`, `POLLY_DEFAULT_VOICE` | `us-east-1`, `generative`, `Ruth` | Polly Generative is the most human-like engine; `Danielle` and `Matthew` are the other recommended voices. AWS credentials come from the standard AWS chain (`aws configure`, `AWS_PROFILE`, SSO, env vars), never from this app's config. |
+| `POLLY_FALLBACK_ENGINE`      | `neural`                                 | Retried once if the requested voice doesn't support `POLLY_ENGINE`. Empty disables it. |
 | `CORS_ORIGINS`               | `app://signflow,http://localhost:5173`   | Exact origins; `*` is rejected.                 |
 | `HOST` / `PORT`              | `127.0.0.1` / `8000`                     | Localhost only by default.                      |
 
@@ -32,9 +33,9 @@ All settings are environment variables, optionally in `backend/.env` (gitignored
 
 | Endpoint          | Purpose                                                                 |
 | ----------------- | ----------------------------------------------------------------------- |
-| `GET /health`     | Liveness, plus whether translation and speech are configured            |
+| `GET /health`     | Liveness, whether translation and speech are configured, and the default voice and engine |
 | `POST /translate` | `{ raw_signs: ["HELLO", …], mode: "chat" \| "medical" \| "emergency" }` → `{ translated_text, mode, model }`. **Text only.** |
-| `POST /speak`     | `{ text, voice_id? }` → `{ audio_base64, audio_format: "mp3", voice_id }` |
+| `POST /speak`     | `{ text, voice_id? }` → `{ audio_base64, audio_format: "mp3", voice_id, engine }`. `engine` is what actually produced the audio (`generative`, or the fallback). |
 
 **No speech before confirmation.** `/translate` never produces audio. The desktop app shows the translation as a draft and calls `/speak` only after the user confirms (and possibly edits) it, with exactly that text.
 

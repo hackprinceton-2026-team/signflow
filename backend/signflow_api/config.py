@@ -19,8 +19,11 @@ from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
 
-#: Amazon Polly voice ids are plain ASCII words (e.g. "Joanna", "Matthew").
+#: Amazon Polly voice ids are plain ASCII words (e.g. "Ruth", "Matthew").
 VOICE_ID_PATTERN = r"^[A-Za-z]{2,32}$"
+
+#: Amazon Polly synthesis engines, from most to least natural for conversation.
+PollyEngine = Literal["generative", "long-form", "neural", "standard"]
 
 
 class Settings(BaseSettings):
@@ -34,8 +37,12 @@ class Settings(BaseSettings):
 
     # --- Speech (Amazon Polly) ---
     aws_region: str = Field("us-east-1", min_length=1)
-    polly_engine: Literal["standard", "neural", "long-form", "generative"] = "neural"
-    polly_default_voice: str = Field("Joanna", pattern=VOICE_ID_PATTERN)
+    #: Generative is Polly's most human-sounding engine. Ruth, Danielle and Matthew support it.
+    polly_engine: PollyEngine = "generative"
+    #: Used once, for the same request, when the voice doesn't support ``polly_engine``
+    #: (Polly's ``EngineNotSupportedException``). Empty disables the retry.
+    polly_fallback_engine: PollyEngine | None = "neural"
+    polly_default_voice: str = Field("Ruth", pattern=VOICE_ID_PATTERN)
     speak_timeout_s: float = Field(20, gt=0, le=120)
 
     # --- HTTP server ---
@@ -60,6 +67,11 @@ class Settings(BaseSettings):
         if "*" in origins:
             raise ValueError("CORS_ORIGINS must list origins explicitly; '*' is not allowed")
         return origins
+
+    @field_validator("polly_fallback_engine", mode="before")
+    @classmethod
+    def _empty_is_none(cls, value: object) -> object:
+        return None if isinstance(value, str) and not value.strip() else value
 
     @property
     def translation_configured(self) -> bool:
