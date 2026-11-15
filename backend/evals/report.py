@@ -97,21 +97,29 @@ def latency_stats(values: Sequence[float]) -> dict[str, float | int | None]:
 
 
 def token_stats(results: Sequence[CaseResult]) -> dict[str, float | int | None]:
-    """Mean token counts over the cases whose provider reported usage (live runs only)."""
-    usages = [result.usage for result in results if result.usage is not None]
-    if not usages:
-        return {"count": 0, "mean_input": None, "mean_output": None, "mean_reasoning": None, "max_reasoning": None}
+    """Mean token counts over the cases whose provider reported usage (live runs only).
 
-    def mean(values: list[int]) -> float:
-        return round(sum(values) / len(values), 1)
+    Thinking statistics use only the cases that reported a thinking count;
+    ``reasoning_reported`` says how many that was.
+    """
+    usages = [result.usage for result in results if result.usage is not None]
+    reasoning = [usage.reasoning_tokens for usage in usages if usage.reasoning_tokens is not None]
+
+    def mean(values: list[int]) -> float | None:
+        return round(sum(values) / len(values), 1) if values else None
 
     return {
         "count": len(usages),
         "mean_input": mean([usage.input_tokens for usage in usages]),
         "mean_output": mean([usage.output_tokens for usage in usages]),
-        "mean_reasoning": mean([usage.reasoning_tokens for usage in usages]),
-        "max_reasoning": max(usage.reasoning_tokens for usage in usages),
+        "reasoning_reported": len(reasoning),
+        "mean_reasoning": mean(reasoning),
+        "max_reasoning": max(reasoning) if reasoning else None,
     }
+
+
+def _count(value: float | None) -> str:
+    return "not reported" if value is None else str(value)
 
 
 def _tally(results: Iterable[CaseResult]) -> dict[str, int]:
@@ -248,10 +256,11 @@ def render_markdown(report: dict) -> str:
             "",
             "Thinking tokens are generated before the answer, so they add directly to latency.",
             "",
-            "| Cases | Mean input | Mean output | Mean thinking | Max thinking |",
-            "| --- | --- | --- | --- | --- |",
+            "| Cases | Mean input | Mean output | Thinking reported | Mean thinking | Max thinking |",
+            "| --- | --- | --- | --- | --- | --- |",
             f"| {tokens['count']} | {tokens['mean_input']} | {tokens['mean_output']} | "
-            f"{tokens['mean_reasoning']} | {tokens['max_reasoning']} |",
+            f"{tokens['reasoning_reported']}/{tokens['count']} | {_count(tokens['mean_reasoning'])} | "
+            f"{_count(tokens['max_reasoning'])} |",
         ]
 
     lines += ["", "## By mode", "", "| Mode | Passed | Failed | Errors |", "| --- | --- | --- | --- |"]
@@ -297,7 +306,7 @@ def render_markdown(report: dict) -> str:
         flags = ", ".join(f"`{flag['code']}`" for flag in case["flags"]) or "none"
         overlap = "n/a" if case["reference_overlap"] is None else f"{case['reference_overlap']:.2f}"
         usage = case.get("usage")
-        thinking = "n/a" if not usage else str(usage["reasoning_tokens"])
+        thinking = "n/a" if not usage else _count(usage["reasoning_tokens"])
         lines.append(
             f"| `{case['id']}` | {case['mode']} | {case['status']} | {_ms(case['latency_ms'])} | {thinking} | "
             f"{overlap} | {flags} | {_cell(case['output'])} |"

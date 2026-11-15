@@ -312,11 +312,12 @@ def test_token_summary_and_markdown():
         "count": 1,
         "mean_input": 90.0,
         "mean_output": 420.0,
+        "reasoning_reported": 1,
         "mean_reasoning": 400.0,
         "max_reasoning": 400,
     }
     markdown = render_markdown(report)
-    assert "## Tokens" in markdown and "| 1 | 90.0 | 420.0 | 400.0 | 400 |" in markdown
+    assert "## Tokens" in markdown and "| 1 | 90.0 | 420.0 | 1/1 | 400.0 | 400 |" in markdown
     [row] = [line for line in markdown.splitlines() if line.startswith("| `unit`")]
     assert row.split(" | ")[4] == "400", "thinking tokens column"
 
@@ -413,3 +414,42 @@ def test_cli_usage_errors_exit_2(argv: list[str], message: str, tmp_path: Path):
     code, _, err = run_cli(*argv, "--out-dir", str(tmp_path))
     assert code == cli.EXIT_USAGE
     assert message in err
+
+
+def test_unreported_thinking_is_shown_as_not_reported_and_left_out_of_means():
+    """Regression: an unknown thinking count must not count as zero in the summary or the table."""
+    cases = [make_case(id="known"), make_case(id="unknown")]
+    usages = {"known": TokenUsage(90, 420, 400), "unknown": TokenUsage(80, 10, None)}
+
+    async def respond(case):
+        return Reply("Hello.", usage=usages[case.id])
+
+    results = asyncio.run(run_cases(cases, respond))
+    report = build_report(results, run_info(live=True))
+    tokens = report["summary"]["tokens"]
+    assert tokens["count"] == 2 and tokens["reasoning_reported"] == 1
+    assert tokens["mean_reasoning"] == 400.0 and tokens["max_reasoning"] == 400
+    assert report["cases"][1]["usage"]["reasoning_tokens"] is None
+    markdown = render_markdown(report)
+    [row] = [line for line in markdown.splitlines() if line.startswith("| `unknown`")]
+    assert row.split(" | ")[4] == "not reported"
+    assert "| 2 | 85.0 | 215.0 | 1/2 | 400.0 | 400 |" in markdown
+
+
+def test_no_thinking_reported_at_all():
+    async def respond(case):
+        return Reply("Hello.", usage=TokenUsage(80, 10, None))
+
+    results = asyncio.run(run_cases([make_case()], respond))
+    tokens = summarize(results)["tokens"]
+    assert tokens["reasoning_reported"] == 0 and tokens["mean_reasoning"] is None and tokens["max_reasoning"] is None
+    assert "| 1 | 80.0 | 10.0 | 0/1 | not reported | not reported |" in render_markdown(
+        build_report(results, run_info(live=True))
+    )
+
+
+def test_recorded_unknown_thinking_stays_unknown(tmp_path: Path):
+    usage = {"input_tokens": 80, "output_tokens": 10, "reasoning_tokens": None}
+    path = tmp_path / "report.json"
+    path.write_text(json.dumps({"cases": [{"id": "a", "output": "Hi.", "usage": usage}]}), encoding="utf-8")
+    assert load_recorded(path).replies == {"a": Reply("Hi.", None, TokenUsage(80, 10, None))}

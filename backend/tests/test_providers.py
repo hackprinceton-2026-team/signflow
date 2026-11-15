@@ -290,9 +290,33 @@ def test_translate_detailed_without_usage_metadata():
     assert translation == Translation("Hi.", None)
 
 
-def test_token_usage_defaults_missing_reasoning_to_zero():
+def test_missing_thinking_count_is_unknown_not_zero():
+    """Regression: langchain-google-genai omits output_token_details when thoughts_token_count is 0 or absent,
+    so a missing count must not be reported as zero thinking."""
     reply = AIMessage(content="Hi.", usage_metadata={"input_tokens": 5, "output_tokens": 2, "total_tokens": 7})
-    assert token_usage(reply) == TokenUsage(input_tokens=5, output_tokens=2, reasoning_tokens=0)
+    assert token_usage(reply) == TokenUsage(input_tokens=5, output_tokens=2, reasoning_tokens=None)
+    assert token_usage(reply).to_dict()["reasoning_tokens"] is None
+
+
+def test_details_without_a_reasoning_key_are_unknown_too():
+    reply = AIMessage(
+        content="Hi.",
+        usage_metadata={"input_tokens": 5, "output_tokens": 2, "total_tokens": 7, "output_token_details": {}},
+    )
+    assert token_usage(reply).reasoning_tokens is None
+
+
+def test_an_explicit_zero_thinking_count_stays_zero():
+    reply = AIMessage(
+        content="Hi.",
+        usage_metadata={
+            "input_tokens": 5,
+            "output_tokens": 2,
+            "total_tokens": 7,
+            "output_token_details": {"reasoning": 0},
+        },
+    )
+    assert token_usage(reply).reasoning_tokens == 0
 
 
 def test_translate_still_returns_plain_text():

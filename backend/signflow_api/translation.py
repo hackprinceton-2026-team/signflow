@@ -85,9 +85,10 @@ class TokenUsage:
     input_tokens: int
     output_tokens: int
     #: Thinking tokens, part of ``output_tokens``. Generated before the answer, so they add latency.
-    reasoning_tokens: int
+    #: ``None`` means not reported, which is not the same as zero (see ``token_usage``).
+    reasoning_tokens: int | None
 
-    def to_dict(self) -> dict[str, int]:
+    def to_dict(self) -> dict[str, int | None]:
         return {
             "input_tokens": self.input_tokens,
             "output_tokens": self.output_tokens,
@@ -96,15 +97,22 @@ class TokenUsage:
 
 
 def token_usage(message: Any) -> TokenUsage | None:
-    """The usage LangChain attached to a model reply, or ``None`` when the provider sent none."""
+    """The usage LangChain attached to a model reply, or ``None`` when the provider sent none.
+
+    ``reasoning_tokens`` is ``None`` unless a thinking count is actually present.
+    langchain-google-genai only adds ``output_token_details.reasoning`` when Gemini's
+    ``thoughts_token_count`` is above zero. A missing key can mean zero or not reported,
+    so it is recorded as unknown rather than as zero.
+    """
     usage = getattr(message, "usage_metadata", None)
     if not usage:
         return None
     details = usage.get("output_token_details") or {}
+    reasoning = details.get("reasoning")
     return TokenUsage(
         input_tokens=int(usage.get("input_tokens") or 0),
         output_tokens=int(usage.get("output_tokens") or 0),
-        reasoning_tokens=int(details.get("reasoning") or 0),
+        reasoning_tokens=None if reasoning is None else int(reasoning),
     )
 
 

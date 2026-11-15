@@ -129,10 +129,15 @@ def _recorded_usage(value: object) -> TokenUsage | None:
     """Token usage saved in a report, when present and well formed (older reports have none)."""
     if not isinstance(value, dict):
         return None
-    counts = [value.get(key) for key in ("input_tokens", "output_tokens", "reasoning_tokens")]
-    if not all(isinstance(count, int) and not isinstance(count, bool) and count >= 0 for count in counts):
+
+    def count(item: object) -> bool:
+        return isinstance(item, int) and not isinstance(item, bool) and item >= 0
+
+    input_tokens, output_tokens = value.get("input_tokens"), value.get("output_tokens")
+    reasoning = value.get("reasoning_tokens")
+    if not (count(input_tokens) and count(output_tokens) and (reasoning is None or count(reasoning))):
         return None
-    return TokenUsage(*counts)
+    return TokenUsage(input_tokens, output_tokens, reasoning)  # type: ignore[arg-type]
 
 
 def load_recorded(path: Path) -> Recorded:
