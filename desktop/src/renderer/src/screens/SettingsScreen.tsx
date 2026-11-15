@@ -112,6 +112,9 @@ export function SettingsScreen() {
     updateConnection,
     live,
     backend,
+    deviceEngine,
+    setDeviceEngine,
+    kokoro,
   } = useSignFlow();
   const { settings } = session.state;
   const contentRef = useRef<HTMLDivElement>(null);
@@ -229,8 +232,8 @@ export function SettingsScreen() {
             onChange={(voice) => updateConnection({ voice })}
           />
           <p className="subtle">
-            The cloud voice (Amazon Polly Generative, through the backend) sounds the most natural and falls back to the
-            system voice if it&apos;s unavailable. Pick the voice under Speech. Either way, only text you confirm is spoken.
+            The cloud voice (Amazon Polly Generative, through the backend) falls back to the on-device voice (system or
+            Kokoro, chosen under Speech) if it&apos;s unavailable. Either way, only text you confirm is spoken.
           </p>
         </Section>
 
@@ -279,6 +282,9 @@ export function SettingsScreen() {
             cloudVoice={live && connection.voice === 'cloud'}
             cloudStatus={cloudSpeechStatus(backend.health)}
             platform={info?.platform}
+            engine={deviceEngine}
+            onEngineChange={setDeviceEngine}
+            kokoro={kokoro.available ? kokoro : undefined}
           />
         </Section>
 
@@ -369,6 +375,9 @@ export function SettingsScreen() {
             </li>
             <li>
               <Icon name="shield" size={15} /> Notes and settings are stored only on this device.
+            </li>
+            <li>
+              <Icon name="shield" size={15} /> The Kokoro voice runs entirely on this device; its engine is blocked from the network.
             </li>
             <li>
               <Icon name="shield" size={15} /> The app runs sandboxed, with camera access only.

@@ -1,6 +1,6 @@
 import { Emitter } from '../emitter';
 import { clampSpeechOptions } from '../speech';
-import type { SpeechEngine, SpeechOptions, SpeechState, SpeechVoice, Unsubscribe, VoiceInUse } from '../types';
+import type { PlayableSpeechEngine, SpeechEngine, SpeechOptions, SpeechState, SpeechVoice, Unsubscribe, VoiceInUse } from '../types';
 import { BackendError, type BackendClient } from './backendClient';
 import type { SpeechResponse } from './guards';
 
@@ -67,7 +67,7 @@ function base64ToBlob(base64: string, type: string): Blob {
  * It only ever receives text the user confirmed: the app calls `speak()` from
  * the confirm path, never with a draft.
  */
-export class CloudSpeechEngine implements SpeechEngine {
+export class CloudSpeechEngine implements PlayableSpeechEngine {
   readonly name = 'SignFlow cloud voice';
   readonly available = true;
   private readonly stateEmitter = new Emitter<SpeechState>();
@@ -103,6 +103,10 @@ export class CloudSpeechEngine implements SpeechEngine {
 
   onVoiceInUse(cb: (voice: VoiceInUse) => void): Unsubscribe {
     return this.voiceInUseEmitter.on(cb);
+  }
+
+  describeVoice(options: SpeechOptions): string {
+    return `${resolveCloudVoice(options.cloudVoiceId).name} · ${cloudEngineLabel('generative')}`;
   }
 
   /** Fire-and-forget (SpeechEngine contract). Use `play()` to observe failures. */
@@ -189,19 +193,29 @@ export class CloudSpeechEngine implements SpeechEngine {
   }
 }
 
+/** The text a failed engine still owes, if it reports one (Kokoro fails mid-way per sentence). */
+function remainingTextOf(err: unknown, text: string): string {
+  const rest = (err as { remainingText?: unknown } | null)?.remainingText;
+  return typeof rest === 'string' && rest.trim() ? rest : text;
+}
+
 /**
- * Cloud voice first; if it fails (offline, not configured, timeout, playback
- * error) the same confirmed text is spoken with the user's system voice, and
- * `onFallback` is told. Voice listings are the system voices (the cloud voices
- * are the fixed `CLOUD_VOICES`), so the fallback voice can be chosen.
+ * Preferred voice first (cloud or Kokoro); if it fails (offline, not
+ * configured, model missing, timeout, playback error) the same confirmed text,
+ * or the part not yet spoken, is spoken with the fallback voice, and
+ * `onFallback` is told. Voice listings are the fallback's (system voices), so
+ * the fallback voice can be chosen. A failure that arrives after cancel() or a
+ * newer speak() is ignored: stale text is never spoken.
  */
-export class FallbackSpeechEngine implements SpeechEngine {
+export class FallbackSpeechEngine implements PlayableSpeechEngine {
   readonly available = true;
-  /** Whether the system voice is currently standing in for the cloud voice. */
+  /** Whether the fallback voice is currently standing in for the primary. */
   private usingFallback = false;
+  /** Identifies the current speak(); bumped by speak() and cancel(). */
+  private token = 0;
 
   constructor(
-    private readonly primary: CloudSpeechEngine,
+    private readonly primary: PlayableSpeechEngine,
     private readonly fallback: SpeechEngine,
     private readonly onFallback?: (error: unknown) => void,
   ) {}
@@ -229,23 +243,37 @@ export class FallbackSpeechEngine implements SpeechEngine {
   }
 
   onVoiceInUse(cb: (voice: VoiceInUse) => void): Unsubscribe {
-    const offPrimary = this.primary.onVoiceInUse(cb);
-    const offFallback = this.fallback.onVoiceInUse?.((v) => cb({ ...v, fallback: this.usingFallback })) ?? (() => undefined);
+    const offPrimary = this.primary.onVoiceInUse?.(cb) ?? (() => undefined);
+    const offFallback =
+      this.fallback.onVoiceInUse?.((v) => cb({ ...v, fallback: v.fallback || this.usingFallback })) ?? (() => undefined);
     return () => {
       offPrimary();
       offFallback();
     };
   }
 
+  describeVoice(options: SpeechOptions): string | undefined {
+    return this.primary.describeVoice?.(options);
+  }
+
   speak(text: string, options: SpeechOptions): void {
+    void this.play(text, options).catch(() => undefined);
+  }
+
+  /** Resolves once the primary or the fallback has taken the text; never rejects for a fallback-able failure. */
+  async play(text: string, options: SpeechOptions): Promise<void> {
+    const token = ++this.token;
     this.fallback.cancel();
     this.usingFallback = false;
-    this.primary.play(text, options).catch((err: unknown) => {
+    try {
+      await this.primary.play(text, options);
+    } catch (err) {
+      if (token !== this.token) return; // cancelled or superseded: speak nothing
       this.onFallback?.(err);
       if (!this.fallback.available) return;
       this.usingFallback = true;
-      this.fallback.speak(text, options);
-    });
+      this.fallback.speak(remainingTextOf(err, text), options);
+    }
   }
 
   pause(): void {
@@ -259,6 +287,7 @@ export class FallbackSpeechEngine implements SpeechEngine {
   }
 
   cancel(): void {
+    this.token++;
     this.primary.cancel();
     this.fallback.cancel();
   }

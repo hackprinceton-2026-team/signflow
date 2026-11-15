@@ -129,3 +129,47 @@ describe('describeVoiceInUse', () => {
     });
   });
 });
+
+describe('describeVoiceInUse with Kokoro', () => {
+  const sam = { id: 'v-sam', name: 'Samantha', lang: 'en-US', isDefault: true };
+  const base = {
+    cloudVoice: false,
+    cloudStatus: 'unknown' as const,
+    cloudVoiceId: undefined,
+    systemVoice: sam,
+    systemLabel: 'macOS voice',
+    last: null,
+    engine: 'kokoro' as const,
+    kokoroVoiceId: 'af_bella',
+  };
+
+  it('before speaking: Kokoro when ready or loading, the macOS voice when missing or broken', () => {
+    expect(describeVoiceInUse({ ...base, kokoroStatus: { state: 'ready' } })).toMatchObject({
+      tone: 'accent',
+      label: 'Bella · Kokoro (on-device neural)',
+      detail: 'Runs entirely on this device. No network needed.',
+    });
+    expect(describeVoiceInUse({ ...base, kokoroStatus: { state: 'loading' } }).detail).toMatch(/Loading the voice model/);
+    expect(describeVoiceInUse({ ...base, kokoroStatus: { state: 'missing' } })).toMatchObject({ tone: 'warning', label: 'Samantha · macOS voice' });
+    expect(describeVoiceInUse({ ...base, kokoroStatus: { state: 'error', message: 'x' } }).detail).toMatch(/isn't working/);
+  });
+
+  it('after speaking: Kokoro itself, or the macOS voice standing in for it', () => {
+    const spoke = { source: 'kokoro' as const, id: 'af_bella', name: 'Bella', engine: 'kokoro', fallback: false };
+    expect(describeVoiceInUse({ ...base, last: spoke })).toMatchObject({ tone: 'success', label: 'Bella · Kokoro (on-device neural)' });
+    const fellBack = { source: 'system' as const, id: 'v-sam', name: 'Samantha', fallback: true };
+    expect(describeVoiceInUse({ ...base, last: fellBack })).toMatchObject({ tone: 'warning', detail: expect.stringMatching(/Kokoro was unavailable/) });
+    // A different Kokoro voice chosen since: describe the new one.
+    expect(describeVoiceInUse({ ...base, kokoroVoiceId: 'am_michael', last: spoke, kokoroStatus: { state: 'ready' } }).label).toBe(
+      'Michael · Kokoro (on-device neural)',
+    );
+  });
+
+  it('with the cloud voice: Kokoro is named as the fallback, and shown when it stood in', () => {
+    const cloud = { ...base, cloudVoice: true, cloudStatus: 'ready' as const, kokoroStatus: { state: 'ready' as const } };
+    expect(describeVoiceInUse(cloud).detail).toMatch(/Bella \(Kokoro\) speaks instead/);
+    expect(describeVoiceInUse({ ...cloud, cloudStatus: 'offline' })).toMatchObject({ label: 'Bella · Kokoro (on-device neural)' });
+    const stoodIn = { source: 'kokoro' as const, id: 'af_bella', name: 'Bella', engine: 'kokoro', fallback: true };
+    expect(describeVoiceInUse({ ...cloud, last: stoodIn })).toMatchObject({ tone: 'warning', detail: expect.stringMatching(/so Kokoro spoke instead/) });
+  });
+});

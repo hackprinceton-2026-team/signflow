@@ -90,6 +90,8 @@ export interface SpeechOptions {
   voiceId?: string | undefined;
   /** Cloud voice (Amazon Polly id, e.g. "Ruth"). Undefined = the app default. */
   cloudVoiceId?: string | undefined;
+  /** Kokoro local voice (e.g. "af_heart"). Undefined = the app default. */
+  kokoroVoiceId?: string | undefined;
   /** 0.1..10, 1 = normal */
   rate: number;
   /** 0..2, 1 = normal */
@@ -102,14 +104,14 @@ export type SpeechState = 'idle' | 'speaking' | 'paused';
 
 /** The voice that actually spoke the most recent text. */
 export interface VoiceInUse {
-  source: 'cloud' | 'system';
-  /** Voice id: Polly id for cloud, voiceURI for system ('' if the platform picked). */
+  source: 'cloud' | 'kokoro' | 'system';
+  /** Voice id: Polly id for cloud, Kokoro voice id, or voiceURI for system ('' if the platform picked). */
   id: string;
   /** Display name, e.g. "Ruth" or "Samantha". */
   name: string;
-  /** Cloud only: the Polly engine that produced the audio, e.g. "generative". */
+  /** Cloud: the Polly engine that produced the audio, e.g. "generative". Kokoro: "kokoro". */
   engine?: string | undefined;
-  /** The cloud voice was requested but failed, so the system voice spoke instead. */
+  /** The preferred voice (cloud or Kokoro) was requested but failed, so a fallback voice spoke instead. */
   fallback: boolean;
 }
 
@@ -125,6 +127,13 @@ export interface SpeechEngine {
   onState(cb: (state: SpeechState) => void): Unsubscribe;
   /** Optional: told which voice actually spoke, once per `speak()` that produced sound. */
   onVoiceInUse?(cb: (voice: VoiceInUse) => void): Unsubscribe;
+  /** Optional: a label for the voice these options select, e.g. "Heart · Kokoro (on-device neural)". */
+  describeVoice?(opts: SpeechOptions): string | undefined;
+}
+
+/** A SpeechEngine whose speech can be awaited: rejects if it fails while still current. */
+export interface PlayableSpeechEngine extends SpeechEngine {
+  play(text: string, opts: SpeechOptions): Promise<void>;
 }
 
 export interface Adapters {
