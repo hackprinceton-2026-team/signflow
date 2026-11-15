@@ -1285,3 +1285,110 @@
     display: none;
   }
 }
+
+/* ================= Focus Mode ================= */
+
+.shell.is-focus {
+  --rail-width: 0px;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.shell.is-focus .shell-main {
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.shell.is-focus .live {
+  padding: 0;
+}
+
+.shell.is-focus .stage {
+  border: 0;
+  border-radius: 0;
+}
+
+/* Distraction-free: controls fade out when the pointer is idle (like a video
+   player) and come back on movement, a key press, or keyboard focus. */
+.shell.is-focus .stage-controls {
+  margin-right: 56px; /* room for the exit button */
+  transition: opacity var(--dur-slow) var(--ease-out);
+}
+
+.shell.is-focus.is-idle {
+  cursor: none;
+}
+
+.shell.is-focus.is-idle .stage-controls:not(:focus-within),
+.shell.is-focus.is-idle .focus-exit:not(:focus-within) {
+  opacity: 0;
+}
+
+.focus-exit {
+  position: fixed;
+  top: var(--space-4);
+  right: var(--space-4);
+  z-index: 40;
+  opacity: 0.75;
+  transition: opacity var(--dur-slow) var(--ease-out);
+  animation: sf-fade-in var(--dur-slow) var(--ease-out);
+}
+
+.focus-exit:hover,
+.focus-exit:focus-within {
+  opacity: 1;
+}
+
+.focus-hint {
+  position: fixed;
+  top: var(--space-5);
+  left: 50%;
+  z-index: 40;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 8px var(--space-4);
+  border-radius: var(--radius-pill);
+  background: var(--glass-bg-strong);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+  box-shadow: var(--shadow-2), var(--glass-highlight);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  animation: sf-rise-in var(--dur-slow) var(--ease-out);
+  pointer-events: none;
+}
+
+/* ================= Shortcuts list ================= */
+
+.shortcut-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.shortcut-list {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.shortcut-row:last-child {
+  border-bottom: 0;
+}
+
+.shortcut-row dt {
+  font-size: var(--text-sm);
+}
+
+.shortcut-row dd {
+  margin: 0;
+}

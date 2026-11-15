@@ -9,6 +9,7 @@ import {
 import { createMainWindow } from './windows';
 import { registerIpcHandlers } from './ipc';
 import { CaptionsController } from './captions';
+import { forwardFullScreenEvents, registerViewControls } from './view';
 
 // Sandbox every renderer, including any created by Electron internals.
 app.enableSandbox();
@@ -38,9 +39,11 @@ if (!app.requestSingleInstanceLock()) {
     hardenDefaultSession();
     registerIpcHandlers();
     captions.registerIpc();
+    registerViewControls(() => mainWindow);
 
     const openMainWindow = () => {
       const win = createMainWindow();
+      forwardFullScreenEvents(win);
       // The captions overlay never outlives the main window.
       win.on('closed', () => {
         if (mainWindow === win) mainWindow = null;

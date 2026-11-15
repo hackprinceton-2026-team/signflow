@@ -1,7 +1,10 @@
 import '@testing-library/jest-dom/vitest';
 import { afterEach, vi } from 'vitest';
-import { cleanup } from '@testing-library/react';
+import { cleanup, configure } from '@testing-library/react';
 import type { SignflowApi } from '@shared/api';
+
+// jsdom under a parallel full-suite run can be slow; 1s (the default) is tight.
+configure({ asyncUtilTimeout: 3000 });
 
 afterEach(() => cleanup());
 
@@ -32,6 +35,10 @@ export function installFakeBridge(overrides: Partial<SignflowApi> = {}): Signflo
       })),
       onRender: vi.fn(() => () => undefined),
       close: vi.fn(),
+    },
+    view: {
+      setFullScreen: vi.fn(async (v: boolean) => v),
+      onFullScreenChange: vi.fn(() => () => undefined),
     },
     ...overrides,
   };

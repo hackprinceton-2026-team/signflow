@@ -214,10 +214,38 @@ test('floating captions: secure always-on-top overlay that mirrors confirmed sen
   });
   expect(err).toContain('untrusted sender');
 
+  // Same for the Focus Mode fullscreen channel: main window only.
+  const viewErr = await captions.evaluate(async () => {
+    try {
+      await window.signflow.view.setFullScreen(true);
+      return 'allowed';
+    } catch (e) {
+      return String(e);
+    }
+  });
+  expect(viewErr).toContain('untrusted sender');
+
   // Closing from the overlay's own × updates the main window.
   await captions.getByRole('button', { name: 'Close captions' }).click();
   await expect(page.getByTestId('captions-toggle')).toHaveAttribute('aria-pressed', 'false');
   expect(await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows().length)).toBe(1);
+});
+
+test('Focus Mode: chrome hidden, real window fullscreen, Esc exits', async () => {
+  const mainIsFullScreen = () =>
+    app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows().find((w) => w.getTitle() === 'SignFlow')?.isFullScreen());
+
+  await page.getByTestId('focus-enter').click();
+  await expect(page.locator('.shell')).toHaveAttribute('data-focus', 'true');
+  await expect(page.getByRole('navigation', { name: 'Main' })).toHaveCount(0);
+  await expect(page.getByTestId('focus-exit')).toBeVisible();
+  await expect.poll(mainIsFullScreen, { timeout: 10_000 }).toBe(true);
+  await page.waitForTimeout(1000); // let the macOS fullscreen animation settle
+
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.shell')).not.toHaveAttribute('data-focus');
+  await expect(page.getByRole('navigation', { name: 'Main' })).toBeVisible();
+  await expect.poll(mainIsFullScreen, { timeout: 10_000 }).toBe(false);
 });
 
 // Keep last: Playwright keeps waiting on the cancelled navigation, so later

@@ -36,6 +36,10 @@ const api: SignflowApi = {
     onRender: (cb) => subscribe<CaptionPayload>(IpcChannels.captionsRender, cb),
     close: () => ipcRenderer.send(IpcChannels.captionsClose),
   },
+  view: {
+    setFullScreen: (fullScreen) => ipcRenderer.invoke(IpcChannels.viewSetFullScreen, fullScreen),
+    onFullScreenChange: (cb) => subscribe<boolean>(IpcChannels.viewFullScreenChanged, cb),
+  },
 };
 
 contextBridge.exposeInMainWorld('signflow', api);

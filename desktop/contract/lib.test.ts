@@ -188,7 +188,8 @@ describe('contract CLI', () => {
     }
   };
 
-  it('generate → check passes → source changes → check fails', () => {
+  // Spawns Node three times; allow for a busy machine running the suite in parallel.
+  it('generate → check passes → source changes → check fails', { timeout: 30_000 }, () => {
     const source = join(tmp, 'openapi.json');
     const output = join(tmp, 'out', 'openapi.ts');
     writeFileSync(source, spec31);
@@ -202,7 +203,7 @@ describe('contract CLI', () => {
     expect(run('check', env)).toMatchObject({ code: 1, out: expect.stringContaining('stale') });
   });
 
-  it('without an official schema: generate explains and fails, check is a no-op', () => {
+  it('without an official schema: generate explains and fails, check is a no-op', { timeout: 30_000 }, () => {
     const env = { SIGNFLOW_CONTRACT_SOURCE: join(tmp, 'absent.json'), SIGNFLOW_CONTRACT_OUTPUT: join(tmp, 'x.ts') };
     expect(run('generate', env)).toMatchObject({ code: 1, out: expect.stringContaining('No official contract') });
     expect(run('check', env).code).toBe(0);

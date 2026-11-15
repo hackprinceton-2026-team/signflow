@@ -1,5 +1,6 @@
 import type { AdapterStatus } from '../adapters/types';
 import { IconButton, StatusPill, type StatusTone } from '../ui';
+import { shortcutLabel } from '../ui/Kbd';
 import { SCREENS, type ScreenId } from './screens';
 import { useSignFlow } from './useSignFlow';
 
@@ -10,7 +11,7 @@ const MODEL: Record<AdapterStatus['state'], { label: string; tone: StatusTone }>
   error: { label: 'Model error', tone: 'danger' },
 };
 
-export function TopBar({ screen }: { screen: ScreenId }) {
+export function TopBar({ screen, onEnterFocus }: { screen: ScreenId; onEnterFocus: () => void }) {
   const { cameraOn, session, speech, captions, captureToNotes } = useSignFlow();
   const meta = SCREENS[screen];
   const model = MODEL[session.recognizerStatus.state];
@@ -48,6 +49,7 @@ export function TopBar({ screen }: { screen: ScreenId }) {
           onClick={() => void captions.toggle()}
           data-testid="captions-toggle"
         />
+        <IconButton icon="focus" label={`Focus Mode (${shortcutLabel('Mod+Shift+F')})`} onClick={onEnterFocus} data-testid="focus-enter" />
       </div>
     </header>
   );

@@ -28,4 +28,9 @@ export interface SignflowApi {
     onRender(cb: (payload: CaptionPayload) => void): () => void;
     close(): void;
   };
+  view: {
+    /** Main window only. Resolves to the requested state. */
+    setFullScreen(fullScreen: boolean): Promise<boolean>;
+    onFullScreenChange(cb: (fullScreen: boolean) => void): () => void;
+  };
 }

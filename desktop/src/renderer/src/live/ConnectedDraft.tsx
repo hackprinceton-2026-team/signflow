@@ -3,7 +3,7 @@ import { DraftOverlay } from './DraftOverlay';
 
 /** The draft overlay bound to the app controller. */
 export function ConnectedDraft({ variant, showHint = false }: { variant: 'stage' | 'dock'; showHint?: boolean }) {
-  const { session, speech, confirmDraft, speakDraft, discardDraft } = useSignFlow();
+  const { session, speech, confirmDraft, speakDraft, discardDraft, draftTextRef } = useSignFlow();
   const { state } = session;
   return (
     <DraftOverlay
@@ -21,6 +21,7 @@ export function ConnectedDraft({ variant, showHint = false }: { variant: 'stage'
       onDiscard={discardDraft}
       onRetry={session.translateNow}
       onDismissError={session.clearBuffer}
+      textRef={draftTextRef}
     />
   );
 }

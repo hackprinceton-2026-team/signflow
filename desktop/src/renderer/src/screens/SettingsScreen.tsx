@@ -4,7 +4,8 @@ import { CONTRACT_GENERATED, CONTRACT_OPENAPI_VERSION } from '../contract';
 import { useSignFlow } from '../app/useSignFlow';
 import { SpeechSettings } from '../components/SpeechSettings';
 import { SETTINGS_LIMITS } from '../state/session';
-import { Button, formatPercent, Icon, RangeField, SelectField, StatusPill, Switch, type IconName } from '../ui';
+import { SHORTCUTS } from '../app/shortcuts';
+import { Button, formatPercent, Icon, Kbd, RangeField, SelectField, StatusPill, Switch, type IconName } from '../ui';
 
 const SECTIONS: { id: string; label: string; icon: IconName }[] = [
   { id: 'camera', label: 'Camera', icon: 'camera' },
@@ -12,6 +13,7 @@ const SECTIONS: { id: string; label: string; icon: IconName }[] = [
   { id: 'speech', label: 'Speech', icon: 'speaker' },
   { id: 'captions', label: 'Captions', icon: 'captions' },
   { id: 'notes', label: 'Notes', icon: 'notes' },
+  { id: 'shortcuts', label: 'Shortcuts', icon: 'keyboard' },
   { id: 'about', label: 'About', icon: 'info' },
 ];
 
@@ -195,6 +197,24 @@ export function SettingsScreen() {
             description="Every Confirm or Speak also adds the sentence to the open note."
           />
           <Switch checked={notes.state.timestamps} onChange={notes.setTimestamps} label="Timestamps" description="Prefix captured lines with the time." />
+        </Section>
+
+        <Section id="shortcuts" title="Keyboard shortcuts" description="Everything on the Live screen works from the keyboard.">
+          {(['Draft', 'Navigate', 'View'] as const).map((group) => (
+            <div key={group} className="shortcut-group">
+              <h4 className="eyebrow">{group}</h4>
+              <dl className="shortcut-list">
+                {SHORTCUTS.filter((sc) => sc.group === group).map((sc) => (
+                  <div key={sc.id} className="shortcut-row">
+                    <dt>{sc.label}</dt>
+                    <dd>
+                      <Kbd combo={sc.combo} />
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          ))}
         </Section>
 
         <Section id="about" title="About" description="Versions, data, and privacy.">

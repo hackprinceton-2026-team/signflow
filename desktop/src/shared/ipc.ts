@@ -23,6 +23,10 @@ export const IpcChannels = {
   captionsRender: 'captions:render',
   /** captions window → main: user closed it */
   captionsClose: 'captions:close',
+  /** main window → main: enter/leave window fullscreen (Focus Mode) */
+  viewSetFullScreen: 'view:set-fullscreen',
+  /** main → main window: fullscreen changed (including via the OS) */
+  viewFullScreenChanged: 'view:fullscreen-changed',
 } as const;
 
 export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels];

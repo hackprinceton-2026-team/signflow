@@ -50,6 +50,8 @@ export function useSignFlowController({ adapters, initialSettings }: SignFlowOpt
   const [feedback, setFeedback] = useState<ConfirmFeedback | null>(null);
   const [info, setInfo] = useState<AppInfo | null>(null);
   const samplerRef = useRef<HTMLVideoElement>(null);
+  /** The draft editor, wherever it is rendered (Live stage or dock). */
+  const draftTextRef = useRef<HTMLTextAreaElement>(null);
 
   const camera = useCamera();
   const cameraOn = camera.status === 'on';
@@ -109,6 +111,7 @@ export function useSignFlowController({ adapters, initialSettings }: SignFlowOpt
     camera,
     cameraOn,
     samplerRef,
+    draftTextRef,
     session,
     speech,
     notes,
