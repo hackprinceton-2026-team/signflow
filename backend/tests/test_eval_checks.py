@@ -103,6 +103,10 @@ def test_affirmatives_are_not_negated(text: str):
         ("My pain is an 8 out of 10.", [8, 10]),
         ("Take 2.5 ml", [2.5]),
         ("at 3:30 p.m.", [3, 30]),
+        # Regression: real gemini-3.5-flash output for TIME 3 was flagged number_added (0).
+        ("I have a doctor's appointment tomorrow at 3:00.", [3]),
+        ("from 9:00 to 12:00", [9, 12]),
+        ("at 3:05", [3, 5]),
         ("two three", [2, 3]),
         ("No one came, so take this one.", []),
         ("One of them", [1]),
@@ -228,3 +232,10 @@ def test_reference_overlap_is_informational_token_f1():
     assert reference_overlap("I understand.", refs) == pytest.approx(0.667, abs=1e-3)
     assert reference_overlap("Pizza.", refs) == 0.0
     assert reference_overlap("Where is it?", ["Nope.", "Where is the bathroom?"]) == pytest.approx(0.571, abs=1e-3)
+
+
+def test_on_the_hour_clock_time_is_not_an_extra_number():
+    """Regression: the live gemini-3.5-flash translation of TOMORROW DOCTOR APPOINTMENT TIME 3."""
+    case = CASES["time-appointment-tomorrow"]
+    assert check_output(case, "I have a doctor's appointment tomorrow at 3:00.") == []
+    assert codes(case, "I have a doctor's appointment tomorrow at 4:00.") == {"number_missing", "number_added"}

@@ -77,7 +77,7 @@ All checks are deterministic: case-insensitive whole-word matching against expli
 | Flag | Severity | Raised when |
 | --- | --- | --- |
 | `negation_dropped` / `negation_added` | fail | The polarity of the English doesn't match the signs |
-| `number_missing` / `number_added` | fail | A signed number is missing or changed, or an unsigned number appears (digits or words: "25", "twenty-five") |
+| `number_missing` / `number_added` | fail | A signed number is missing or changed, or an unsigned number appears (digits or words: "25", "twenty-five"; an on-the-hour time like "3:00" counts as 3) |
 | `time_missing` | fail | A required time concept is absent |
 | `time_conflict` | fail | A contradicting time appears (yesterday→tomorrow, before→after, morning→night) |
 | `time_added` | fail | An anchoring time (yesterday, tomorrow, tonight, every day, a.m./p.m., …) appears that no reference has. Filler like "now" and "today" is allowed. |

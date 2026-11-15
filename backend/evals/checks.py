@@ -117,6 +117,8 @@ def extract_numbers(text: str) -> list[float]:
     """Every number in the text, written as digits or words, as values (with repeats)."""
     lowered = normalize(text)
     without_separators = re.sub(r"(?<=\d),(?=\d{3}(?!\d))", "", lowered)
+    # On-the-hour clock times: "3:00" is the number 3, not 3 and 0. ("3:30" still yields 3 and 30.)
+    without_separators = re.sub(r"(?<![\d:])(\d{1,2}):00(?![\d:])", r"\1", without_separators)
     # Digits glued to letters are gloss notation (IX-1, POSS-1), reported as gloss_leak instead.
     digits = [float(match) for match in re.findall(r"(?<![a-z]-)(?<![a-z])\d+(?:\.\d+)?", without_separators)]
     tokens = re.findall(r"[a-z]+(?:'[a-z]+)?", re.sub(r"\d", " ", lowered))
