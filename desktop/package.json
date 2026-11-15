@@ -22,6 +22,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "npm run build && playwright test",
+    "contract:sync": "node contract/cli.mts sync",
     "contract:generate": "node contract/cli.mts generate",
     "contract:check": "node contract/cli.mts check",
     "check": "npm run typecheck && npm run lint && npm test && npm run contract:check"

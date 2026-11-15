@@ -27,7 +27,10 @@ export interface ConceptMapping {
 }
 
 export interface ContractConfig {
+  /** The pinned contract this app is built against (a byte-for-byte copy of upstream). */
   source: string;
+  /** Where the backend publishes the contract. When present, it must equal `source`. */
+  upstream?: string;
   examplesDir: string;
   output: string;
   concepts: Record<string, ConceptMapping>;
@@ -38,7 +41,13 @@ export function loadConfig(
   path = process.env['SIGNFLOW_CONTRACT_CONFIG'] || join(DESKTOP_ROOT, 'contract', 'config.json'),
 ): ContractConfig {
   const raw = JSON.parse(readFileSync(path, 'utf8')) as ContractConfig & { $comment?: unknown };
-  return { source: raw.source, examplesDir: raw.examplesDir, output: raw.output, concepts: raw.concepts };
+  return {
+    source: raw.source,
+    ...(raw.upstream ? { upstream: raw.upstream } : {}),
+    examplesDir: raw.examplesDir,
+    output: raw.output,
+    concepts: raw.concepts,
+  };
 }
 
 export function isUrl(source: string): boolean {
@@ -163,6 +172,28 @@ export function listExamples(examplesDir: string): ExampleFile[] {
     }
   }
   return out;
+}
+
+export interface InlineExample {
+  schema: string;
+  index: number;
+  value: unknown;
+}
+
+/** Examples the backend embeds in its schemas (`components.schemas.X.examples`). */
+export function inlineExamples(doc: OpenApiDoc): InlineExample[] {
+  const out: InlineExample[] = [];
+  for (const [schema, def] of Object.entries(doc.components?.schemas ?? {})) {
+    const examples = (def as { examples?: unknown }).examples;
+    if (Array.isArray(examples)) examples.forEach((value, index) => out.push({ schema, index, value }));
+  }
+  return out;
+}
+
+/** `SIGNFLOW_CONTRACT_UPSTREAM` (path or http URL) overrides the configured upstream. */
+export function contractUpstream(config: ContractConfig, env = process.env): string | undefined {
+  const upstream = env['SIGNFLOW_CONTRACT_UPSTREAM'] || config.upstream;
+  return upstream ? resolveSource(upstream) : undefined;
 }
 
 /** Problems with the concept → schema mapping for a given official document. */

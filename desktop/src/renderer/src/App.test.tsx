@@ -63,7 +63,7 @@ describe('<App /> shell', () => {
     renderApp();
     go('Settings');
     expect(await screen.findByText(/SignFlow v0\.1\.0-test/)).toBeInTheDocument();
-    expect(screen.getByText('Waiting for the official backend schema')).toBeInTheDocument();
+    expect(screen.getByText(/Official schema \(OpenAPI 3\.1\.0\)/)).toBeInTheDocument();
   });
 });
 

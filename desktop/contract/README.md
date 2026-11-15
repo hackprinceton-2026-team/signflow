@@ -11,26 +11,20 @@ backend/ Pydantic models ──► openapi.json ──► npm run contract:gener
 
 ## Status
 
-🟡 **Waiting for the official schema.** Until it exists:
+🟢 **Official schema pinned.** `contract/openapi.json` is a byte-for-byte copy of `backend/openapi.json` (backend PR `fix/backend-integration`), generated from the backend's Pydantic models. The TypeScript types in `src/renderer/src/contract/generated/openapi.ts` come from it.
 
-- the app runs on **mock adapters**, unchanged (`createAdapters('mock')`)
-- `generated/openapi.ts` is a **placeholder** (`CONTRACT_GENERATED = false`) with no wire types
-- the official contract tests are **skipped**; the tooling self-tests run against a synthetic fixture (`fixtures/tooling`, deliberately named `Tooling*`)
+- **Live mode** uses these types for `/health`, `/translate`, and `/speak`. Demo mode (mock adapters) is unchanged and needs no backend.
+- **Recognition** is not served by the backend yet (`recognizedSign` is unmapped), so signs come from the demo recognizer in both modes.
+- When `backend/openapi.json` is present (on `main`, after both PRs merge), the contract tests require the pinned copy to match it exactly.
 
-## What the frontend needs from the backend
+### Updating the contract
 
-1. **An OpenAPI 3.1 (or 3.0) JSON document** generated from the Pydantic models, committed at the shared path in `config.json` (`source`, proposed: `docs/contract/openapi.json`). It must include every model that crosses the wire under `components.schemas`, **including WebSocket messages**. FastAPI only puts models used by HTTP routes into `/openapi.json`, so WebSocket message models need to be added explicitly, e.g. a small export script using `pydantic.json_schema.models_json_schema(...)` with `ref_template="#/components/schemas/{model}"`.
-2. **Example payloads** for each message: `<examplesDir>/<SchemaName>/*.json` (valid) and optionally `<SchemaName>/invalid/*.json` (must be rejected). Proposed `examplesDir`: `docs/contract/examples`.
-3. **Names for the concepts below**, filled into `config.json` → `concepts.*.schema`:
+```bash
+npm run contract:sync                                   # copy ../backend/openapi.json → contract/openapi.json, regenerate types
+SIGNFLOW_CONTRACT_UPSTREAM=http://localhost:8000/openapi.json npm run contract:sync   # from a running backend
+```
 
-| Concept             | Required | UI type it feeds   |
-| ------------------- | -------- | ------------------ |
-| `recognizedSign`    | yes      | `RecognizedSign`   |
-| `englishDraft`      | yes      | `EnglishDraft`     |
-| `errorMessage`      | no       | error banners      |
-| `recognitionInput`  | no       | frame sampler      |
-| `draftConfirmation` | no       | confirm action     |
-| `sessionControl`    | no       | start/stop         |
+Then fix any TypeScript errors: renamed or removed fields fail the typecheck, and new enum values fail the exhaustive guards in `adapters/remote/guards.ts`.
 
 ## Commands
 

@@ -1,38 +1,44 @@
 {
-  "$comment": "Frontend side of the backend contract. The canonical schema is the backend's Pydantic models (owner: Muhammad). Do not hand-write wire types here: fill in `schema` with the official component names once the OpenAPI document exists. `source` and `examplesDir` are the proposed shared locations and are not created by the frontend.",
-  "source": "../docs/contract/openapi.json",
-  "examplesDir": "../docs/contract/examples",
+  "$comment": "Frontend side of the backend contract. The source of truth is the backend's Pydantic models, exported to backend/openapi.json. `source` is this app's pinned byte-for-byte copy of it (refresh with `npm run contract:sync`); when `upstream` exists, the contract tests require the two to be identical. Concepts map what the UI needs to the official schema names.",
+  "source": "contract/openapi.json",
+  "upstream": "../backend/openapi.json",
+  "examplesDir": "contract/examples",
   "output": "src/renderer/src/contract/generated/openapi.ts",
   "concepts": {
+    "translationRequest": {
+      "schema": "TranslationRequest",
+      "required": true,
+      "description": "Signs sent for translation (POST /translate)."
+    },
+    "translationResponse": {
+      "schema": "TranslationResponse",
+      "required": true,
+      "description": "English draft for confirmation (UI type EnglishDraft). Text only, never audio."
+    },
+    "speechRequest": {
+      "schema": "SpeechRequest",
+      "required": true,
+      "description": "Confirmed text to speak (POST /speak), sent only after the user confirms."
+    },
+    "speechResponse": {
+      "schema": "SpeechResponse",
+      "required": true,
+      "description": "Audio for the confirmed text."
+    },
+    "health": {
+      "schema": "HealthResponse",
+      "required": true,
+      "description": "Backend liveness and provider configuration (connection status in the UI)."
+    },
+    "errorResponse": {
+      "schema": "ErrorResponse",
+      "required": true,
+      "description": "Shape of every backend error; its message is shown to the user."
+    },
     "recognizedSign": {
       "schema": null,
-      "required": true,
-      "description": "One recognized sign streamed by the model. Feeds the live sign feed (UI type RecognizedSign)."
-    },
-    "englishDraft": {
-      "schema": null,
-      "required": true,
-      "description": "English text generated from a run of signs, shown for user confirmation (UI type EnglishDraft)."
-    },
-    "errorMessage": {
-      "schema": null,
       "required": false,
-      "description": "Error reported by the backend or model, surfaced in the UI."
-    },
-    "recognitionInput": {
-      "schema": null,
-      "required": false,
-      "description": "What the desktop sends for recognition (video frame, landmarks, ...). Depends on the backend's design."
-    },
-    "draftConfirmation": {
-      "schema": null,
-      "required": false,
-      "description": "Sent when the user confirms or edits a draft, if the backend wants it."
-    },
-    "sessionControl": {
-      "schema": null,
-      "required": false,
-      "description": "Session start/stop messages, if the backend uses them."
+      "description": "One recognized sign. Not served by the backend yet; recognition stays on the demo recognizer until ml/ provides it."
     }
   }
 }

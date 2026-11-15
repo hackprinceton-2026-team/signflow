@@ -1,13 +1,14 @@
 /**
- * npm run contract:generate   → write TS types from the official OpenAPI document
+ * npm run contract:sync       → copy the backend's openapi.json into the pinned snapshot, then generate
+ * npm run contract:generate   → write TS types from the pinned OpenAPI document
  * npm run contract:check      → fail if committed types are stale (CI-friendly)
  *
  * Source: contract/config.json "source", or SIGNFLOW_CONTRACT_SOURCE
  * (a file path, or e.g. http://localhost:8000/openapi.json).
  */
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, relative, resolve } from 'node:path';
-import { contractSource, DESKTOP_ROOT, generateTypes, isUrl, loadConfig, readSourceText } from './lib.mts';
+import { contractSource, contractUpstream, DESKTOP_ROOT, generateTypes, isUrl, loadConfig, parseOpenApi, readSourceText } from './lib.mts';
 
 const command = process.argv[2];
 const config = loadConfig();
@@ -28,9 +29,24 @@ function noSource(): never {
 }
 
 async function main(): Promise<void> {
-  if (command !== 'generate' && command !== 'check') {
-    console.error('Usage: contract/cli.mts <generate|check>');
+  if (command !== 'generate' && command !== 'check' && command !== 'sync') {
+    console.error('Usage: contract/cli.mts <sync|generate|check>');
     process.exit(2);
+  }
+
+  if (command === 'sync') {
+    const upstream = contractUpstream(config);
+    if (!upstream) throw new Error('No upstream configured (contract/config.json "upstream" or SIGNFLOW_CONTRACT_UPSTREAM)');
+    if (isUrl(upstream)) {
+      const text = await readSourceText(upstream);
+      parseOpenApi(text); // refuse to pin something that isn't OpenAPI
+      writeFileSync(source, text.endsWith('\n') ? text : `${text}\n`);
+    } else {
+      if (!existsSync(upstream)) throw new Error(`Upstream contract not found: ${rel(upstream)}`);
+      parseOpenApi(readFileSync(upstream, 'utf8'));
+      copyFileSync(upstream, source);
+    }
+    console.log(`✓ Pinned ${rel(source)} from ${rel(upstream)}`);
   }
   if (!isUrl(source) && !existsSync(source)) noSource();
 
