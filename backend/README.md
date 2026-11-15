@@ -67,6 +67,15 @@ ruff check . && ruff format --check .
 
 No test needs real credentials or network access.
 
+## Translation quality evaluation
+
+`python -m evals` scores translations of 25 synthetic ASL gloss cases with deterministic checks for negation, numbers, time references and medical terms, and reports latency. It writes JSON and Markdown reports to `evals/out/`. It is offline by default. Real Gemini calls happen only with `--live`. See [`evals/README.md`](evals/README.md).
+
+```bash
+python -m evals            # offline sanity check, no credentials
+python -m evals --live     # real Gemini calls with GOOGLE_API_KEY (uses quota)
+```
+
 ## Layout
 
 ```
@@ -80,5 +89,6 @@ signflow_api/
   speech.py             Polly synthesizer
 scripts/export_openapi.py
 openapi.json            generated contract (committed)
+evals/                  translation quality evaluation (python -m evals)
 tests/
 ```
