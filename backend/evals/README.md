@@ -15,6 +15,8 @@ python -m evals --live                        # real Gemini calls (needs GOOGLE_
 python -m evals --live --case num-age-25      # one live call
 ```
 
+The default run answers every case with its own first reference translation, so it passes by construction. It only shows that the dataset and the checks agree. It says nothing about Gemini or any other model; only `--live` runs, or `--responses` files recorded from them, measure a model.
+
 Each run prints one line per case and a summary, and writes a JSON and a Markdown report to `evals/out/` (gitignored). Exit status: `0` if every case passed, `1` if any failed or errored, `2` for usage or configuration problems.
 
 | Option | Meaning |
@@ -97,7 +99,7 @@ The tests pin that every reference passes its own case and every counterexample 
 
 ## Reports
 
-`translation-eval-<provider>-<UTC timestamp>.json`:
+`translation-eval-<provider>-<UTC timestamp>.json` (values below are illustrative, not results):
 
 ```jsonc
 {
