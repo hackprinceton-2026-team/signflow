@@ -106,7 +106,15 @@ describe('createBackendClient', () => {
 
   it('health uses GET with a short timeout', async () => {
     const { client, fetchFn } = clientWith(async () =>
-      json(200, { status: 'ok', version: '0.2.0', translation: 'ready', speech: 'not_configured', model: 'm' }),
+      json(200, {
+        status: 'ok',
+        version: '0.3.0',
+        translation: 'ready',
+        speech: 'not_configured',
+        model: 'm',
+        speech_voice: 'Ruth',
+        speech_engine: 'generative',
+      }),
     );
     await expect(client.health()).resolves.toMatchObject({ translation: 'ready' });
     expect(fetchFn.mock.calls[0]![1]).toMatchObject({ method: 'GET' });

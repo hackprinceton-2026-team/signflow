@@ -72,7 +72,10 @@ export interface SpeechVoice {
 }
 
 export interface SpeechOptions {
+  /** System voice (voiceURI). Undefined = the best available English voice. */
   voiceId?: string | undefined;
+  /** Cloud voice (Amazon Polly id, e.g. "Ruth"). Undefined = the app default. */
+  cloudVoiceId?: string | undefined;
   /** 0.1..10, 1 = normal */
   rate: number;
   /** 0..2, 1 = normal */
@@ -82,6 +85,19 @@ export interface SpeechOptions {
 }
 
 export type SpeechState = 'idle' | 'speaking' | 'paused';
+
+/** The voice that actually spoke the most recent text. */
+export interface VoiceInUse {
+  source: 'cloud' | 'system';
+  /** Voice id: Polly id for cloud, voiceURI for system ('' if the platform picked). */
+  id: string;
+  /** Display name, e.g. "Ruth" or "Samantha". */
+  name: string;
+  /** Cloud only: the Polly engine that produced the audio, e.g. "generative". */
+  engine?: string | undefined;
+  /** The cloud voice was requested but failed, so the system voice spoke instead. */
+  fallback: boolean;
+}
 
 export interface SpeechEngine {
   readonly name: string;
@@ -93,6 +109,8 @@ export interface SpeechEngine {
   resume(): void;
   cancel(): void;
   onState(cb: (state: SpeechState) => void): Unsubscribe;
+  /** Optional: told which voice actually spoke, once per `speak()` that produced sound. */
+  onVoiceInUse?(cb: (voice: VoiceInUse) => void): Unsubscribe;
 }
 
 export interface Adapters {

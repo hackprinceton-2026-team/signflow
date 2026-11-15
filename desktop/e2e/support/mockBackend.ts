@@ -107,7 +107,15 @@ export class MockBackend {
     };
 
     if (req.method === 'GET' && path === '/health') {
-      return this.send(res, 200, { status: 'ok', version: '0.2.0', translation: 'ready', speech: 'ready', model: 'e2e-fake' }, 'HealthResponse', origin);
+      return this.send(res, 200, {
+          status: 'ok',
+          version: '0.3.0',
+          translation: 'ready',
+          speech: 'ready',
+          model: 'e2e-fake',
+          speech_voice: 'Ruth',
+          speech_engine: 'generative',
+        }, 'HealthResponse', origin);
     }
     if (req.method === 'POST' && path === '/translate') {
       if (!checkRequest('TranslationRequest')) return;
@@ -120,7 +128,7 @@ export class MockBackend {
       return this.send(
         res,
         200,
-        { audio_base64: silentMp3().toString('base64'), audio_format: 'mp3', voice_id: voice_id ?? 'Joanna' },
+        { audio_base64: silentMp3().toString('base64'), audio_format: 'mp3', voice_id: voice_id ?? 'Ruth', engine: 'generative' },
         'SpeechResponse',
         origin,
       );

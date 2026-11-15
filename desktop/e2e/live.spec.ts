@@ -77,11 +77,30 @@ test('AI draft from the backend; /speak only after confirming, with the edited t
   await expect(page.getByTestId('confirm-toast')).toContainText('Spoken');
   if (backend) {
     await expect.poll(() => backend.callsTo('/speak').length).toBe(1);
-    expect(backend.callsTo('/speak')[0]!.body).toEqual({ text: 'Hello, nice to meet you, doctor.' });
+    expect(backend.callsTo('/speak')[0]!.body).toEqual({ text: 'Hello, nice to meet you, doctor.', voice_id: 'Ruth' });
   }
   // The cloud audio really played (muted in e2e): no fallback to the system voice.
   await page.waitForTimeout(1500);
   await expect(page.getByTestId('notice-toast')).toHaveCount(0);
+});
+
+test('Settings › Speech: pick a Generative voice, test it, and see the voice actually used', async () => {
+  await go('Settings');
+  const pill = page.getByTestId('voice-in-use-pill');
+  await expect(pill).toHaveText('Ruth · Amazon Polly Generative');
+  await expect(page.getByTestId('voice-in-use')).toContainText('Last confirmed text was spoken with this cloud voice.');
+  await choose('Cloud voice', 'Matthew');
+  await expect(pill).toHaveText('Matthew · Amazon Polly Generative');
+  const before = backend?.callsTo('/speak').length ?? 0;
+  await page.getByRole('button', { name: 'Test voice' }).click();
+  await expect(page.getByTestId('voice-in-use')).toContainText('Last confirmed text was spoken with this cloud voice.');
+  if (backend) {
+    await expect.poll(() => backend.callsTo('/speak').length).toBe(before + 1);
+    expect(backend.callsTo('/speak').at(-1)!.body).toEqual({ text: 'This is how SignFlow will sound.', voice_id: 'Matthew' });
+  }
+  await auditAccessibility(page, 'Settings › Speech (cloud voice)');
+  await choose('Cloud voice', 'Ruth');
+  await go('Live'); // the next test keeps signing on the Live screen
 });
 
 test('every request and response matched the OpenAPI contract', async () => {

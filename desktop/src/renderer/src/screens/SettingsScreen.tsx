@@ -2,7 +2,7 @@ import { useRef, useState, type ReactNode } from 'react';
 import { CAPTION_LIMITS } from '@shared/captions';
 import { CONTRACT_GENERATED, CONTRACT_OPENAPI_VERSION } from '../contract';
 import { useSignFlow } from '../app/useSignFlow';
-import { SpeechSettings } from '../components/SpeechSettings';
+import { SpeechSettings, type CloudSpeechStatus } from '../components/SpeechSettings';
 import { SETTINGS_LIMITS } from '../state/session';
 import { SHORTCUTS } from '../app/shortcuts';
 import type { BackendHealth } from '../hooks/useBackendHealth';
@@ -72,11 +72,17 @@ function BackendStatus({ health, baseUrl, cloudVoice }: { health: BackendHealth;
       )}
       {health.health && health.status === 'online' && (
         <p className="subtle">
-          {health.health.model} · API v{health.health.version} · speech {health.health.speech === 'ready' ? 'ready' : 'not configured'}
+          {health.health.model} · API v{health.health.version} · speech{' '}
+          {health.health.speech === 'ready' ? `ready (Polly ${health.health.speech_engine})` : 'not configured'}
         </p>
       )}
     </div>
   );
+}
+
+function cloudSpeechStatus(health: BackendHealth): CloudSpeechStatus {
+  if (health.status === 'offline') return 'offline';
+  return health.health?.speech ?? 'unknown';
 }
 
 function InfoRow({ label, children }: { label: string; children: ReactNode }) {
@@ -223,8 +229,8 @@ export function SettingsScreen() {
             onChange={(voice) => updateConnection({ voice })}
           />
           <p className="subtle">
-            The cloud voice (Amazon Polly, through the backend) falls back to the system voice if it&apos;s unavailable.
-            Either way, only text you confirm is spoken.
+            The cloud voice (Amazon Polly Generative, through the backend) sounds the most natural and falls back to the
+            system voice if it&apos;s unavailable. Pick the voice under Speech. Either way, only text you confirm is spoken.
           </p>
         </Section>
 
@@ -262,7 +268,9 @@ export function SettingsScreen() {
             speech={speech}
             autoSpeak={settings.autoSpeak}
             onAutoSpeakChange={(autoSpeak) => updateSettings({ autoSpeak })}
-            pitchSupported={!(live && connection.voice === 'cloud')}
+            cloudVoice={live && connection.voice === 'cloud'}
+            cloudStatus={cloudSpeechStatus(backend.health)}
+            platform={info?.platform}
           />
         </Section>
 

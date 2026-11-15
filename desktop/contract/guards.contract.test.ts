@@ -11,6 +11,7 @@ import { describe, expect, it } from 'vitest';
 import {
   isErrorResponse,
   isHealthResponse,
+  isSpeechEngineName,
   isSpeechResponse,
   isTranslationResponse,
   TRANSLATION_MODES,
@@ -49,14 +50,22 @@ describe('response guards vs. the official schema', () => {
     expect(isTranslationResponse(value)).toBe(false);
   });
 
-  it('rejects non-mp3 speech and empty audio (as the schema does)', () => {
+  it('rejects non-mp3 speech, empty audio, and a missing or unknown engine (as the schema does)', () => {
     for (const value of [
-      { audio_base64: 'AAA', audio_format: 'wav', voice_id: 'Joanna' },
-      { audio_base64: '', audio_format: 'mp3', voice_id: 'Joanna' },
+      { audio_base64: 'AAA', audio_format: 'wav', voice_id: 'Ruth', engine: 'generative' },
+      { audio_base64: '', audio_format: 'mp3', voice_id: 'Ruth', engine: 'generative' },
+      { audio_base64: 'AAA', audio_format: 'mp3', voice_id: 'Ruth' },
+      { audio_base64: 'AAA', audio_format: 'mp3', voice_id: 'Ruth', engine: 'turbo' },
     ]) {
       expect(validate('SpeechResponse', value).valid).toBe(false);
       expect(isSpeechResponse(value)).toBe(false);
     }
+  });
+
+  it('knows exactly the speech engines the schema defines', () => {
+    const schema = doc.components!.schemas!['SpeechResponse'] as unknown as { properties: { engine: { enum: string[] } } };
+    for (const engine of schema.properties.engine.enum) expect(isSpeechEngineName(engine)).toBe(true);
+    expect(isSpeechEngineName('turbo')).toBe(false);
   });
 
   it('knows exactly the translation modes the schema defines', () => {

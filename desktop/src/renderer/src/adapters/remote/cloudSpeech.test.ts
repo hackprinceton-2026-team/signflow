@@ -1,13 +1,14 @@
 import { describe, expect, it, vi } from 'vitest';
-import { CloudSpeechEngine, FallbackSpeechEngine, type AudioLike } from './cloudSpeech';
+import { CLOUD_SPEAK_TIMEOUT_MS, CLOUD_VOICES, CloudSpeechEngine, FallbackSpeechEngine, resolveCloudVoice, type AudioLike } from './cloudSpeech';
 import { createFakeBackend } from '../../test/fakeBackend';
 import { MockSpeechEngine } from '../speech';
-import type { SpeechState } from '../types';
+import type { SpeechState, VoiceInUse } from '../types';
 
 class FakeAudio implements AudioLike {
   src = '';
   volume = 1;
   playbackRate = 1;
+  preservesPitch = false;
   muted = false;
   onended: AudioLike['onended'] = null;
   onerror: AudioLike['onerror'] = null;
@@ -35,15 +36,25 @@ function setup(backend = createFakeBackend()) {
   });
   const states: SpeechState[] = [];
   engine.onState((s) => states.push(s));
-  return { backend, engine, audios, states, revoke };
+  const used: VoiceInUse[] = [];
+  engine.onVoiceInUse((v) => used.push(v));
+  return { backend, engine, audios, states, revoke, used };
 }
 
 describe('CloudSpeechEngine', () => {
+  it('offers the Generative voices Ruth (default), Danielle and Matthew', () => {
+    expect(CLOUD_VOICES.map((v) => v.id)).toEqual(['Ruth', 'Danielle', 'Matthew']);
+    expect(resolveCloudVoice(undefined).id).toBe('Ruth');
+    expect(resolveCloudVoice('Danielle').id).toBe('Danielle');
+    expect(resolveCloudVoice('com.apple.voice.Samantha').id).toBe('Ruth');
+  });
+
   it('fetches /speak for exactly the given text and plays it', async () => {
-    const { backend, engine, audios, states, revoke } = setup();
-    await engine.play('  Thank you so much.  ', { ...opts, voiceId: 'Matthew' });
+    const { backend, engine, audios, states, revoke, used } = setup();
+    await engine.play('  Thank you so much.  ', { ...opts, cloudVoiceId: 'Matthew' });
     expect(backend.callsTo('/speak').map((c) => c.body)).toEqual([{ text: 'Thank you so much.', voice_id: 'Matthew' }]);
-    expect(audios[0]).toMatchObject({ src: 'blob:test', volume: 0.6, playbackRate: 1.25, muted: false });
+    expect(audios[0]).toMatchObject({ src: 'blob:test', volume: 0.6, playbackRate: 1.25, preservesPitch: true, muted: false });
+    expect(used).toEqual([{ source: 'cloud', id: 'Matthew', name: 'Matthew', engine: 'generative', fallback: false }]);
     expect(audios[0]!.play).toHaveBeenCalled();
     expect(states).toEqual(['speaking']);
     audios[0]!.end();
@@ -51,10 +62,42 @@ describe('CloudSpeechEngine', () => {
     expect(revoke).toHaveBeenCalledWith('blob:test');
   });
 
-  it('ignores system voice ids (lets the server pick its default)', async () => {
+  it('uses Ruth unless another offered cloud voice was picked; the system voice never leaks in', async () => {
     const { backend, engine } = setup();
     await engine.play('Hi.', { ...opts, voiceId: 'com.apple.voice.Samantha' });
-    expect(backend.callsTo('/speak')[0]!.body).toEqual({ text: 'Hi.' });
+    await engine.play('Hi.', { ...opts, cloudVoiceId: 'Joanna' });
+    expect(backend.callsTo('/speak').map((c) => c.body)).toEqual([
+      { text: 'Hi.', voice_id: 'Ruth' },
+      { text: 'Hi.', voice_id: 'Ruth' },
+    ]);
+  });
+
+  it('reports the engine the backend actually used', async () => {
+    const backend = createFakeBackend();
+    backend.fetch.mockImplementationOnce(async () =>
+      new Response(JSON.stringify({ audio_base64: btoa('ID3'), audio_format: 'mp3', voice_id: 'Ruth', engine: 'neural' }), { status: 200 }),
+    );
+    const { engine, used } = setup(backend);
+    await engine.play('Hi.', opts);
+    expect(used[0]).toMatchObject({ id: 'Ruth', engine: 'neural' });
+  });
+
+  it('gives up on a slow cloud voice so the fallback can speak', async () => {
+    vi.useFakeTimers();
+    try {
+      const backend = createFakeBackend();
+      backend.fetch.mockImplementationOnce(
+        (_input, init) =>
+          new Promise((_resolve, reject) => init?.signal?.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')))),
+      );
+      const { engine } = setup(backend);
+      const played = engine.play('Hi.', opts);
+      const check = expect(played).rejects.toMatchObject({ kind: 'timeout' });
+      await vi.advanceTimersByTimeAsync(CLOUD_SPEAK_TIMEOUT_MS + 1);
+      await check;
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('pause/resume/cancel control playback', async () => {
@@ -93,21 +136,36 @@ describe('FallbackSpeechEngine', () => {
     const { backend, engine } = setup();
     const system = new MockSpeechEngine();
     const onFallback = vi.fn();
-    new FallbackSpeechEngine(engine, system, onFallback).speak('Hello.', opts);
-    await vi.waitFor(() => expect(backend.callsTo('/speak')).toHaveLength(1));
+    const fb = new FallbackSpeechEngine(engine, system, onFallback);
+    const used: VoiceInUse[] = [];
+    fb.onVoiceInUse((v) => used.push(v));
+    fb.speak('Hello.', opts);
+    await vi.waitFor(() => expect(used).toHaveLength(1));
+    expect(backend.callsTo('/speak')).toHaveLength(1);
+    expect(used[0]).toMatchObject({ source: 'cloud', name: 'Ruth', engine: 'generative', fallback: false });
     expect(system.spoken).toHaveLength(0);
     expect(onFallback).not.toHaveBeenCalled();
   });
 
-  it('speaks the same confirmed text with the system voice if the cloud fails', async () => {
+  it('speaks the same confirmed text with the chosen system voice if the cloud fails, and says so', async () => {
     const { engine } = setup(createFakeBackend({ offline: true }));
     const system = new MockSpeechEngine();
     const onFallback = vi.fn();
-    new FallbackSpeechEngine(engine, system, onFallback).speak('I need help.', { ...opts, voiceId: 'Joanna' });
+    const fb = new FallbackSpeechEngine(engine, system, onFallback);
+    const used: VoiceInUse[] = [];
+    fb.onVoiceInUse((v) => used.push(v));
+    fb.speak('I need help.', { ...opts, voiceId: 'mock-voice', cloudVoiceId: 'Danielle' });
     await vi.waitFor(() => expect(system.spoken).toHaveLength(1));
     expect(system.spoken[0]!.text).toBe('I need help.');
-    expect(system.spoken[0]!.opts.voiceId).toBeUndefined();
+    expect(system.spoken[0]!.opts.voiceId).toBe('mock-voice');
     expect(onFallback).toHaveBeenCalledWith(expect.objectContaining({ kind: 'offline' }));
+    expect(used).toEqual([{ source: 'system', id: 'mock-voice', name: 'Mock Voice', fallback: true }]);
+  });
+
+  it('lists the system voices, so the fallback voice can be chosen', () => {
+    const { engine } = setup();
+    const system = new MockSpeechEngine();
+    expect(new FallbackSpeechEngine(engine, system).voices()).toEqual(system.voices());
   });
 
   it('merges state from both engines and unsubscribes cleanly', () => {

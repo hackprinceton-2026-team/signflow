@@ -43,10 +43,12 @@ export function createFakeBackend(initial: Partial<FakeBackendState> = {}) {
     if (url.pathname === '/health') {
       return json(200, {
         status: 'ok',
-        version: '0.2.0',
+        version: '0.3.0',
         translation: state.translationConfigured ? 'ready' : 'not_configured',
         speech: state.speechConfigured ? 'ready' : 'not_configured',
         model: 'gemini-test',
+        speech_voice: 'Ruth',
+        speech_engine: 'generative',
       });
     }
     if (url.pathname === '/translate') {
@@ -64,7 +66,10 @@ export function createFakeBackend(initial: Partial<FakeBackendState> = {}) {
         return json(503, { error: { code: 'speech_unavailable', message: 'Speech is not configured on the server (no AWS credentials).' } });
       }
       const req = body as { voice_id?: string };
-      return json(200, { audio_base64: btoa('ID3fake'), audio_format: 'mp3', voice_id: req.voice_id ?? 'Joanna' });
+      const voice = req.voice_id ?? 'Ruth';
+      // Mirrors Polly: these voices support the Generative engine; others fall back to Neural.
+      const engine = ['Ruth', 'Danielle', 'Matthew'].includes(voice) ? 'generative' : 'neural';
+      return json(200, { audio_base64: btoa('ID3fake'), audio_format: 'mp3', voice_id: voice, engine });
     }
     return json(404, { error: { code: 'not_found', message: 'Not found.' } });
   });

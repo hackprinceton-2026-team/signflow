@@ -1217,6 +1217,22 @@
   font-weight: var(--weight-medium);
 }
 
+.voice-in-use {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.voice-in-use .setting-line-text {
+  flex-wrap: wrap;
+}
+
+.cloud-voice-picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
 .info-row {
   display: flex;
   justify-content: space-between;

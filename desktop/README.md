@@ -24,14 +24,22 @@ Choose in **Settings › Connection**:
 | Mode     | Translation                                            | Speech                                     | Needs                          |
 | -------- | ------------------------------------------------------ | ------------------------------------------ | ------------------------------ |
 | **Demo** | Mock translator, on the device                         | System voice                               | Nothing                        |
-| **Live** | SignFlow backend (`POST /translate`, Gemini), with an Everyday / Medical / Emergency context | System voice, or **cloud voice** (`POST /speak`, Amazon Polly) with automatic fallback to the system voice | The backend running on `http://localhost:8000` (see `backend/README.md`) |
+| **Live** | SignFlow backend (`POST /translate`, Gemini), with an Everyday / Medical / Emergency context | System voice, or **cloud voice** (`POST /speak`, Amazon Polly Generative: Ruth by default, or Danielle / Matthew) with automatic fallback to the system voice | The backend running on `http://localhost:8000` (see `backend/README.md`) |
 
 Signs come from the demo recognizer in both modes until the ML model is connected. Switching modes never restarts recognition.
 
 Live mode is built to fail gracefully:
 - **Status:** the backend's state shows in the top bar and in Settings (online, not configured, offline), with setup hints and "Check again". It's polled every 15 s, re-checked when the network returns, and refreshed immediately after any failed request.
 - **Translation errors:** the backend's explanation appears in the draft (for example a missing `GOOGLE_API_KEY`), with **Retry** and **Use demo mode**. The latter finishes the same phrase locally; the signs are kept.
-- **Cloud voice errors:** the same confirmed text is spoken with the system voice instead, and a notice says so.
+- **Cloud voice errors:** the same confirmed text is spoken with the system voice instead, and a notice says so. The cloud request gives up after 10 s so the fallback isn't left waiting.
+
+### Voices (Settings › Speech)
+
+- **Cloud voice:** Ruth (recommended), Danielle, or Matthew, all Amazon Polly **Generative**. The backend retries with Neural only if a voice lacks Generative, and says so.
+- **System / fallback voice:** "Automatic" picks the most natural installed English voice (Premium or Enhanced macOS voices first, never novelty voices). The app waits briefly for macOS to load its voice list before speaking.
+- **Voice in use:** shows the voice and engine that actually spoke last (for example "Ruth · Amazon Polly Generative", or the macOS voice after a fallback), or, before anything is spoken, what will be used.
+- **Test voice** speaks a fixed sample phrase through the same path as confirmed text. It never speaks your text and doesn't change "Speak last".
+- Defaults are natural playback: rate 1.0×, pitch 1.0, volume 100%. Cloud playback keeps the voice's pitch when the rate changes.
 
 The backend URL is fixed to `http://localhost:8000` because it's the only backend origin the renderer's CSP allows (`src/shared/csp.ts`).
 

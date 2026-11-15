@@ -101,9 +101,11 @@ export interface components {
          * @example {
          *       "model": "gemini-3.8-flash",
          *       "speech": "not_configured",
+         *       "speech_engine": "generative",
+         *       "speech_voice": "Ruth",
          *       "status": "ok",
          *       "translation": "ready",
-         *       "version": "0.2.0"
+         *       "version": "0.3.0"
          *     }
          */
         HealthResponse: {
@@ -114,6 +116,17 @@ export interface components {
              * @enum {string}
              */
             speech: "ready" | "not_configured";
+            /**
+             * Speech Engine
+             * @description Engine `/speak` tries first.
+             * @enum {string}
+             */
+            speech_engine: "generative" | "long-form" | "neural" | "standard";
+            /**
+             * Speech Voice
+             * @description Default voice for `/speak` when the request names none.
+             */
+            speech_voice: string;
             /**
              * Status
              * @default ok
@@ -133,7 +146,10 @@ export interface components {
          * @description Text the user has already confirmed (and possibly edited) in the app.
          * @example {
          *       "text": "I've had a headache since yesterday.",
-         *       "voice_id": "Joanna"
+         *       "voice_id": "Ruth"
+         *     }
+         * @example {
+         *       "text": "Nice to meet you."
          *     }
          */
         SpeechRequest: {
@@ -144,7 +160,7 @@ export interface components {
             text: string;
             /**
              * Voice Id
-             * @description Amazon Polly voice; the server default if omitted.
+             * @description Amazon Polly voice, e.g. `Ruth`, `Danielle` or `Matthew` (Generative). The server default if omitted.
              */
             voice_id?: string | null;
         };
@@ -153,7 +169,8 @@ export interface components {
          * @example {
          *       "audio_base64": "SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4",
          *       "audio_format": "mp3",
-         *       "voice_id": "Joanna"
+         *       "engine": "generative",
+         *       "voice_id": "Ruth"
          *     }
          */
         SpeechResponse: {
@@ -168,7 +185,16 @@ export interface components {
              * @constant
              */
             audio_format?: "mp3";
-            /** Voice Id */
+            /**
+             * Engine
+             * @description Polly engine that produced the audio: the configured one, or the fallback if the voice lacks it.
+             * @enum {string}
+             */
+            engine: "generative" | "long-form" | "neural" | "standard";
+            /**
+             * Voice Id
+             * @description Voice that spoke the audio.
+             */
             voice_id: string;
         };
         /**
@@ -384,5 +410,5 @@ export interface operations {
 
 /** True once types come from the official contract (false in the placeholder). */
 export const CONTRACT_GENERATED = true as const;
-export const CONTRACT_SOURCE_SHA256 = '8e48e992d1b079ba421d63716735e87170df26b11ae23cdda0c8acdc8a9653d2';
+export const CONTRACT_SOURCE_SHA256 = 'ad7203309ead6dfae8fc9040b94937b18091d89bf7b790ff8b367390dc4af902';
 export const CONTRACT_OPENAPI_VERSION = '3.1.0';

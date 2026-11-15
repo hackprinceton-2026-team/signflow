@@ -6,6 +6,7 @@ import { FakeRecognizer, installFakeMediaDevices } from '../test/fakes';
 import { createFakeBackend } from '../test/fakeBackend';
 import { MockTranslator } from '../adapters/mock/mockTranslator';
 import { MockSpeechEngine } from '../adapters/speech';
+import { TEST_PHRASE } from '../components/SpeechSettings';
 
 function renderApp(backend = createFakeBackend()) {
   installFakeBridge();
@@ -60,7 +61,7 @@ describe('live mode: AI translation through the backend', () => {
     radio('Mode', 'Live (SignFlow AI)');
     await waitFor(() => expect(screen.getByTestId('status-backend')).toHaveTextContent('AI online'));
     expect(within(screen.getByTestId('backend-status')).getByText('Online')).toBeInTheDocument();
-    expect(screen.getByText(/gemini-test · API v0\.2\.0/)).toBeInTheDocument();
+    expect(screen.getByText(/gemini-test · API v0\.3\.0/)).toBeInTheDocument();
     expect(JSON.parse(localStorage.getItem('signflow.connection') ?? '{}')).toMatchObject({ mode: 'live' });
     expect(backend.callsTo('/health').length).toBeGreaterThan(0);
   });
@@ -86,8 +87,8 @@ describe('live mode: AI translation through the backend', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /^Speak/ }));
     await waitFor(() => expect(backend.callsTo('/speak')).toHaveLength(1));
-    // No voice chosen → the server's configured default voice.
-    expect(backend.callsTo('/speak')[0]!.body).toEqual({ text: 'Thank you so much.' });
+    // No voice chosen → Ruth, the natural Generative default.
+    expect(backend.callsTo('/speak')[0]!.body).toEqual({ text: 'Thank you so much.', voice_id: 'Ruth' });
     expect(system.spoken).toHaveLength(0);
     // Order on the wire: translate first, speak only after.
     const paths = backend.calls.map((c) => c.path).filter((p) => p !== '/health');
@@ -98,7 +99,7 @@ describe('live mode: AI translation through the backend', () => {
     const { backend, recognizer } = renderApp();
     await goLive({ voice: 'Cloud voice' });
     go('Settings');
-    fireEvent.change(screen.getByRole('combobox', { name: 'Voice' }), { target: { value: 'Matthew' } });
+    radio('Cloud voice', 'Matthew');
     go('Live');
     await signPhrase(recognizer, ['HELLO']);
     await screen.findByTestId('draft-text');
@@ -125,6 +126,48 @@ describe('live mode: AI translation through the backend', () => {
     await waitFor(() => expect(system.spoken.map((s) => s.text)).toEqual(['[AI] i need help.']));
     expect(backend.callsTo('/speak')).toHaveLength(1);
     expect(screen.getByTestId('notice-toast')).toHaveTextContent(/Cloud voice unavailable: Speech is not configured.*system voice/);
+
+    // Settings › Speech says which voice actually spoke.
+    go('Settings');
+    expect(screen.getByTestId('voice-in-use-pill')).toHaveTextContent('Mock Voice · macOS voice');
+    expect(screen.getByTestId('voice-in-use')).toHaveTextContent(/cloud voice was unavailable last time/);
+  });
+
+  it('Settings › Speech shows the cloud voice that actually spoke, and its engine', async () => {
+    const { recognizer } = renderApp();
+    await goLive({ voice: 'Cloud voice' });
+    go('Settings');
+    expect(screen.getByTestId('voice-in-use-pill')).toHaveTextContent('Ruth · Amazon Polly Generative');
+    go('Live');
+    await signPhrase(recognizer, ['HELLO']);
+    await screen.findByTestId('draft-text');
+    fireEvent.click(screen.getByRole('button', { name: /^Speak/ }));
+    go('Settings');
+    await waitFor(() => expect(screen.getByTestId('voice-in-use')).toHaveTextContent(/Last confirmed text was spoken with this cloud voice/));
+    expect(screen.getByTestId('voice-in-use-pill')).toHaveTextContent('Ruth · Amazon Polly Generative');
+  });
+
+  it('Test voice previews the selected cloud voice with a fixed phrase', async () => {
+    const { backend } = renderApp();
+    await goLive({ voice: 'Cloud voice' });
+    go('Settings');
+    radio('Cloud voice', 'Danielle');
+    expect(screen.getByTestId('cloud-voice-detail')).toHaveTextContent('Danielle: US English, female · Amazon Polly Generative');
+    fireEvent.click(screen.getByRole('button', { name: 'Test voice' }));
+    await waitFor(() => expect(backend.callsTo('/speak').map((c) => c.body)).toEqual([{ text: TEST_PHRASE, voice_id: 'Danielle' }]));
+    await waitFor(() => expect(screen.getByTestId('voice-in-use-pill')).toHaveTextContent('Danielle · Amazon Polly Generative'));
+    // A test phrase is not confirmed text: "Speak last" stays empty.
+    go('Live');
+    expect(screen.queryByRole('button', { name: 'Speak last' })).toBeNull();
+  });
+
+  it('warns before speaking when the backend has no speech credentials', async () => {
+    renderApp(createFakeBackend({ speechConfigured: false }));
+    await goLive({ voice: 'Cloud voice' });
+    go('Settings');
+    fireEvent.click(screen.getByRole('button', { name: 'Check again' }));
+    await waitFor(() => expect(screen.getByTestId('voice-in-use')).toHaveTextContent(/no AWS credentials/));
+    expect(screen.getByTestId('voice-in-use-pill')).toHaveTextContent('Mock Voice · macOS voice');
   });
 
   it('system voice in live mode speaks locally (no /speak)', async () => {
@@ -207,7 +250,10 @@ describe('connection settings', () => {
     radio('Mode', 'Live (SignFlow AI)');
     radio('Voice', 'Cloud voice');
     expect(screen.getByText('Not supported by the cloud voice.')).toBeInTheDocument();
-    expect(screen.getByRole('combobox', { name: 'Voice' })).toHaveTextContent('Joanna (cloud)');
+    const cloudVoices = within(screen.getByRole('radiogroup', { name: 'Cloud voice' })).getAllByRole('radio');
+    expect(cloudVoices.map((r) => r.textContent)).toEqual(['Ruth', 'Danielle', 'Matthew']);
+    expect(cloudVoices[0]).toHaveAttribute('aria-checked', 'true');
+    expect(screen.getByRole('combobox', { name: 'Fallback voice' })).toHaveTextContent('Automatic (Mock Voice)');
   });
 
   it('arrow keys move the selection in a segmented control', () => {

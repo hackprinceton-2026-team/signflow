@@ -16,8 +16,10 @@ export type HealthResponse = Schema<'HealthResponse'>;
 export type ErrorResponse = Schema<'ErrorResponse'>;
 export type TranslationMode = TranslationResponse['mode'];
 export type ErrorCode = ErrorResponse['error']['code'];
+export type SpeechEngineName = SpeechResponse['engine'];
 
 const MODES = { chat: true, medical: true, emergency: true } satisfies Record<TranslationMode, true>;
+const SPEECH_ENGINES = { generative: true, 'long-form': true, neural: true, standard: true } satisfies Record<SpeechEngineName, true>;
 const PROVIDER_STATUS = { ready: true, not_configured: true } satisfies Record<HealthResponse['translation'], true>;
 const ERROR_CODES = {
   invalid_request: true,
@@ -39,6 +41,10 @@ export function isTranslationMode(v: unknown): v is TranslationMode {
   return typeof v === 'string' && Object.hasOwn(MODES, v);
 }
 
+export function isSpeechEngineName(v: unknown): v is SpeechEngineName {
+  return typeof v === 'string' && Object.hasOwn(SPEECH_ENGINES, v);
+}
+
 export function isErrorCode(v: unknown): v is ErrorCode {
   return typeof v === 'string' && Object.hasOwn(ERROR_CODES, v);
 }
@@ -52,7 +58,8 @@ export function isSpeechResponse(v: unknown): v is SpeechResponse {
     isObject(v) &&
     isNonEmptyString(v['audio_base64']) &&
     (v['audio_format'] === undefined || v['audio_format'] === 'mp3') &&
-    typeof v['voice_id'] === 'string'
+    typeof v['voice_id'] === 'string' &&
+    isSpeechEngineName(v['engine'])
   );
 }
 
@@ -65,7 +72,9 @@ export function isHealthResponse(v: unknown): v is HealthResponse {
     typeof v['translation'] === 'string' &&
     Object.hasOwn(PROVIDER_STATUS, v['translation']) &&
     typeof v['speech'] === 'string' &&
-    Object.hasOwn(PROVIDER_STATUS, v['speech'])
+    Object.hasOwn(PROVIDER_STATUS, v['speech']) &&
+    typeof v['speech_voice'] === 'string' &&
+    isSpeechEngineName(v['speech_engine'])
   );
 }
 

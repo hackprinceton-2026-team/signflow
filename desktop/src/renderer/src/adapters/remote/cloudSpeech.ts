@@ -1,16 +1,50 @@
 import { Emitter } from '../emitter';
 import { clampSpeechOptions } from '../speech';
-import type { SpeechEngine, SpeechOptions, SpeechState, SpeechVoice, Unsubscribe } from '../types';
+import type { SpeechEngine, SpeechOptions, SpeechState, SpeechVoice, Unsubscribe, VoiceInUse } from '../types';
 import { BackendError, type BackendClient } from './backendClient';
+import type { SpeechResponse } from './guards';
 
 /** The parts of HTMLAudioElement we use (injectable for tests). */
-export type AudioLike = Pick<HTMLAudioElement, 'src' | 'volume' | 'playbackRate' | 'muted' | 'onended' | 'onerror' | 'play' | 'pause'>;
+export type AudioLike = Pick<
+  HTMLAudioElement,
+  'src' | 'volume' | 'playbackRate' | 'preservesPitch' | 'muted' | 'onended' | 'onerror' | 'play' | 'pause'
+>;
 
-/** Amazon Polly voices offered in the app; the backend validates and has its own default. */
-export const CLOUD_VOICES: SpeechVoice[] = [
-  { id: 'Joanna', name: 'Joanna (cloud)', lang: 'en-US', isDefault: true },
-  { id: 'Matthew', name: 'Matthew (cloud)', lang: 'en-US', isDefault: false },
+export interface CloudVoice extends SpeechVoice {
+  /** Short description for the voice picker. */
+  description: string;
+}
+
+/** Amazon Polly Generative voices offered in the app (the most human-like Polly engine). */
+export const CLOUD_VOICES: readonly CloudVoice[] = [
+  { id: 'Ruth', name: 'Ruth', lang: 'en-US', isDefault: true, description: 'Recommended · US English, female' },
+  { id: 'Danielle', name: 'Danielle', lang: 'en-US', isDefault: false, description: 'US English, female' },
+  { id: 'Matthew', name: 'Matthew', lang: 'en-US', isDefault: false, description: 'US English, male' },
 ];
+
+export const DEFAULT_CLOUD_VOICE: CloudVoice = CLOUD_VOICES[0]!;
+
+/** The cloud voice to request: the user's pick if it is offered, otherwise Ruth. */
+export function resolveCloudVoice(id: string | undefined): CloudVoice {
+  return CLOUD_VOICES.find((v) => v.id === id) ?? DEFAULT_CLOUD_VOICE;
+}
+
+const ENGINE_LABELS: Record<SpeechResponse['engine'], string> = {
+  generative: 'Amazon Polly Generative',
+  'long-form': 'Amazon Polly Long-form',
+  neural: 'Amazon Polly Neural',
+  standard: 'Amazon Polly Standard',
+};
+
+export function cloudEngineLabel(engine: string | undefined): string {
+  return (engine && ENGINE_LABELS[engine as SpeechResponse['engine']]) || 'Amazon Polly';
+}
+
+/**
+ * Confirmed sentences are short; if the cloud voice hasn't answered by then, the
+ * system voice speaks instead of leaving the user waiting.
+ */
+export const CLOUD_SPEAK_TIMEOUT_MS = 10_000;
 
 export interface CloudSpeechOptions {
   client: BackendClient;
@@ -38,6 +72,7 @@ export class CloudSpeechEngine implements SpeechEngine {
   readonly available = true;
   private readonly stateEmitter = new Emitter<SpeechState>();
   private readonly voicesEmitter = new Emitter<SpeechVoice[]>();
+  private readonly voiceInUseEmitter = new Emitter<VoiceInUse>();
   private readonly opts: Required<Omit<CloudSpeechOptions, 'muted'>> & { muted: boolean };
   private audio: AudioLike | null = null;
   private url: string | null = null;
@@ -55,7 +90,7 @@ export class CloudSpeechEngine implements SpeechEngine {
   }
 
   voices(): SpeechVoice[] {
-    return CLOUD_VOICES;
+    return [...CLOUD_VOICES];
   }
 
   onVoicesChanged(cb: (voices: SpeechVoice[]) => void): Unsubscribe {
@@ -64,6 +99,10 @@ export class CloudSpeechEngine implements SpeechEngine {
 
   onState(cb: (state: SpeechState) => void): Unsubscribe {
     return this.stateEmitter.on(cb);
+  }
+
+  onVoiceInUse(cb: (voice: VoiceInUse) => void): Unsubscribe {
+    return this.voiceInUseEmitter.on(cb);
   }
 
   /** Fire-and-forget (SpeechEngine contract). Use `play()` to observe failures. */
@@ -78,22 +117,30 @@ export class CloudSpeechEngine implements SpeechEngine {
     this.cancel();
     const seq = ++this.seq;
     const opts = clampSpeechOptions(options);
-    const voiceId = CLOUD_VOICES.some((v) => v.id === opts.voiceId) ? opts.voiceId : undefined;
+    const voice = resolveCloudVoice(opts.cloudVoiceId);
     this.ctrl = new AbortController();
     this.stateEmitter.emit('speaking');
     try {
-      const res = await this.opts.client.speak({ text: trimmed, ...(voiceId ? { voice_id: voiceId } : {}) }, { signal: this.ctrl.signal });
+      const res = await this.opts.client.speak(
+        { text: trimmed, voice_id: voice.id },
+        { signal: this.ctrl.signal, timeoutMs: CLOUD_SPEAK_TIMEOUT_MS },
+      );
       if (seq !== this.seq) return; // superseded or cancelled
       this.url = this.opts.createObjectURL(base64ToBlob(res.audio_base64, 'audio/mpeg'));
       const audio = this.opts.createAudio();
       audio.src = this.url;
       audio.volume = opts.volume;
       audio.playbackRate = Math.min(2, Math.max(0.5, opts.rate));
+      // Faster or slower playback keeps the voice's natural pitch.
+      audio.preservesPitch = true;
       audio.muted = this.opts.muted;
       audio.onended = () => this.finish(seq);
       audio.onerror = () => this.finish(seq);
       this.audio = audio;
       await audio.play();
+      if (seq === this.seq) {
+        this.voiceInUseEmitter.emit({ source: 'cloud', id: res.voice_id, name: res.voice_id, engine: res.engine, fallback: false });
+      }
     } catch (err) {
       if (seq === this.seq) this.finish(seq);
       if (err instanceof BackendError && err.kind === 'aborted') return;
@@ -143,11 +190,15 @@ export class CloudSpeechEngine implements SpeechEngine {
 }
 
 /**
- * Cloud voice first; if it fails (offline, not configured, playback error) the
- * same confirmed text is spoken with the system voice, and `onFallback` is told.
+ * Cloud voice first; if it fails (offline, not configured, timeout, playback
+ * error) the same confirmed text is spoken with the user's system voice, and
+ * `onFallback` is told. Voice listings are the system voices (the cloud voices
+ * are the fixed `CLOUD_VOICES`), so the fallback voice can be chosen.
  */
 export class FallbackSpeechEngine implements SpeechEngine {
   readonly available = true;
+  /** Whether the system voice is currently standing in for the cloud voice. */
+  private usingFallback = false;
 
   constructor(
     private readonly primary: CloudSpeechEngine,
@@ -160,11 +211,11 @@ export class FallbackSpeechEngine implements SpeechEngine {
   }
 
   voices(): SpeechVoice[] {
-    return this.primary.voices();
+    return this.fallback.voices();
   }
 
   onVoicesChanged(cb: (voices: SpeechVoice[]) => void): Unsubscribe {
-    return this.primary.onVoicesChanged(cb);
+    return this.fallback.onVoicesChanged(cb);
   }
 
   /** Subscribes to both engines; the returned function removes both listeners. */
@@ -177,12 +228,23 @@ export class FallbackSpeechEngine implements SpeechEngine {
     };
   }
 
+  onVoiceInUse(cb: (voice: VoiceInUse) => void): Unsubscribe {
+    const offPrimary = this.primary.onVoiceInUse(cb);
+    const offFallback = this.fallback.onVoiceInUse?.((v) => cb({ ...v, fallback: this.usingFallback })) ?? (() => undefined);
+    return () => {
+      offPrimary();
+      offFallback();
+    };
+  }
+
   speak(text: string, options: SpeechOptions): void {
     this.fallback.cancel();
+    this.usingFallback = false;
     this.primary.play(text, options).catch((err: unknown) => {
       this.onFallback?.(err);
-      // Cloud voice names mean nothing to the system engine; let it pick its default.
-      if (this.fallback.available) this.fallback.speak(text, { ...options, voiceId: undefined });
+      if (!this.fallback.available) return;
+      this.usingFallback = true;
+      this.fallback.speak(text, options);
     });
   }
 
