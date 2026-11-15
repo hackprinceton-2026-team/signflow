@@ -10,7 +10,7 @@ drawing and his message format are used as is. It only adds one thing: throttled
 low-resolution JPEG preview frames, sent over the same loopback WebSocket so SignFlow
 can show the camera without opening it a second time:
 
-    {"type": "preview", "jpeg": "<base64>", "width": 320, "height": 240, "ts": 1794708452.9}
+    {"type": "preview", "jpeg": "<base64>", "width": 640, "height": 360, "ts": 1794708452.9}
 
 The camera is opened only here. Frames go only to 127.0.0.1 (never a public interface).
 Run it with the Python environment from Umar's README (Python 3.11, his requirements.txt).
@@ -19,7 +19,9 @@ import argparse
 import base64
 import json
 import sys
+import threading
 import time
+from types import SimpleNamespace
 from pathlib import Path
 
 
@@ -57,15 +59,120 @@ def camera_frames(cv2, resolve, log):
         time.sleep(0.5)
 
 
+class PreviewPublisher:
+    """Draws, scales, encodes and sends preview frames on a background thread, so the
+    recognizer loop only hands over a frame reference (it never waits for JPEG encoding
+    or the socket). It keeps only the NEWEST frame: if encoding falls behind, older frames
+    are dropped, never queued. If a frame takes longer than its time budget for a while,
+    the width steps down (640 -> 480 -> 320) and back up when there is headroom.
+    The camera image and the model's input are untouched: this only reads them."""
+
+    WIDTHS = (320, 480, 640, 800, 960, 1280)
+
+    def __init__(self, cv2, live, ws, width, quality, fps):
+        self.cv2, self.live, self.ws, self.quality = cv2, live, ws, quality
+        self.interval = 1.0 / fps
+        self.max_width = width
+        self.width = width
+        self.slot = None
+        self.cond = threading.Condition()
+        self.closed = False
+        self.last_offer = 0.0
+        self.sent = self.dropped = self.bytes = 0
+        self.busy = 0.0  # seconds spent encoding+sending since the last stats read
+        self.slow_streak = self.fast_streak = 0
+        threading.Thread(target=self._run, name="preview", daemon=True).start()
+
+    def offer(self, engine, bgr, now):
+        """Called from the recognizer loop: O(1), never blocks on encoding."""
+        if now - self.last_offer < self.interval:
+            return
+        self.last_offer = now
+        # A snapshot of what live.draw() reads, so the overlay matches this frame.
+        snap = SimpleNamespace(results=engine.results, state=engine.state, spacebar=engine.spacebar,
+                               last=engine.last, keyword=engine.keyword, sentence=list(engine.sentence))
+        with self.cond:
+            if self.slot is not None:
+                self.dropped += 1  # the previous frame was never encoded: replace it
+            self.slot = (snap, bgr, now)
+            self.cond.notify()
+
+    def _run(self):
+        while True:
+            with self.cond:
+                while self.slot is None and not self.closed:
+                    self.cond.wait()
+                if self.closed:
+                    return
+                snap, bgr, ts = self.slot
+                self.slot = None
+            t0 = time.perf_counter()
+            try:
+                self._send(snap, bgr, ts)
+            except Exception as e:  # a preview problem must never affect recognition
+                self.live.log(f"preview frame skipped: {e}")
+            spent = time.perf_counter() - t0
+            self.busy += spent
+            self._adapt(spent)
+
+    def _send(self, snap, bgr, ts):
+        cv2 = self.cv2
+        view = self.live.draw(snap, bgr)  # his overlay (landmarks, state, last sign), mirrored like his window
+        h, w = view.shape[:2]
+        width = min(self.width, w)
+        size = (width, max(16, round(h * width / w)))  # keeps the camera's aspect ratio
+        small = cv2.resize(view, size, interpolation=cv2.INTER_AREA)
+        ok, buf = cv2.imencode(".jpg", small, [cv2.IMWRITE_JPEG_QUALITY, self.quality])
+        if not ok or not self.ws.clients:
+            return
+        msg = json.dumps({
+            "type": "preview",
+            "jpeg": base64.b64encode(buf.tobytes()).decode("ascii"),
+            "width": small.shape[1],
+            "height": small.shape[0],
+            "ts": round(ts, 3),
+        })
+        self.ws.send(msg)
+        self.sent += 1
+        self.bytes += len(msg)
+
+    def _adapt(self, spent):
+        budget = self.interval * 0.6
+        if spent > budget:
+            self.slow_streak, self.fast_streak = self.slow_streak + 1, 0
+        elif spent < budget * 0.4:
+            self.fast_streak, self.slow_streak = self.fast_streak + 1, 0
+        smaller = [x for x in self.WIDTHS if x < self.width]
+        larger = [x for x in self.WIDTHS if self.width < x <= self.max_width]
+        if self.slow_streak >= 15 and smaller:
+            self.width, self.slow_streak = smaller[-1], 0
+            self.live.log(f"preview: encoding is slow, width -> {self.width}px")
+        elif self.fast_streak >= 150 and larger:
+            self.width, self.fast_streak = larger[0], 0
+            self.live.log(f"preview: headroom, width -> {self.width}px")
+
+    def read_stats(self):
+        out = (self.sent, self.dropped, self.bytes, self.busy, self.width)
+        self.sent = self.dropped = self.bytes = 0
+        self.busy = 0.0
+        return out
+
+    def close(self):
+        with self.cond:
+            self.closed = True
+            self.cond.notify()
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--ml", required=True, help="path to Umar's checkout (the folder with src/live.py)")
     ap.add_argument("--port", type=int, default=8765)
-    ap.add_argument("--preview-fps", type=float, default=10.0, help="preview frames per second (0 = none)")
-    ap.add_argument("--preview-width", type=int, default=320)
-    ap.add_argument("--preview-quality", type=int, default=60, help="JPEG quality 1-100")
+    ap.add_argument("--preview-fps", type=float, default=15.0, help="preview frames per second (0 = none)")
+    ap.add_argument("--preview-width", type=int, default=640, help="preview width; height keeps the camera's aspect ratio")
+    ap.add_argument("--preview-quality", type=int, default=80, help="JPEG quality 1-100")
     ap.add_argument("--window", action="store_true", help="also show the recognizer's own OpenCV window")
     ap.add_argument("--camera-name", help="use the first camera whose name contains this (e.g. 'MacBook', 'iPhone')")
+    ap.add_argument("--stats", action="store_true", help="log loop FPS, inference and preview timings every 5 s")
     ap.add_argument("--list-cameras", action="store_true", help="print the cameras (OpenCV index and name) and exit")
     pre, rest = ap.parse_known_args()
     sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -152,12 +259,13 @@ def main():
                 print(text, flush=True)
                 ws.send(text)
 
-    interval = 1.0 / pre.preview_fps if pre.preview_fps > 0 else None
-    last_preview = 0.0
+    preview = (PreviewPublisher(cv2, live, ws, pre.preview_width, pre.preview_quality, pre.preview_fps)
+               if pre.preview_fps > 0 else None)
     t = 0.0
     try:
         frames = live.frame_source(args) if args.video else camera_frames(cv2, resolve, live.log)
         last_camera_msg = 0.0
+        stats = {"t0": time.time(), "frames": 0, "step": 0.0, "pv_ms": 0.0}
         for bgr, t in frames:
             key = -1
             if args.headless is False:
@@ -165,31 +273,33 @@ def main():
                 key = cv2.waitKey(1) & 0xFF
                 if key in (ord("q"), 27):
                     break
+            t_step = time.perf_counter()
             emit(engine.step(cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB), t, space=key == ord(" ")))
+            stats["step"] += time.perf_counter() - t_step
+            stats["frames"] += 1
             now = time.time()
+            if pre.stats and now - stats["t0"] >= 5:
+                n, el = stats["frames"], now - stats["t0"]
+                sent, dropped, size, busy, width = preview.read_stats() if preview else (0, 0, 0, 0.0, 0)
+                live.log(f"STATS loop {n / el:.1f} fps ({bgr.shape[1]}x{bgr.shape[0]}), inference {1000 * stats['step'] / max(1, n):.0f} ms/frame, "
+                         f"preview {sent / el:.1f} fps at {width}px, {1000 * stats['pv_ms'] / max(1, n):.2f} ms/frame in loop, "
+                         f"{1000 * busy / max(1, sent):.1f} ms/frame in its thread, {size / max(1, sent) / 1024:.0f} KB/frame, {dropped} dropped")
+                stats.update(t0=now, frames=0, step=0.0, pv_ms=0.0)
             if camera_info and ws.clients and now - last_camera_msg >= 3:
                 last_camera_msg = now
                 ws.send(json.dumps(camera_info))  # which camera is in use, for SignFlow's Settings
-            if interval and now - last_preview >= interval and ws.clients:
-                last_preview = now
-                view = live.draw(engine, bgr)  # his overlay: landmarks, state, last sign (mirrored like his window)
-                h, w = view.shape[:2]
-                small = cv2.resize(view, (pre.preview_width, max(16, round(h * pre.preview_width / w))), interpolation=cv2.INTER_AREA)
-                ok, buf = cv2.imencode(".jpg", small, [cv2.IMWRITE_JPEG_QUALITY, pre.preview_quality])
-                if ok:
-                    ws.send(json.dumps({
-                        "type": "preview",
-                        "jpeg": base64.b64encode(buf.tobytes()).decode("ascii"),
-                        "width": small.shape[1],
-                        "height": small.shape[0],
-                        "ts": round(now, 3),
-                    }))
+            if preview and ws.clients:
+                t_pv = time.perf_counter()
+                preview.offer(engine, bgr, now)  # O(1): encoding happens on the preview thread
+                stats["pv_ms"] += time.perf_counter() - t_pv
         if args.video:
             emit(engine.flush(t))
             time.sleep(1.0)
     except KeyboardInterrupt:
         pass
     finally:
+        if preview:
+            preview.close()
         engine.close()
         ws.close()
         cv2.destroyAllWindows()

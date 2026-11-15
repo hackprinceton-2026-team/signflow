@@ -68,7 +68,7 @@ export class RecognizerBridge {
       retryMaxMs: 3000,
       log: (m) => console.warn(`[recognizer] ${m}`),
       onPreview: () => undefined,
-      previewIntervalMs: 80,
+      previewIntervalMs: 66,
       ...options,
     };
     this.retryMs = this.opts.retryMinMs;

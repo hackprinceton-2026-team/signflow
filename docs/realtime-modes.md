@@ -50,11 +50,11 @@ The ASL recognizer owns the camera, and SignFlow still never opens it. To see th
 ```bash
 # from the signflow repo; ../signflow-ml is Umar's checkout (docs/asl-recognizer.md)
 ../signflow-ml/slenv/bin/python desktop/scripts/asl/signflow_recognizer.py --ml ../signflow-ml
-#   --keyword (116-sign model, opt-in) · --window (also his OpenCV window) · --preview-fps 10 · --camera N
+#   --keyword (116-sign model, opt-in) · --window (also his OpenCV window) · --preview-fps 15 · --preview-width 640 · --preview-quality 80 · --stats · --camera N
 ```
 
 - **What the launcher reuses:** Umar's code **unchanged**, imported read-only from his checkout: `LiveEngine`, drawing, flags and message format.
-- **What it adds:** 320-px JPEG preview frames (about 8–10 fps on an M4, about 10–15 KB each), with his hand-tracking overlay, on the same WebSocket, bound to `127.0.0.1` only.
+- **What it adds:** 640-px JPEG preview frames at quality 80 (about 12–13 fps on an M4, about 35 KB each), keeping the camera's aspect ratio, with his hand-tracking overlay, on the same WebSocket, bound to `127.0.0.1` only. They are drawn, scaled and encoded on a separate thread that keeps only the newest frame, so the recognizer loop never waits for them; if encoding falls behind, the width steps down to 480 or 320 px. `--stats` logs loop FPS, inference time and preview cost every 5 s.
 - **Camera hiccups:** it reopens the camera after a failed read instead of exiting.
 - **In SignFlow:** Electron main validates each frame (JPEG marker, base64, dimensions, 200 KB cap) and forwards at most one per 80 ms. The stage shows it as a `data:` image, which the CSP already allows; the CSP is unchanged.
 - **Fallback:** with plain `live.py` (no frames), Live shows the "preview is in the recognizer window" card as before.
@@ -81,7 +81,10 @@ Measured in the built app with Kokoro (Heart). Audio was muted for the run, but 
 | --- | --- |
 | Words: sign end → audio start | **281–347 ms, median 305 ms** (10 words) |
 | Sentence: sentence end → audio start, with an instantly answering fake Gemini | 299–363 ms (3 sentences): app + Kokoro overhead only |
-| Preview frames shown in SignFlow (live camera) | 8.2–8.6 fps, 320×180, ≤ 13 KB base64 |
+| Preview frames shown in SignFlow (live camera) | **12.7 fps, 640×360**, ~35 KB base64 (before: 8.3 fps, 320×180, 9 KB) |
+| Preview cost inside the recognizer loop | **0.00 ms/frame** (before: 4 ms per preview frame); recognizer loop 28–30 fps at 1920×1080, inference 18–26 ms/frame either way |
+| CPU with the preview running | recognizer 103% (before 89%), Electron 33% (before 35%) |
+| Kokoro synthesis while the recognizer and preview run (Test voice, median) | 588 ms (before 578 ms: no measurable change; the recognizer's CPU load slows Kokoro either way vs ~460 ms idle) |
 
 **Not measured, and why:**
 - **Real Gemini response time:** no live Gemini calls were authorized. Add it to the Sentence numbers; the backend eval harness can measure it with `--live`.

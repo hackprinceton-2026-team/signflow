@@ -191,7 +191,7 @@ describe('RecognizerBridge', () => {
     bridge.stop();
   });
 
-  it('forwards preview frames throttled (at most one per 80 ms), never as sign events', () => {
+  it('forwards preview frames throttled (at most one per 66 ms, ~15 fps), never as sign events', () => {
     const { bridge, events, previews, tick, last } = setup();
     bridge.start({ allowKeyword: false });
     last().open();
