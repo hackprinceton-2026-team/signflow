@@ -15,6 +15,7 @@ from pathlib import Path
 from signflow_api.translation import PROMPT
 
 from .flags import FIDELITY_FAMILIES, FLAGS
+from .live import redact
 from .runner import CaseResult
 
 SCHEMA_VERSION = 1
@@ -276,10 +277,12 @@ def report_stem(run: RunInfo) -> str:
     return f"translation-eval-{run.provider}-{run.started_at.astimezone(UTC):%Y%m%dT%H%M%SZ}"
 
 
-def write_reports(report: dict, out_dir: Path, stem: str) -> tuple[Path, Path]:
+def write_reports(report: dict, out_dir: Path, stem: str, *, secrets: Sequence[str] = ()) -> tuple[Path, Path]:
+    """Write ``<stem>.json`` and ``<stem>.md``. Any secret that somehow reached the text is redacted first."""
     out_dir.mkdir(parents=True, exist_ok=True)
     json_path = out_dir / f"{stem}.json"
     md_path = out_dir / f"{stem}.md"
-    json_path.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    md_path.write_text(render_markdown(report), encoding="utf-8")
+    json_text = redact(json.dumps(report, indent=2, ensure_ascii=False) + "\n", secrets)
+    json_path.write_text(json_text, encoding="utf-8")
+    md_path.write_text(redact(render_markdown(report), secrets), encoding="utf-8")
     return json_path, md_path

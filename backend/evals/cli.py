@@ -1,7 +1,10 @@
 """Command line: ``python -m evals`` from ``backend/``.
 
-Offline by default. Exit status: 0 if every case passed, 1 if any case failed or
-errored, 2 for usage or configuration problems.
+Offline by default: the cases' reference answers, or outputs recorded earlier
+(``--responses``). Real Gemini calls happen only with ``--live``.
+
+Exit status: 0 if every case passed, 1 if any case failed or errored, 2 for
+usage or configuration problems.
 """
 
 from __future__ import annotations
@@ -10,13 +13,15 @@ import argparse
 import asyncio
 import sys
 from collections.abc import Callable, Sequence
+from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import TextIO
 
 from signflow_api.config import BACKEND_DIR
 
-from .dataset import DEFAULT_CASES_PATH, dataset_fingerprint, load_dataset
+from . import live
+from .dataset import DEFAULT_CASES_PATH, Dataset, EvalCase, dataset_fingerprint, load_dataset
 from .report import RunInfo, build_report, passed, report_stem, write_reports
 from .runner import (
     DEFAULT_LATENCY_BUDGET_MS,
@@ -26,6 +31,7 @@ from .runner import (
     recorded_responder,
     reference_responder,
     run_cases,
+    translator_responder,
 )
 
 DEFAULT_OUT_DIR = BACKEND_DIR / "evals" / "out"
@@ -35,6 +41,16 @@ EXIT_OK, EXIT_FAILURES, EXIT_USAGE = 0, 1, 2
 
 class UsageError(Exception):
     """A problem with how the tool was invoked or configured (exit 2)."""
+
+
+@dataclass(frozen=True)
+class Source:
+    provider: str
+    model: str
+    live: bool
+    respond: Responder
+    settings: dict[str, object] = field(default_factory=dict)
+    secrets: tuple[str, ...] = field(default=(), repr=False)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -51,6 +67,19 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         metavar="FILE",
         help="re-score saved outputs offline: a report JSON from an earlier run, or {case_id: output}",
+    )
+    source.add_argument(
+        "--live",
+        action="store_true",
+        help="call the real Gemini API with the production translator (uses GOOGLE_API_KEY and quota)",
+    )
+    parser.add_argument("--model", metavar="NAME", help="with --live: Gemini model to use instead of GEMINI_MODEL")
+    parser.add_argument(
+        "--delay-s",
+        type=float,
+        default=0.0,
+        metavar="S",
+        help="with --live: pause between calls to stay under rate limits (default 0)",
     )
     parser.add_argument("--cases", type=Path, default=DEFAULT_CASES_PATH, metavar="FILE", help="dataset JSON")
     parser.add_argument("--case", action="append", dest="ids", metavar="ID", help="only this case (repeatable)")
@@ -74,14 +103,13 @@ def _progress(stream: TextIO) -> Callable[[CaseResult], None]:
     def show(result: CaseResult) -> None:
         codes = ", ".join(flag.code for flag in result.flags)
         latency = "" if result.latency_ms is None else f" {result.latency_ms:7.0f} ms"
-        print(
-            f"  {result.status.upper():5}{latency}  {result.case.id}{'  [' + codes + ']' if codes else ''}", file=stream
-        )
+        suffix = f"  [{codes}]" if codes else ""
+        print(f"  {result.status.upper():5}{latency}  {result.case.id}{suffix}", file=stream)
 
     return show
 
 
-def _select(args: argparse.Namespace):
+def _select(args: argparse.Namespace) -> tuple[Dataset, list[EvalCase]]:
     dataset = load_dataset(args.cases)
     try:
         cases = dataset.select(ids=args.ids, categories=args.categories, modes=args.modes)
@@ -92,34 +120,59 @@ def _select(args: argparse.Namespace):
     return dataset, cases
 
 
-def _offline_source(args: argparse.Namespace) -> tuple[str, str, Responder]:
-    if args.responses is None:
-        return "reference", "reference-answers", reference_responder()
-    try:
-        recorded = load_recorded(args.responses)
-    except (OSError, ValueError) as exc:
-        raise UsageError(f"cannot read --responses: {exc}") from exc
-    return "recorded", recorded.model or "recorded", recorded_responder(recorded.replies)
+def _source(args: argparse.Namespace) -> Source:
+    if not args.live and args.model is not None:
+        raise UsageError("--model only applies with --live")
+    if args.delay_s < 0:
+        raise UsageError("--delay-s must be zero or more")
+    if args.live:
+        try:
+            setup = live.build_live_translator(live.load_settings(), model=args.model)
+        except live.LiveUnavailable as exc:
+            raise UsageError(str(exc)) from exc
+        return Source(
+            "gemini", setup.model, True, translator_responder(setup.translator), setup.settings, setup.secrets
+        )
+    if args.responses is not None:
+        try:
+            recorded = load_recorded(args.responses)
+        except (OSError, ValueError) as exc:
+            raise UsageError(f"cannot read --responses: {exc}") from exc
+        return Source("recorded", recorded.model or "recorded", False, recorded_responder(recorded.replies))
+    return Source("reference", "reference-answers", False, reference_responder())
 
 
 def main(argv: Sequence[str] | None = None, *, stdout: TextIO = sys.stdout, stderr: TextIO = sys.stderr) -> int:
     args = build_parser().parse_args(argv)
     try:
         dataset, cases = _select(args)
-        provider, model, respond = _offline_source(args)
+        source = _source(args)
     except UsageError as exc:
         print(f"error: {exc}", file=stderr)
         return EXIT_USAGE
 
-    print(f"Evaluating {len(cases)} case(s) with {provider} ({model}), offline.", file=stdout)
+    if source.live:
+        print(
+            f"LIVE: {len(cases)} real Gemini API call(s) to {source.model}. This uses your API quota.",
+            file=stderr,
+        )
+    else:
+        print(f"Evaluating {len(cases)} case(s) with {source.provider} ({source.model}), offline.", file=stdout)
+
     started = datetime.now(UTC)
     results = asyncio.run(
-        run_cases(cases, respond, latency_budget_ms=args.latency_budget_ms, on_result=_progress(stdout))
+        run_cases(
+            cases,
+            source.respond,
+            latency_budget_ms=args.latency_budget_ms,
+            delay_s=args.delay_s if source.live else 0.0,
+            on_result=_progress(stdout),
+        )
     )
     run = RunInfo(
-        provider=provider,
-        model=model,
-        live=False,
+        provider=source.provider,
+        model=source.model,
+        live=source.live,
         dataset_path=_display_path(args.cases),
         dataset_version=dataset.version,
         dataset_sha256=dataset_fingerprint(args.cases),
@@ -128,11 +181,12 @@ def main(argv: Sequence[str] | None = None, *, stdout: TextIO = sys.stdout, stde
         started_at=started,
         finished_at=datetime.now(UTC),
         filters={"case": args.ids or [], "category": args.categories or [], "mode": args.modes or []},
+        settings=source.settings,
     )
     report = build_report(results, run)
     _print_summary(report, stdout)
     if not args.no_write:
-        json_path, md_path = write_reports(report, args.out_dir, report_stem(run))
+        json_path, md_path = write_reports(report, args.out_dir, report_stem(run), secrets=source.secrets)
         print(f"Reports: {_display_path(json_path)}\n         {_display_path(md_path)}", file=stdout)
     return EXIT_OK if passed(report) else EXIT_FAILURES
 
