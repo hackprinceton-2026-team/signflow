@@ -95,6 +95,10 @@ export type SessionAction =
   | { type: 'draft/confirmed'; at: number }
   | { type: 'draft/discarded' }
   | { type: 'buffer/cleared' }
+  /** Words/Sentence mode: these signs were taken for speaking or composing. */
+  | { type: 'buffer/taken'; signIds: string[] }
+  /** Words/Sentence mode: text spoken without a draft. */
+  | { type: 'utterance/added'; utterance: Utterance }
   | { type: 'transcript/cleared' }
   | { type: 'session/reset' }
   | { type: 'settings/updated'; settings: Partial<SessionSettings> };
@@ -223,6 +227,14 @@ export function sessionReducer(state: SessionState, action: SessionAction): Sess
 
     case 'buffer/cleared':
       return { ...state, buffer: [], draftStatus: state.draftStatus === 'error' ? 'idle' : state.draftStatus, draftError: null };
+
+    case 'buffer/taken': {
+      const ids = new Set(action.signIds);
+      return { ...state, buffer: state.buffer.filter((s) => !ids.has(s.id)) };
+    }
+
+    case 'utterance/added':
+      return { ...state, transcript: [...state.transcript, action.utterance] };
 
     case 'transcript/cleared':
       return { ...state, transcript: [] };

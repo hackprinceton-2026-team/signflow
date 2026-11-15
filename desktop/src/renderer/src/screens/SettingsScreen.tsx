@@ -115,6 +115,7 @@ export function SettingsScreen() {
     deviceEngine,
     setDeviceEngine,
     kokoro,
+    realtime,
     recognition,
     recognizerSettings,
     updateRecognizerSettings,
@@ -226,7 +227,7 @@ export function SettingsScreen() {
           <Segmented
             label="Translation context"
             value={connection.context}
-            disabled={!live}
+            disabled={!live && realtime.mode !== 'sentence'}
             options={[
               { value: 'chat', label: 'Everyday' },
               { value: 'medical', label: 'Medical' },
