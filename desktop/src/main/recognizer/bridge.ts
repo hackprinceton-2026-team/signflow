@@ -3,6 +3,7 @@ import {
   RECOGNIZER_HOST,
   type RecognizerEvent,
   type RecognizerModel,
+  type RecognizerPreview,
   type RecognizerStatus,
 } from '@shared/recognizer';
 
@@ -21,7 +22,11 @@ export interface RecognizerBridgeOptions {
   connect: (url: string) => SocketLike;
   onEvent: (event: RecognizerEvent) => void;
   onStatus: (status: RecognizerStatus) => void;
+  /** Camera preview frames from SignFlow's recognizer launcher (throttled). */
+  onPreview?: (frame: RecognizerPreview) => void;
   now?: () => number;
+  /** At most one preview frame per this many ms reaches the window. */
+  previewIntervalMs?: number;
   /** Reconnect delays: start, then doubling up to the max. */
   retryMinMs?: number;
   retryMaxMs?: number;
@@ -53,6 +58,8 @@ export class RecognizerBridge {
   private status: RecognizerStatus = { state: 'idle' };
   private model: RecognizerModel | undefined;
   private rejected = 0;
+  private lastPreviewAt = -Infinity;
+  private camera: RecognizerStatus['camera'];
   private readonly opts: Required<RecognizerBridgeOptions>;
 
   constructor(options: RecognizerBridgeOptions) {
@@ -61,6 +68,8 @@ export class RecognizerBridge {
       retryMinMs: 500,
       retryMaxMs: 3000,
       log: (m) => console.warn(`[recognizer] ${m}`),
+      onPreview: () => undefined,
+      previewIntervalMs: 66,
       ...options,
     };
     this.retryMs = this.opts.retryMinMs;
@@ -147,6 +156,19 @@ export class RecognizerBridge {
       if (this.rejected <= 5 || this.rejected % 50 === 0) this.opts.log(`dropped message (${parsed.reason}); ${this.rejected} so far`);
       return;
     }
+    if ('camera' in parsed) {
+      this.camera = parsed.camera;
+      this.setStatus({ ...this.status });
+      return;
+    }
+    if ('preview' in parsed) {
+      const now = this.opts.now();
+      if (now - this.lastPreviewAt < this.opts.previewIntervalMs) return; // throttle
+      this.lastPreviewAt = now;
+      if (this.status.state !== 'ready' && this.status.state !== 'error') this.setStatus({ state: 'ready', ...(this.model ? { model: this.model } : {}) });
+      this.opts.onPreview(parsed.preview);
+      return;
+    }
     const { event } = parsed;
     const model = event.type === 'sign' ? event.sign.model : event.model;
     if (model === 'keyword116' && !this.allowKeyword) {
@@ -186,8 +208,10 @@ export class RecognizerBridge {
 
   private setStatus(next: RecognizerStatus): void {
     const prev = this.status;
-    if (prev.state === next.state && prev.message === next.message && prev.model === next.model) return;
-    this.status = next;
-    this.opts.onStatus(next);
+    const withCamera: RecognizerStatus = next.state === 'idle' || !this.camera ? next : { ...next, camera: this.camera };
+    if (next.state === 'idle') this.camera = undefined;
+    if (JSON.stringify(prev) === JSON.stringify(withCamera)) return;
+    this.status = withCamera;
+    this.opts.onStatus(withCamera);
   }
 }

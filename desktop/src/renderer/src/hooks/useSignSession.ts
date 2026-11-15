@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useLayoutEffect, useReducer, useRef, useState } from 'react';
 import type { AdapterStatus, Adapters, RecognizedSign } from '../adapters/types';
+import type { CommMode } from '../state/realtime';
 import {
   initialSessionState,
+  isAccepted,
   sessionReducer,
   type SessionSettings,
   type SessionState,
@@ -29,6 +31,15 @@ export interface SignSessionOptions {
    * ever happen here, i.e. for text the user explicitly confirmed.
    */
   onConfirm?: (utterance: Utterance, settings: SessionSettings, intent: ConfirmIntent) => void;
+  /**
+   * review (default): accepted signs become an editable draft the user confirms.
+   * words: each accepted sign is handed to `onWords` once, right away (no translation).
+   * sentence: when a sentence is complete, `onSentenceReady` is called; the caller
+   * takes the signs with `takeBuffer()` and composes the sentence itself.
+   */
+  mode?: CommMode;
+  onWords?: (signs: RecognizedSign[]) => void;
+  onSentenceReady?: () => void;
 }
 
 /**
@@ -43,10 +54,19 @@ export function useSignSession(adapters: Pick<Adapters, 'recognizer' | 'translat
   // Latest values for stable callbacks (synced after render, never during).
   const stateRef = useRef<SessionState>(state);
   const onConfirmRef = useRef(options.onConfirm);
+  const onWordsRef = useRef(options.onWords);
+  const onSentenceReadyRef = useRef(options.onSentenceReady);
+  const mode: CommMode = options.mode ?? 'review';
+  const modeRef = useRef(mode);
   useLayoutEffect(() => {
+    modeRef.current = mode;
     stateRef.current = state;
     onConfirmRef.current = options.onConfirm;
+    onWordsRef.current = options.onWords;
+    onSentenceReadyRef.current = options.onSentenceReady;
   });
+  /** Words mode: ids already handed out, so a re-delivered sign is never spoken twice. */
+  const handedOutRef = useRef(new Set<string>());
   /** The one translation in flight, if any, and the signs it took from the buffer. */
   const inflightRef = useRef<{ ctrl: AbortController; signs: RecognizedSign[] } | null>(null);
   /** Sentence ends reported by the recognizer, and how many of them have been acted on. */
@@ -56,13 +76,25 @@ export function useSignSession(adapters: Pick<Adapters, 'recognizer' | 'translat
 
   // Recognizer events → reducer.
   useEffect(() => {
-    const offSign = recognizer.onSign((sign) => dispatch({ type: 'sign/received', sign }));
+    // Accepted signs since the last sentence end, tracked as they arrive: a sentence end
+    // can come right after its last sign, before React has rendered that sign.
+    const acceptedSinceEnd = new Set<string>();
+    const offSign = recognizer.onSign((sign) => {
+      if (isAccepted(sign, stateRef.current.settings)) acceptedSinceEnd.add(sign.id);
+      else acceptedSinceEnd.delete(sign.id); // a refinement below the threshold
+      dispatch({ type: 'sign/received', sign });
+    });
     const offStatus = recognizer.onStatus(setRecognizerStatus);
     // A sentence end matters only if accepted signs are waiting (now, or behind a
     // translation in flight). With nothing accepted, ignore it: it must not make
     // the first sign of the next sentence draft on its own.
     const offEnd = recognizer.onSentenceEnd?.(() => {
-      if (stateRef.current.buffer.length > 0) setSentenceEnds((n) => n + 1);
+      // Words mode speaks each sign on its own; a sentence end means nothing there (and
+      // must not be left over to end the next sentence early after switching modes).
+      if (modeRef.current !== 'words' && (acceptedSinceEnd.size > 0 || stateRef.current.buffer.length > 0)) {
+        setSentenceEnds((n) => n + 1);
+      }
+      acceptedSinceEnd.clear();
     });
     return () => {
       offSign();
@@ -131,15 +163,39 @@ export function useSignSession(adapters: Pick<Adapters, 'recognizer' | 'translat
   // instead (a fixed pause would split a sentence between slow signs).
   const { buffer, draftStatus, settings } = state;
   useEffect(() => {
-    if (buffer.length === 0 || draftStatus !== 'idle') return;
+    if (buffer.length === 0) return;
+    if (mode === 'words') {
+      // Hand each accepted sign out once, immediately; it never becomes a draft.
+      const fresh = buffer.filter((s) => !handedOutRef.current.has(s.id));
+      for (const s of fresh) handedOutRef.current.add(s.id);
+      if (handedOutRef.current.size > 500) handedOutRef.current = new Set([...handedOutRef.current].slice(-200));
+      dispatch({ type: 'buffer/taken', signIds: buffer.map((s) => s.id) });
+      if (fresh.length) onWordsRef.current?.(fresh);
+      return;
+    }
+    if (mode === 'review' && draftStatus !== 'idle') return;
     const ended = segmentsSentences && sentenceEnds > handledSentenceEnds.current;
     const delay = !segmentsSentences ? settings.pauseMs : ended ? 0 : SENTENCE_END_FALLBACK_MS;
     const t = setTimeout(() => {
       handledSentenceEnds.current = sentenceEnds;
-      void translate(buffer);
+      if (mode === 'sentence') onSentenceReadyRef.current?.();
+      else void translate(buffer);
     }, delay);
     return () => clearTimeout(t);
-  }, [buffer, draftStatus, segmentsSentences, sentenceEnds, settings.pauseMs, translate]);
+  }, [buffer, draftStatus, mode, segmentsSentences, sentenceEnds, settings.pauseMs, translate]);
+
+  /** Sentence mode: take the accepted signs (in order) out of the buffer for composing. */
+  const takeBuffer = useCallback((): RecognizedSign[] => {
+    const signs = stateRef.current.buffer;
+    if (signs.length === 0) return [];
+    const next = sessionReducer(stateRef.current, { type: 'buffer/taken', signIds: signs.map((s) => s.id) });
+    stateRef.current = next; // a second take before React re-renders must not get the same signs
+    dispatch({ type: 'buffer/taken', signIds: signs.map((s) => s.id) });
+    return signs;
+  }, []);
+
+  /** Words/Sentence mode: record text that was spoken without a draft (transcript, captions). */
+  const addUtterance = useCallback((utterance: Utterance) => dispatch({ type: 'utterance/added', utterance }), []);
 
   const translateNow = useCallback(() => {
     const s = stateRef.current;
@@ -186,6 +242,8 @@ export function useSignSession(adapters: Pick<Adapters, 'recognizer' | 'translat
     clearTranslationError,
     clearTranscript,
     updateSettings,
+    takeBuffer,
+    addUtterance,
   };
 }
 

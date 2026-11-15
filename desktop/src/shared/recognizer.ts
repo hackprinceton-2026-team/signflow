@@ -20,6 +20,18 @@ export const RECOGNIZER_DEFAULT_PORT = 8765;
 /** Real messages are ~200-400 bytes; anything far larger is not from the recognizer. */
 export const RECOGNIZER_MAX_MESSAGE_CHARS = 8192;
 export const RECOGNIZER_MAX_CANDIDATES = 10;
+/**
+ * Preview frames (SignFlow's recognizer launcher, desktop/scripts/asl/): a small JPEG
+ * of what the recognizer's camera sees. ~320 px wide is ~15-30 KB of base64.
+ */
+export const RECOGNIZER_MAX_PREVIEW_CHARS = 200_000;
+
+/** A camera preview frame from the recognizer (base64 JPEG), shown in place of a local camera. */
+export interface RecognizerPreview {
+  jpeg: string;
+  width: number;
+  height: number;
+}
 
 export type RecognizerModel = 'demo14' | 'keyword116';
 
@@ -55,14 +67,72 @@ export type RecognizerEvent =
 
 export type RecognizerState = 'idle' | 'connecting' | 'ready' | 'error';
 
+/** Which camera SignFlow's recognizer launcher uses (desktop/scripts/asl/camera_select.py). */
+export interface RecognizerCamera {
+  active: string;
+  /** OpenCV index. */
+  index: number;
+  selection: 'automatic' | 'explicit-index' | 'explicit-name' | 'unidentified';
+  /** The index was physically verified to be that camera (or chosen explicitly). */
+  verified: boolean;
+  note: string;
+  available: { name: string; kind: 'built-in' | 'iPhone' | 'external' }[];
+}
+
 export interface RecognizerStatus {
   state: RecognizerState;
   message?: string;
+  camera?: RecognizerCamera;
   /** Which model the recognizer is running, once a message has told us. */
   model?: RecognizerModel;
 }
 
-export type ParseResult = { ok: true; event: RecognizerEvent } | { ok: false; reason: string };
+export type ParseResult =
+  | { ok: true; event: RecognizerEvent }
+  | { ok: true; preview: RecognizerPreview }
+  | { ok: true; camera: RecognizerCamera }
+  | { ok: false; reason: string };
+
+const BASE64 = /^[A-Za-z0-9+/]+={0,2}$/;
+const isDim = (v: unknown): v is number => typeof v === 'number' && Number.isInteger(v) && v >= 16 && v <= 1280;
+
+const SELECTIONS = ['automatic', 'explicit-index', 'explicit-name', 'unidentified'] as const;
+const KINDS = ['built-in', 'iPhone', 'external'] as const;
+const shortText = (v: unknown): v is string => typeof v === 'string' && v.length > 0 && v.length <= 120;
+
+function parseCamera(o: Record<string, unknown>): ParseResult {
+  const available = o['available'];
+  if (
+    !shortText(o['active']) ||
+    typeof o['index'] !== 'number' || !Number.isInteger(o['index']) || o['index'] < 0 || o['index'] > 64 ||
+    !SELECTIONS.includes(o['selection'] as (typeof SELECTIONS)[number]) ||
+    typeof o['verified'] !== 'boolean' ||
+    !(o['note'] === undefined || (typeof o['note'] === 'string' && o['note'].length <= 300)) ||
+    !Array.isArray(available) || available.length > 16 ||
+    !available.every((a) => a && typeof a === 'object' && shortText(a.name) && KINDS.includes(a.kind))
+  ) {
+    return { ok: false, reason: 'malformed camera message' };
+  }
+  return {
+    ok: true,
+    camera: {
+      active: o['active'],
+      index: o['index'],
+      selection: o['selection'] as RecognizerCamera['selection'],
+      verified: o['verified'],
+      note: typeof o['note'] === 'string' ? o['note'] : '',
+      available: available.map((a: { name: string; kind: RecognizerCamera['available'][number]['kind'] }) => ({ name: a.name, kind: a.kind })),
+    },
+  };
+}
+
+function parsePreview(o: Record<string, unknown>): ParseResult {
+  const jpeg = o['jpeg'];
+  // "/9j/" is the base64 of the JPEG start-of-image marker (FF D8 FF).
+  if (typeof jpeg !== 'string' || !jpeg.startsWith('/9j/') || !BASE64.test(jpeg)) return { ok: false, reason: 'preview is not a JPEG' };
+  if (!isDim(o['width']) || !isDim(o['height'])) return { ok: false, reason: 'preview has bad dimensions' };
+  return { ok: true, preview: { jpeg, width: o['width'], height: o['height'] } };
+}
 
 /** The same pattern SignFlow's backend enforces on glosses for POST /translate. */
 const GLOSS_PATTERN = /^[A-Z0-9#][A-Z0-9#'+.-]{0,39}$/;
@@ -119,7 +189,7 @@ const round = (p: number) => Math.round(p * 1000) / 1000;
  */
 export function parseRecognizerMessage(text: unknown, now: number): ParseResult {
   if (typeof text !== 'string') return { ok: false, reason: 'not a text message' };
-  if (text.length > RECOGNIZER_MAX_MESSAGE_CHARS) return { ok: false, reason: 'message too large' };
+  if (text.length > RECOGNIZER_MAX_PREVIEW_CHARS) return { ok: false, reason: 'message too large' };
   let msg: unknown;
   try {
     msg = JSON.parse(text);
@@ -128,6 +198,10 @@ export function parseRecognizerMessage(text: unknown, now: number): ParseResult 
   }
   if (!msg || typeof msg !== 'object' || Array.isArray(msg)) return { ok: false, reason: 'not an object' };
   const o = msg as Record<string, unknown>;
+  if (o['type'] === 'preview') return parsePreview(o);
+  if (text.length <= RECOGNIZER_MAX_MESSAGE_CHARS && o['type'] === 'camera') return parseCamera(o);
+  // Only preview frames may be large.
+  if (text.length > RECOGNIZER_MAX_MESSAGE_CHARS) return { ok: false, reason: 'message too large' };
 
   if (o['type'] === 'end_of_sentence') {
     const keyword = Array.isArray(o['confident']);

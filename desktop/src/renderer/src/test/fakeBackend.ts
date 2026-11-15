@@ -6,6 +6,10 @@ export interface FakeBackendState {
   offline: boolean;
   translationConfigured: boolean;
   speechConfigured: boolean;
+  /** /translate answers after this long (aborting the request rejects it). */
+  translateDelayMs?: number;
+  /** /translate fails with this HTTP status (e.g. 503). */
+  translateStatus?: number;
   /** How the fake "AI" turns glosses into English. */
   translate: (glosses: string[], mode: TranslationMode) => string;
 }
@@ -39,6 +43,18 @@ export function createFakeBackend(initial: Partial<FakeBackendState> = {}) {
     calls.push({ method: init?.method ?? 'GET', path: url.pathname, body });
     if (init?.signal?.aborted) throw new DOMException('Aborted', 'AbortError');
     if (state.offline) throw new TypeError('Failed to fetch');
+    if (url.pathname === '/translate' && state.translateDelayMs) {
+      await new Promise<void>((resolve, reject) => {
+        const t = setTimeout(resolve, state.translateDelayMs);
+        init?.signal?.addEventListener('abort', () => {
+          clearTimeout(t);
+          reject(new DOMException('Aborted', 'AbortError'));
+        });
+      });
+    }
+    if (url.pathname === '/translate' && state.translateStatus) {
+      return json(state.translateStatus, { detail: 'Translation is temporarily unavailable.' });
+    }
 
     if (url.pathname === '/health') {
       return json(200, {

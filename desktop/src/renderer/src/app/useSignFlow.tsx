@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { AppInfo } from '@shared/ipc';
 import { DEFAULT_CONNECTION, isConnectionSettings, type ConnectionSettings } from '../adapters/connection';
 import { newId } from '../adapters/emitter';
@@ -7,16 +7,19 @@ import { CloudSpeechEngine, FallbackSpeechEngine } from '../adapters/remote/clou
 import { KokoroSpeechEngine, KokoroSpeechError, type KokoroBridge } from '../adapters/kokoroSpeech';
 import { AslRecognizer, type RecognizerBridge } from '../adapters/external/aslRecognizer';
 import { RemoteTranslator } from '../adapters/remote/remoteTranslator';
-import type { Adapters, SignRecognizer, SpeechEngine, Translator } from '../adapters/types';
+import type { Adapters, RecognizedSign, SignRecognizer, SpeechEngine, Translator } from '../adapters/types';
 import { useBackendHealth } from '../hooks/useBackendHealth';
 import { useCamera } from '../hooks/useCamera';
 import { useCaptions } from '../hooks/useCaptions';
 import { useFrameSampler } from '../hooks/useFrameSampler';
 import { useKokoro } from '../hooks/useKokoro';
+import { useRecognizerCamera, useRecognizerPreview } from '../hooks/useRecognizerPreview';
 import { useNotes } from '../hooks/useNotes';
 import { usePersistentState } from '../hooks/usePersistentState';
 import { useSignSession, type ConfirmIntent } from '../hooks/useSignSession';
 import { useSpeech } from '../hooks/useSpeech';
+import { useSentenceComposer, useSpeechQueue, type SentenceItem, type SpokenRecord } from '../hooks/useRealtime';
+import { DEFAULT_COMM_MODE, glossToWords, isCommMode, type CommMode } from '../state/realtime';
 import { DEFAULT_SETTINGS, isSessionSettings, type SessionSettings, type Utterance } from '../state/session';
 
 const isBoolean = (v: unknown): v is boolean => typeof v === 'boolean';
@@ -100,6 +103,8 @@ export function useSignFlowController({ adapters, initialSettings, backendClient
     isConnectionSettings,
   );
   const [deviceEngine, setDeviceEngine] = usePersistentState<DeviceSpeechEngine>('signflow.speechEngine', 'system', isDeviceSpeechEngine);
+  /** Live screen: Words (instant), Sentence (Gemini), or Review (draft + confirm). */
+  const [commMode, setCommMode] = usePersistentState<CommMode>('signflow.commMode', DEFAULT_COMM_MODE, isCommMode);
   const [recognizerSettings, setRecognizerSettings] = usePersistentState<RecognizerSettings>(
     'signflow.recognizer',
     DEFAULT_RECOGNIZER_SETTINGS,
@@ -134,6 +139,8 @@ export function useSignFlowController({ adapters, initialSettings, backendClient
     if (externalCamera && camera.status !== 'off') stopCamera();
   }, [camera.status, externalCamera, stopCamera]);
   const recognitionOn = externalCamera ? externalOnFor === recognizer : cameraOn;
+  const recognizerPreview = useRecognizerPreview(recognizerBridge, externalCamera && recognitionOn);
+  const recognizerCamera = useRecognizerCamera(recognizerBridge, externalCamera && recognitionOn);
   const recognition = useMemo(
     () => ({
       on: recognitionOn,
@@ -141,19 +148,30 @@ export function useSignFlowController({ adapters, initialSettings, backendClient
       external: externalCamera,
       start: externalCamera ? async () => setExternalOnFor(recognizer) : camera.start,
       stop: externalCamera ? () => setExternalOnFor(null) : camera.stop,
+      /** The recognizer's camera preview frames, when its launcher sends them. */
+      preview: recognizerPreview,
+      /** The camera the recognizer launcher reports using (Settings › Camera). */
+      camera: recognizerCamera,
     }),
-    [camera.start, camera.stop, externalCamera, recognitionOn, recognizer],
+    [camera.start, camera.stop, externalCamera, recognitionOn, recognizer, recognizerCamera, recognizerPreview],
   );
   // Live mode swaps the translator (and optionally speech) for the backend's. The
   // recognizer is the same object in both modes, so switching never restarts it.
   const live = connection.mode === 'live';
-  const health = useBackendHealth(client, live);
+  // Sentence mode always composes with Gemini through the backend, whatever Demo/Live says.
+  const sentenceMode = commMode === 'sentence';
+  const health = useBackendHealth(client, live || sentenceMode);
   // A failed request refreshes the status right away, so the top bar never says
   // "AI online" next to an "unreachable" error.
   const { check: recheckBackend } = health;
   const translator = useMemo<Translator>(
     () => (live ? new RemoteTranslator(client, connection.context, () => void recheckBackend()) : adapters.translator),
     [adapters.translator, client, connection.context, live, recheckBackend],
+  );
+  /** Sentence mode's composer: Gemini through the SignFlow backend. */
+  const geminiTranslator = useMemo<Translator>(
+    () => new RemoteTranslator(client, connection.context, () => void recheckBackend()),
+    [client, connection.context, recheckBackend],
   );
   const kokoroBridge = useMemo<KokoroBridge | undefined>(() => window.signflow?.kokoro, []);
   const kokoroSelected = deviceEngine === 'kokoro' && kokoroBridge !== undefined;
@@ -202,11 +220,103 @@ export function useSignFlowController({ adapters, initialSettings, backendClient
     [appendToNotes, captureToNotes, speak, speechAvailable],
   );
 
+  // ---------- Words / Sentence modes: spoken automatically, no confirmation ----------
+  /** Glosses behind each queued item, for the transcript. */
+  const spokenMetaRef = useRef(new Map<string, { glosses: string[]; confidence: number }>());
+  const addUtteranceRef = useRef<(u: Utterance) => void>(() => undefined);
+  const onSpeechStart = useCallback(
+    (item: SpokenRecord) => {
+      const metas = item.ids.map((id) => spokenMetaRef.current.get(id)).filter(Boolean) as { glosses: string[]; confidence: number }[];
+      const at = Date.now();
+      const text = item.kind === 'sentence' ? item.text : item.text.charAt(0).toUpperCase() + item.text.slice(1);
+      addUtteranceRef.current({
+        id: `${item.id}-${at}`,
+        text,
+        glosses: metas.flatMap((m) => m.glosses),
+        confidence: metas.length ? metas.reduce((a, m) => a + m.confidence, 0) / metas.length : 1,
+        confirmedAt: at,
+        edited: false,
+      });
+      if (captureToNotes) appendToNotes(text, at);
+    },
+    [appendToNotes, captureToNotes],
+  );
+  const speechQueue = useSpeechQueue({
+    engine: speechEngine,
+    speak,
+    stopSpeech: speech.stop,
+    available: speechAvailable,
+    onStart: onSpeechStart,
+  });
+  const { enqueue } = speechQueue;
+  const onWords = useCallback(
+    (signs: RecognizedSign[]) => {
+      const now = Date.now();
+      enqueue(
+        signs.map((s) => {
+          spokenMetaRef.current.set(s.id, { glosses: [s.gloss], confidence: s.confidence });
+          // The recognizer's own "sign ended" time when plausible, else when it arrived.
+          const t0 = s.ts <= now && s.ts > now - 10_000 ? s.ts : now;
+          return { id: s.id, text: glossToWords(s.gloss), kind: 'word' as const, t0 };
+        }),
+      );
+    },
+    [enqueue],
+  );
+  const deliverSentence = useCallback(
+    (item: SentenceItem, text: string) => {
+      spokenMetaRef.current.set(item.id, { glosses: item.glosses, confidence: item.confidence });
+      enqueue([{ id: item.id, text, kind: 'sentence', t0: item.endedAt }]);
+    },
+    [enqueue],
+  );
+  const composer = useSentenceComposer({
+    translator: geminiTranslator,
+    deliver: deliverSentence,
+    onGeminiError: (err) => {
+      if (err instanceof BackendError) void recheckBackend();
+    },
+  });
+  const takeBufferRef = useRef<() => RecognizedSign[]>(() => []);
+  const { submit: submitSentence } = composer;
+  const onSentenceReady = useCallback(() => submitSentence(takeBufferRef.current()), [submitSentence]);
+
   const session = useSignSession({ recognizer, translator }, {
     active: recognitionOn,
     initialSettings: { ...savedSettings, ...initialSettings },
     onConfirm: handleConfirm,
+    mode: commMode,
+    onWords,
+    onSentenceReady,
   });
+  useLayoutEffect(() => {
+    addUtteranceRef.current = session.addUtterance;
+    takeBufferRef.current = session.takeBuffer;
+  });
+  // Switching modes or restarting recognition abandons a sentence still being composed:
+  // a late Gemini answer must never be spoken. Switching modes also stops the voice.
+  const { reset: resetComposer } = composer;
+  const { stop: stopQueue } = speechQueue;
+  useEffect(() => {
+    resetComposer();
+  }, [commMode, recognitionOn, resetComposer]);
+  useEffect(() => stopQueue, [commMode, stopQueue]);
+  const realtime = useMemo(
+    () => ({
+      mode: commMode,
+      setMode: setCommMode,
+      queue: speechQueue,
+      composer,
+      /** Stop speaking now, drop everything queued, and abandon the sentence being composed. */
+      stop: () => {
+        resetComposer();
+        stopQueue();
+      },
+      /** Sentence mode: end the sentence now (instead of waiting for the recognizer). */
+      finishSentence: () => submitSentence(session.takeBuffer()),
+    }),
+    [commMode, composer, resetComposer, session, setCommMode, speechQueue, stopQueue, submitSentence],
+  );
   useFrameSampler(samplerRef, recognizer, cameraOn && !externalCamera);
   const captions = useCaptions(session.state);
 
@@ -254,6 +364,7 @@ export function useSignFlowController({ adapters, initialSettings, backendClient
     backend: { client, health },
     deviceEngine,
     setDeviceEngine,
+    realtime,
     recognizer,
     recognition,
     recognizerSettings,

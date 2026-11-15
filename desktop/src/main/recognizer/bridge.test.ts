@@ -36,6 +36,8 @@ function setup() {
   const events: RecognizerEvent[] = [];
   const statuses: RecognizerStatus[] = [];
   const log = vi.fn();
+  const previews: unknown[] = [];
+  let clock = NOW;
   const bridge = new RecognizerBridge({
     port: 8765,
     connect: (url) => {
@@ -45,10 +47,12 @@ function setup() {
     },
     onEvent: (e) => events.push(e),
     onStatus: (s) => statuses.push(s),
-    now: () => NOW,
+    onPreview: (f) => previews.push(f),
+    now: () => clock,
     log,
   });
-  return { bridge, sockets, events, statuses, log, last: () => sockets.at(-1)! };
+  const tick = (ms: number) => (clock += ms);
+  return { bridge, sockets, events, statuses, log, previews, tick, last: () => sockets.at(-1)! };
 }
 
 beforeEach(() => vi.useFakeTimers());
@@ -196,5 +200,29 @@ describe('RecognizerBridge', () => {
     vi.advanceTimersByTime(500);
     expect(calls).toBe(2);
     bridge.stop();
+  });
+
+  it('forwards preview frames throttled (at most one per 66 ms, ~15 fps), never as sign events', () => {
+    const { bridge, events, previews, tick, last } = setup();
+    bridge.start({ allowKeyword: false });
+    last().open();
+    const frame = { type: 'preview', jpeg: '/9j/AAAA', width: 320, height: 180, ts: NOW / 1000 };
+    last().message(frame);
+    tick(30);
+    last().message(frame); // dropped: too soon
+    tick(60);
+    last().message(frame);
+    expect(previews).toHaveLength(2);
+    expect(events).toHaveLength(0);
+  });
+
+  it('carries the launcher’s camera report in the status, and forgets it on stop', () => {
+    const { bridge, statuses, last } = setup();
+    bridge.start({ allowKeyword: false });
+    last().open();
+    last().message({ type: 'camera', active: 'MacBook Air Camera', index: 1, selection: 'automatic', verified: true, note: 'built-in camera preferred', available: [] });
+    expect(statuses.at(-1)).toMatchObject({ state: 'ready', camera: { active: 'MacBook Air Camera', index: 1 } });
+    bridge.stop();
+    expect(statuses.at(-1)).toEqual({ state: 'idle' });
   });
 });

@@ -115,6 +115,7 @@ export function SettingsScreen() {
     deviceEngine,
     setDeviceEngine,
     kokoro,
+    realtime,
     recognition,
     recognizerSettings,
     updateRecognizerSettings,
@@ -165,10 +166,31 @@ export function SettingsScreen() {
       <div className="settings-content" ref={contentRef} onScroll={onScroll}>
         <Section id="camera" title="Camera" description="Choose a camera and how the preview looks.">
           {recognition.external ? (
+            <>
             <p className="backend-hint" data-testid="camera-external-note">
               The SignFlow ASL recognizer uses the camera itself (its own window shows the preview), so SignFlow doesn&apos;t
               open it while that recognizer is selected: one camera session, one camera permission.
             </p>
+            {recognition.camera ? (
+              <div className="recognizer-help" data-testid="recognizer-camera">
+                <InfoRow label="Recognizer camera">
+                  {recognition.camera.active}{' '}
+                  <span className="tag">
+                    {recognition.camera.selection === 'automatic' ? 'automatic' : recognition.camera.selection === 'unidentified' ? 'not identified' : 'chosen'}
+                    {recognition.camera.verified ? '' : ' · unverified'}
+                  </span>
+                </InfoRow>
+                <p className="subtle">
+                  {recognition.camera.note}. Available:{' '}
+                  {recognition.camera.available.map((c) => `${c.name} (${c.kind})`).join(', ') || 'unknown'}. The built-in camera
+                  is preferred automatically. To use another, restart the recognizer with <code>--camera-name iPhone</code> or{' '}
+                  <code>--camera N</code> (<code>--list-cameras</code> lists them).
+                </p>
+              </div>
+            ) : (
+              <p className="subtle">Start recognition to see which camera the recognizer uses.</p>
+            )}
+            </>
           ) : (
           <>
           <div className="setting-line">
@@ -226,7 +248,7 @@ export function SettingsScreen() {
           <Segmented
             label="Translation context"
             value={connection.context}
-            disabled={!live}
+            disabled={!live && realtime.mode !== 'sentence'}
             options={[
               { value: 'chat', label: 'Everyday' },
               { value: 'medical', label: 'Medical' },

@@ -1,6 +1,6 @@
 import type { CaptionPayload } from './captions';
 import type { KokoroStatus, KokoroSynthesizeRequest, KokoroSynthesizeResult } from './kokoro';
-import type { RecognizerEvent, RecognizerStartRequest, RecognizerStatus } from './recognizer';
+import type { RecognizerEvent, RecognizerPreview, RecognizerStartRequest, RecognizerStatus } from './recognizer';
 import type { AppInfo, CameraAccessStatus, NotesExportRequest, NotesExportResult } from './ipc';
 
 /**
@@ -53,6 +53,8 @@ export interface SignflowApi {
     status(): Promise<RecognizerStatus>;
     onEvent(cb: (event: RecognizerEvent) => void): () => void;
     onStatus(cb: (status: RecognizerStatus) => void): () => void;
+    /** Camera preview frames (only from SignFlow's recognizer launcher). */
+    onPreview(cb: (frame: RecognizerPreview) => void): () => void;
   };
   view: {
     /** Main window only. Resolves to the requested state. */

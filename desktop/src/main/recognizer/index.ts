@@ -20,6 +20,7 @@ export function registerRecognizer(getMainWindow: () => BrowserWindow | null): R
     connect: (url) => new WebSocket(url) as unknown as SocketLike,
     onEvent: (event) => sendToMain(IpcChannels.recognizerEvent, event),
     onStatus: (status) => sendToMain(IpcChannels.recognizerStatusChanged, status),
+    onPreview: (frame) => sendToMain(IpcChannels.recognizerPreview, frame),
   });
 
   const handle = <T>(channel: string, handler: (...args: unknown[]) => T) => {

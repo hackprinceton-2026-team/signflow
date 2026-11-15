@@ -29,6 +29,8 @@ cd ml && ./slenv/bin/python src/live.py --keyword
 cd desktop && npm run dev
 ```
 
+**With the camera preview inside SignFlow** (instead of terminal 1): `../signflow-ml/slenv/bin/python desktop/scripts/asl/signflow_recognizer.py --ml ../signflow-ml`, run from the signflow repo. It runs the same recognizer, unmodified, and also sends throttled preview frames over loopback. See [`realtime-modes.md`](realtime-modes.md).
+
 In SignFlow, go to **Settings › Recognition › Sign recognizer › SignFlow ASL model (local)**, then **Live › Start recognition**. Keep the recognizer's window next to SignFlow: it is the camera preview, and it shows when a sign starts and ends.
 
 - **Camera permission:** macOS asks once, for the app that runs `live.py` (Terminal, iTerm or VS Code), not for SignFlow. Allow it, then restart that app.

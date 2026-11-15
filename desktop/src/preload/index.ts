@@ -3,7 +3,7 @@ import { IpcChannels } from '@shared/ipc';
 import type { SignflowApi } from '@shared/api';
 import type { CaptionPayload } from '@shared/captions';
 import type { KokoroStatus } from '@shared/kokoro';
-import type { RecognizerEvent, RecognizerStatus } from '@shared/recognizer';
+import type { RecognizerEvent, RecognizerPreview, RecognizerStatus } from '@shared/recognizer';
 
 /** Subscribe to a main→renderer channel without leaking the IpcRendererEvent. */
 function subscribe<T>(channel: string, cb: (value: T) => void): () => void {
@@ -52,6 +52,7 @@ const api: SignflowApi = {
     status: () => ipcRenderer.invoke(IpcChannels.recognizerStatus),
     onEvent: (cb) => subscribe<RecognizerEvent>(IpcChannels.recognizerEvent, cb),
     onStatus: (cb) => subscribe<RecognizerStatus>(IpcChannels.recognizerStatusChanged, cb),
+    onPreview: (cb) => subscribe<RecognizerPreview>(IpcChannels.recognizerPreview, cb),
   },
   view: {
     setFullScreen: (fullScreen) => ipcRenderer.invoke(IpcChannels.viewSetFullScreen, fullScreen),

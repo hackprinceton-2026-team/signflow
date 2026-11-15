@@ -34,6 +34,10 @@ export class MockBackend {
   readonly requests: RecordedRequest[] = [];
   readonly violations: string[] = [];
   translate: (glosses: string[], mode: string) => string = (g, mode) => `[AI ${mode}] ${g.join(' ').toLowerCase()}`;
+  /** /translate answers after this long (a slow Gemini). */
+  translateDelayMs = 0;
+  /** /translate fails with this error (a Gemini outage), instead of answering. */
+  translateError: { status: number; code: string; message: string } | null = null;
   private server: Server | null = null;
 
   constructor(
@@ -120,6 +124,8 @@ export class MockBackend {
     if (req.method === 'POST' && path === '/translate') {
       if (!checkRequest('TranslationRequest')) return;
       const { raw_signs, mode = 'chat' } = body as { raw_signs: string[]; mode?: string };
+      if (this.translateDelayMs) await new Promise((r) => setTimeout(r, this.translateDelayMs));
+      if (this.translateError) return error(this.translateError.status, this.translateError.code, this.translateError.message);
       return this.send(res, 200, { translated_text: this.translate(raw_signs, mode), mode, model: 'e2e-fake' }, 'TranslationResponse', origin);
     }
     if (req.method === 'POST' && path === '/speak') {

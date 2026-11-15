@@ -49,6 +49,8 @@ export const IpcChannels = {
   recognizerEvent: 'recognizer:event',
   /** main → main window: connection status changed */
   recognizerStatusChanged: 'recognizer:status-changed',
+  /** main → main window: a validated, throttled camera preview frame from the recognizer */
+  recognizerPreview: 'recognizer:preview',
 } as const;
 
 export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels];
