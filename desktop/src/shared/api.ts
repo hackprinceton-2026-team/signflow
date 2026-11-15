@@ -1,5 +1,6 @@
 import type { CaptionPayload } from './captions';
 import type { KokoroStatus, KokoroSynthesizeRequest, KokoroSynthesizeResult } from './kokoro';
+import type { RecognizerEvent, RecognizerStartRequest, RecognizerStatus } from './recognizer';
 import type { AppInfo, CameraAccessStatus, NotesExportRequest, NotesExportResult } from './ipc';
 
 /**
@@ -41,6 +42,17 @@ export interface SignflowApi {
     /** Stop the engine and free the model's memory (it reloads on next use). */
     release(): Promise<void>;
     onStatus(cb: (status: KokoroStatus) => void): () => void;
+  };
+  /**
+   * The local ASL recognizer (a separate process that owns the camera). Main
+   * window only. Events are validated and normalized in the main process.
+   */
+  recognizer: {
+    start(request: RecognizerStartRequest): Promise<RecognizerStatus>;
+    stop(): Promise<void>;
+    status(): Promise<RecognizerStatus>;
+    onEvent(cb: (event: RecognizerEvent) => void): () => void;
+    onStatus(cb: (status: RecognizerStatus) => void): () => void;
   };
   view: {
     /** Main window only. Resolves to the requested state. */

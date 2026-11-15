@@ -100,7 +100,7 @@ export type SessionAction =
   | { type: 'settings/updated'; settings: Partial<SessionSettings> };
 
 export function isAccepted(sign: RecognizedSign, settings: SessionSettings): boolean {
-  return sign.final && sign.confidence >= settings.minConfidence;
+  return sign.final && !sign.uncertain && sign.confidence >= settings.minConfidence;
 }
 
 function upsertById<T extends { id: string }>(list: T[], item: T): { list: T[]; replaced: boolean } {

@@ -9,7 +9,7 @@ import { lastUtterance } from '../state/session';
 
 /** Recognition details, conversation history, and playback. */
 export function WorkspaceScreen() {
-  const { camera, cameraOn, mirrored, session, speech, updateSettings } = useSignFlow();
+  const { camera, cameraOn, mirrored, session, speech, updateSettings, recognition } = useSignFlow();
   const { state } = session;
 
   return (
@@ -31,13 +31,18 @@ export function WorkspaceScreen() {
             title="Camera"
             className="mini-camera-card"
             actions={
-              <StatusPill tone={cameraOn ? 'live' : 'neutral'} pulse={cameraOn}>
-                {cameraOn ? 'Live' : 'Off'}
+              <StatusPill tone={recognition.on ? 'live' : 'neutral'} pulse={recognition.on}>
+                {recognition.on ? 'Live' : 'Off'}
               </StatusPill>
             }
           >
             <div className="mini-camera">
-              {cameraOn ? (
+              {recognition.external ? (
+                <div className="mini-camera-off">
+                  <Icon name="camera" size={20} />
+                  <span>{recognition.on ? 'In the SignFlow Recognizer window' : 'Start recognition from Live'}</span>
+                </div>
+              ) : cameraOn ? (
                 <CameraView stream={camera.stream} mirrored={mirrored} label="Camera preview (small)" />
               ) : (
                 <div className="mini-camera-off">

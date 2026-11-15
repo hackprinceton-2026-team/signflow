@@ -1,5 +1,7 @@
 import { encodeKokoroError, type KokoroErrorCode, type KokoroStatus, type KokoroSynthesizeRequest, type KokoroSynthesizeResult } from '@shared/kokoro';
 import type { KokoroBridge } from '../adapters/kokoroSpeech';
+import type { RecognizerBridge } from '../adapters/external/aslRecognizer';
+import { parseRecognizerMessage, type RecognizerEvent, type RecognizerStatus } from '@shared/recognizer';
 import type { AudioLike } from '../adapters/remote/cloudSpeech';
 import { vi, type Mock } from 'vitest';
 import { Emitter } from '../adapters/emitter';
@@ -189,5 +191,60 @@ export class FakeKokoro implements KokoroBridge {
   fail(id: string | undefined, code: KokoroErrorCode, message = 'boom'): void {
     const p = this.take(id);
     p.reject(new Error(`Error invoking remote method 'kokoro:synthesize': Error: ${encodeKokoroError(code, message)}`));
+  }
+}
+
+// ---------- Local ASL recognizer ----------
+
+/**
+ * A controllable `window.signflow.recognizer`. `send()` takes the recognizer's
+ * raw wire JSON and runs it through the same parser as the main process, so
+ * tests exercise real messages end to end.
+ */
+export class FakeRecognizerBridge implements RecognizerBridge {
+  private readonly events = new Set<(e: RecognizerEvent) => void>();
+  private readonly statuses = new Set<(s: RecognizerStatus) => void>();
+  current: RecognizerStatus = { state: 'idle' };
+  /** What start() connects to. */
+  startResult: RecognizerStatus = { state: 'ready', model: 'demo14' };
+  allowKeyword: boolean | null = null;
+
+  start: Mock<RecognizerBridge['start']> = vi.fn(async (req: { allowKeyword: boolean }) => {
+    this.allowKeyword = req.allowKeyword;
+    this.setStatus(this.startResult);
+    return this.current;
+  });
+  stop: Mock<RecognizerBridge['stop']> = vi.fn(async () => {
+    this.setStatus({ state: 'idle' });
+  });
+  status: Mock<RecognizerBridge['status']> = vi.fn(async () => this.current);
+  onEvent: Mock<RecognizerBridge['onEvent']> = vi.fn((cb: (e: RecognizerEvent) => void) => {
+    this.events.add(cb);
+    return () => void this.events.delete(cb);
+  });
+  onStatus: Mock<RecognizerBridge['onStatus']> = vi.fn((cb: (s: RecognizerStatus) => void) => {
+    this.statuses.add(cb);
+    return () => void this.statuses.delete(cb);
+  });
+
+  get listening(): boolean {
+    return this.events.size > 0;
+  }
+
+  setStatus(s: RecognizerStatus): void {
+    this.current = s;
+    for (const cb of this.statuses) cb(s);
+  }
+
+  emit(event: RecognizerEvent): void {
+    for (const cb of this.events) cb(event);
+  }
+
+  /** Deliver one raw recognizer message (as live.py sends it). Returns false if the parser dropped it. */
+  send(raw: string | Record<string, unknown>, now = Date.now()): boolean {
+    const parsed = parseRecognizerMessage(typeof raw === 'string' ? raw : JSON.stringify(raw), now);
+    if (!parsed.ok) return false;
+    this.emit(parsed.event);
+    return true;
   }
 }

@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
-import { useSignSession } from './useSignSession';
+import { SENTENCE_END_FALLBACK_MS, useSignSession } from './useSignSession';
+import { Emitter } from '../adapters/emitter';
 import { FakeRecognizer } from '../test/fakes';
 import { MockTranslator } from '../adapters/mock/mockTranslator';
 import type { EnglishDraft, RecognizedSign, Translator } from '../adapters/types';
@@ -240,5 +241,86 @@ describe('useSignSession: stale translations (Demo/Live or context switches)', (
     });
     expect(onConfirm).toHaveBeenCalledTimes(1);
     expect(result.current.state.transcript).toHaveLength(1);
+  });
+});
+
+describe('useSignSession with a recognizer that reports sentence ends (the local ASL model)', () => {
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => vi.useRealTimers());
+
+  /** FakeRecognizer + onSentenceEnd, like AslRecognizer. */
+  class SegmentingRecognizer extends FakeRecognizer {
+    readonly ends = new Emitter<void>();
+    onSentenceEnd(cb: () => void) {
+      return this.ends.on(cb);
+    }
+    endSentence() {
+      this.ends.emit();
+    }
+  }
+
+  function setup() {
+    const recognizer = new SegmentingRecognizer();
+    const translator = new ManualTranslator('asl', 'demo');
+    const hook = renderHook(() => useSignSession({ recognizer, translator }, { active: true, initialSettings: { pauseMs: 1000 } }));
+    return { recognizer, translator, ...hook };
+  }
+
+  it('drafts the whole sentence when it ends, not after the usual pause between slow signs', async () => {
+    const { recognizer, translator, result } = setup();
+    act(() => void recognizer.emit('HELP'));
+    await act(() => vi.advanceTimersByTimeAsync(2500)); // a slow second sign: longer than pauseMs
+    expect(translator.calls).toHaveLength(0);
+    act(() => void recognizer.emit('DOCTOR'));
+    act(() => recognizer.endSentence());
+    await act(() => vi.advanceTimersByTimeAsync(0));
+    expect(translator.calls.map((c) => c.glosses)).toEqual([['HELP', 'DOCTOR']]);
+    act(() => translator.calls[0]!.resolve('I need a doctor.'));
+    await act(() => vi.advanceTimersByTimeAsync(0));
+    expect(result.current.state.draft?.text).toBe('I need a doctor.');
+  });
+
+  it('a sentence end with nothing accepted is ignored: the next sign waits for its own sentence end', async () => {
+    const { recognizer, translator } = setup();
+    act(() => void recognizer.emit('HELP', 0.4)); // below threshold: shown, not used
+    act(() => recognizer.endSentence());
+    act(() => void recognizer.emit('YES'));
+    await act(() => vi.advanceTimersByTimeAsync(3000));
+    expect(translator.calls).toHaveLength(0);
+    act(() => recognizer.endSentence());
+    await act(() => vi.advanceTimersByTimeAsync(0));
+    expect(translator.calls.map((c) => c.glosses)).toEqual([['YES']]);
+  });
+
+  it('signs that arrive while a sentence is translating are drafted as soon as it finishes, if their sentence ended', async () => {
+    const { recognizer, translator } = setup();
+    act(() => void recognizer.emit('HELLO'));
+    act(() => recognizer.endSentence());
+    await act(() => vi.advanceTimersByTimeAsync(0));
+    act(() => void recognizer.emit('THANK-YOU'));
+    act(() => recognizer.endSentence());
+    expect(translator.calls).toHaveLength(1);
+    await act(async () => translator.calls[0]!.resolve('Hello.'));
+    await act(() => vi.advanceTimersByTimeAsync(0));
+    expect(translator.calls.map((c) => c.glosses)).toEqual([['HELLO'], ['THANK-YOU']]);
+  });
+
+  it('falls back to drafting after SENTENCE_END_FALLBACK_MS if no sentence end ever comes', async () => {
+    const { recognizer, translator } = setup();
+    act(() => void recognizer.emit('WATER'));
+    await act(() => vi.advanceTimersByTimeAsync(SENTENCE_END_FALLBACK_MS - 1));
+    expect(translator.calls).toHaveLength(0);
+    await act(() => vi.advanceTimersByTimeAsync(1));
+    expect(translator.calls.map((c) => c.glosses)).toEqual([['WATER']]);
+  });
+
+  it('a sign the model was unsure about is shown but never drafted, even at high confidence', async () => {
+    const { recognizer, translator, result } = setup();
+    act(() => void recognizer.emit('SICK', 0.95, { uncertain: true }));
+    act(() => recognizer.endSentence());
+    await act(() => vi.advanceTimersByTimeAsync(SENTENCE_END_FALLBACK_MS + 10));
+    expect(result.current.state.liveSigns).toHaveLength(1);
+    expect(result.current.state.buffer).toHaveLength(0);
+    expect(translator.calls).toHaveLength(0);
   });
 });

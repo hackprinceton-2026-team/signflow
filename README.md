@@ -47,6 +47,8 @@ See [`desktop/README.md`](desktop/README.md) for scripts and architecture.
 
 ## Team
 
-- **Raimbek**: desktop app and UI.
-- **Muhammad**: original author of the backend (FastAPI service, Gemini translation) and its Backend and AI Engineering.
-- **Umar**: ML
+- **Raimbek — Desktop & AI Integration:** Built the Electron/React desktop application, including the interface, live captions, notes, accessibility features, and Kokoro neural speech. Integrated the Gemini backend with the frontend and developed AI evaluation, performance monitoring, and the ASL recognition bridge.
+
+- **Muhammad — Backend Development:** Originally developed the FastAPI backend, Gemini-powered translation service, and core API infrastructure.
+
+- **Umar — Machine Learning:** Developed and evaluated the ASL recognition models, including the 14-sign demo model and the 116-sign keyword model, along with webcam inference and sign recognition over WebSocket.

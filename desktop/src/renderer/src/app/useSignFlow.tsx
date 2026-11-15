@@ -5,8 +5,9 @@ import { newId } from '../adapters/emitter';
 import { BackendError, createBackendClient, type BackendClient } from '../adapters/remote/backendClient';
 import { CloudSpeechEngine, FallbackSpeechEngine } from '../adapters/remote/cloudSpeech';
 import { KokoroSpeechEngine, KokoroSpeechError, type KokoroBridge } from '../adapters/kokoroSpeech';
+import { AslRecognizer, type RecognizerBridge } from '../adapters/external/aslRecognizer';
 import { RemoteTranslator } from '../adapters/remote/remoteTranslator';
-import type { Adapters, SpeechEngine, Translator } from '../adapters/types';
+import type { Adapters, SignRecognizer, SpeechEngine, Translator } from '../adapters/types';
 import { useBackendHealth } from '../hooks/useBackendHealth';
 import { useCamera } from '../hooks/useCamera';
 import { useCaptions } from '../hooks/useCaptions';
@@ -23,6 +24,22 @@ const isBoolean = (v: unknown): v is boolean => typeof v === 'boolean';
 /** The on-device speech engine: macOS/system voices, or Kokoro's local neural voice. */
 export type DeviceSpeechEngine = 'system' | 'kokoro';
 const isDeviceSpeechEngine = (v: unknown): v is DeviceSpeechEngine => v === 'system' || v === 'kokoro';
+
+/**
+ * Where signs come from: the scripted demo recognizer (default, always works),
+ * or the local ASL model (Umar's live.py, a separate process that owns the
+ * camera). The 116-sign keyword model is opt-in.
+ */
+export interface RecognizerSettings {
+  source: 'demo' | 'asl';
+  allowKeyword: boolean;
+}
+export const DEFAULT_RECOGNIZER_SETTINGS: RecognizerSettings = { source: 'demo', allowKeyword: false };
+export function isRecognizerSettings(v: unknown): v is RecognizerSettings {
+  if (!v || typeof v !== 'object') return false;
+  const o = v as Record<string, unknown>;
+  return (o['source'] === 'demo' || o['source'] === 'asl') && typeof o['allowKeyword'] === 'boolean';
+}
 
 function kokoroFailureMessage(err: unknown): string {
   if (err instanceof KokoroSpeechError && err.code === 'missing') return "Kokoro voice isn't installed.";
@@ -82,6 +99,11 @@ export function useSignFlowController({ adapters, initialSettings, backendClient
     isConnectionSettings,
   );
   const [deviceEngine, setDeviceEngine] = usePersistentState<DeviceSpeechEngine>('signflow.speechEngine', 'system', isDeviceSpeechEngine);
+  const [recognizerSettings, setRecognizerSettings] = usePersistentState<RecognizerSettings>(
+    'signflow.recognizer',
+    DEFAULT_RECOGNIZER_SETTINGS,
+    isRecognizerSettings,
+  );
   const [client] = useState<BackendClient>(() => backendClient ?? createBackendClient());
   const [notice, setNotice] = useState<Notice | null>(null);
   const [feedback, setFeedback] = useState<ConfirmFeedback | null>(null);
@@ -92,6 +114,35 @@ export function useSignFlowController({ adapters, initialSettings, backendClient
 
   const camera = useCamera();
   const cameraOn = camera.status === 'on';
+
+  // The recognizer: the demo one from `adapters`, or the local ASL model.
+  const recognizerBridge = useMemo<RecognizerBridge | undefined>(() => window.signflow?.recognizer, []);
+  const useAsl = recognizerSettings.source === 'asl' && recognizerBridge !== undefined;
+  const recognizer = useMemo<SignRecognizer>(
+    () => (useAsl && recognizerBridge ? new AslRecognizer(recognizerBridge, { allowKeyword: recognizerSettings.allowKeyword }) : adapters.recognizer),
+    [adapters.recognizer, recognizerBridge, recognizerSettings.allowKeyword, useAsl],
+  );
+  /** The recognizer captures the camera itself: the app must not open it too. */
+  const externalCamera = recognizer.ownsCamera === true;
+  // Recognition with an external recognizer is "on" for that recognizer instance
+  // only: switching recognizers (or the keyword opt-in) always turns it off.
+  const [externalOnFor, setExternalOnFor] = useState<SignRecognizer | null>(null);
+  // Choosing a recognizer that owns the camera: release ours first (one capture session).
+  const { stop: stopCamera } = camera;
+  useEffect(() => {
+    if (externalCamera && camera.status !== 'off') stopCamera();
+  }, [camera.status, externalCamera, stopCamera]);
+  const recognitionOn = externalCamera ? externalOnFor === recognizer : cameraOn;
+  const recognition = useMemo(
+    () => ({
+      on: recognitionOn,
+      /** Signs come from a separate recognizer process that owns the camera. */
+      external: externalCamera,
+      start: externalCamera ? async () => setExternalOnFor(recognizer) : camera.start,
+      stop: externalCamera ? () => setExternalOnFor(null) : camera.stop,
+    }),
+    [camera.start, camera.stop, externalCamera, recognitionOn, recognizer],
+  );
   // Live mode swaps the translator (and optionally speech) for the backend's. The
   // recognizer is the same object in both modes, so switching never restarts it.
   const live = connection.mode === 'live';
@@ -150,12 +201,12 @@ export function useSignFlowController({ adapters, initialSettings, backendClient
     [appendToNotes, captureToNotes, speak, speechAvailable],
   );
 
-  const session = useSignSession({ recognizer: adapters.recognizer, translator }, {
-    active: cameraOn,
+  const session = useSignSession({ recognizer, translator }, {
+    active: recognitionOn,
     initialSettings: { ...savedSettings, ...initialSettings },
     onConfirm: handleConfirm,
   });
-  useFrameSampler(samplerRef, adapters.recognizer, cameraOn);
+  useFrameSampler(samplerRef, recognizer, cameraOn && !externalCamera);
   const captions = useCaptions(session.state);
 
   const { updateSettings: updateSessionSettings, confirm, discardDraft, clearTranslationError } = session;
@@ -202,6 +253,14 @@ export function useSignFlowController({ adapters, initialSettings, backendClient
     backend: { client, health },
     deviceEngine,
     setDeviceEngine,
+    recognizer,
+    recognition,
+    recognizerSettings,
+    updateRecognizerSettings: useCallback(
+      (patch: Partial<RecognizerSettings>) => setRecognizerSettings((prev) => ({ ...prev, ...patch })),
+      [setRecognizerSettings],
+    ),
+    aslAvailable: recognizerBridge !== undefined,
     kokoro: { ...kokoro, available: kokoroBridge !== undefined },
     notice,
     clearNotice: useCallback(() => setNotice(null), []),

@@ -21,6 +21,14 @@ function signState(sign: RecognizedSign, settings: SessionSettings): 'provisiona
 
 const STATE_LABEL = { provisional: 'refining', accepted: 'accepted', rejected: 'low confidence' } as const;
 
+/** "STOP 5% · DOCTOR 2%": what else the model considered (display only, never used). */
+export function formatAlternatives(sign: RecognizedSign, max = 3): string {
+  return (sign.alternatives ?? [])
+    .slice(0, max)
+    .map((a) => `${a.gloss} ${formatPercent(a.confidence)}`)
+    .join(' · ');
+}
+
 /** Every recognizer event with its confidence, plus the phrase being built. */
 export function LiveSignsPanel({
   liveSigns,
@@ -84,14 +92,22 @@ export function LiveSignsPanel({
         <ol className="sign-feed" aria-label="Recognized signs, newest first" tabIndex={0}>
           {liveSigns.map((sign) => {
             const st = signState(sign, settings);
+            const alternatives = formatAlternatives(sign);
             return (
               <li key={sign.id} className={`sign-row sign-${st}`} data-testid="sign-row">
-                <span className="sign-gloss mono">{sign.gloss}</span>
+                <span className="sign-gloss mono">
+                  {sign.gloss}
+                  {alternatives && (
+                    <span className="sign-alternatives" data-testid="sign-alternatives">
+                      or {alternatives}
+                    </span>
+                  )}
+                </span>
                 <ConfidenceMeter confidence={sign.confidence} threshold={threshold} label={`${sign.gloss} confidence`} />
                 <span className={`sign-pct tabular conf-${confidenceLevel(sign.confidence, threshold)}`}>
                   {formatPercent(sign.confidence)}
                 </span>
-                <span className={`sign-state state-${st}`}>{STATE_LABEL[st]}</span>
+                <span className={`sign-state state-${st}`}>{st === 'rejected' && sign.uncertain ? 'model unsure' : STATE_LABEL[st]}</span>
               </li>
             );
           })}
