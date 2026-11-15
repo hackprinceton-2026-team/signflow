@@ -25,7 +25,9 @@
     "contract:sync": "node contract/cli.mts sync",
     "contract:generate": "node contract/cli.mts generate",
     "contract:check": "node contract/cli.mts check",
-    "check": "npm run typecheck && npm run lint && npm test && npm run contract:check"
+    "check": "npm run typecheck && npm run lint && npm test && npm run contract:check",
+    "kokoro:install": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/kokoro-install.mts",
+    "kokoro:bench": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/kokoro-bench.mts"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.3.0",
