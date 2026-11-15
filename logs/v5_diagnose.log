@@ -1,0 +1,9 @@
+1106 videos, 116 glosses, 19 OOV clips; live rule cuts a segment from 1057/1106 clips
+  fold 0: top-1 66.3% (v4 metrics file: 66.3%)  best epoch 19  [293s]
+  fold 1: top-1 65.1% (v4 metrics file: 65.1%)  best epoch 11  [467s]
+  fold 2: top-1 67.8% (v4 metrics file: 67.8%)  best epoch 10  [597s]
+  fold 3: top-1 58.5% (v4 metrics file: 58.5%)  best epoch 21  [757s]
+  fold 4: top-1 51.9% (v4 metrics file: 51.9%)  best epoch 12  [960s]
+reproduced v4 per-fold top-1 exactly: True
+done in 16.0 min -> reports/v5_diagnosis.md, reports/oof/v4_cnn.npz
+EXIT 0

@@ -1,0 +1,3 @@
+trial,prompt,predicted,confidence,shown,correct,outcome
+1,HEADACHE,,0.0,,0,missed
+2,HELP,HELP,0.59,?,0,?

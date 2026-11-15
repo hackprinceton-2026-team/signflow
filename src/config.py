@@ -5,6 +5,11 @@
 # shown and 97.8% of the shown ones are correct (models/v2_rf_feat2dom.json, "thresholds").
 CONF_THRESHOLD = 0.5
 
+# Keyword mode (116-sign keyword model): a sign is "confident" when its CALIBRATED top-1 probability
+# is >= this. The top-5 candidates are always sent to the backend; this only sets "confident" and
+# the on-screen label. Trade-off on held-out signers: reports/v5_eval.md. Override with --threshold.
+KEYWORD_THRESHOLD = 0.35
+
 # Mirror the on-screen webcam preview (feels like a mirror). This only affects what you SEE:
 # the model and the saved recordings always get the original, unmirrored camera frames,
 # matching the orientation of the WLASL training videos.

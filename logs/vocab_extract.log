@@ -1,0 +1,52 @@
+Source 'wlasl_vocab': 1180 videos -> data/landmarks/wlasl_vocab/  (213 cached, 0 reused, 967 to extract with 7 workers)
+
+INFO: INFO: INFO: Created TensorFlow Lite XNNPACK delegate for CPU.Created TensorFlow Lite XNNPACK delegate for CPU.
+
+  [25/967] 13636 COUSIN   0.56 videos/s, ~28.2 min left
+  [50/967] 57940 THIN   0.80 videos/s, ~19.1 min left
+  [75/967] 66818 YEAR   0.94 videos/s, ~15.9 min left
+  [100/967] 06471 BLACK   1.00 videos/s, ~14.4 min left
+  [125/967] 69368 HOT   1.09 videos/s, ~12.9 min left
+  [150/967] 69396 MANY   1.12 videos/s, ~12.1 min left
+  [175/967] 38995 NOW   1.16 videos/s, ~11.4 min left
+  [200/967] 57641 THANKSGIVING   1.16 videos/s, ~11.0 min left
+  [225/967] 05629 BED   1.19 videos/s, ~10.4 min left
+  [250/967] 07397 BOWLING   1.21 videos/s, ~9.9 min left
+  [275/967] 17091 DOG   1.22 videos/s, ~9.5 min left
+  [300/967] 25324 GRADUATE   1.22 videos/s, ~9.1 min left
+  [325/967] 26980 HEARING   1.23 videos/s, ~8.7 min left
+  [350/967] 32337 LATER   1.24 videos/s, ~8.3 min left
+  [375/967] 51068 SHIRT   1.23 videos/s, ~8.0 min left
+  [400/967] 66592 TALL   1.22 videos/s, ~7.7 min left
+  [425/967] 00624 ACCIDENT   1.23 videos/s, ~7.4 min left
+  [450/967] 06331 BIRD   1.22 videos/s, ~7.1 min left
+  [475/967] 11770 COLOR   1.22 videos/s, ~6.7 min left
+  [500/967] 14633 DANCE   1.22 videos/s, ~6.4 min left
+  [525/967] 19258 ENJOY   1.22 videos/s, ~6.1 min left
+  [550/967] 32254 LAST   1.23 videos/s, ~5.7 min left
+  [575/967] 42830 PINK   1.21 videos/s, ~5.4 min left
+  [600/967] 49597 SCHOOL   1.21 videos/s, ~5.1 min left
+  [625/967] 51232 SHORT   1.21 videos/s, ~4.7 min left
+  [650/967] 63790 WORK   1.20 videos/s, ~4.4 min left
+  [675/967] 05233 BASKETBALL   1.20 videos/s, ~4.1 min left
+  [700/967] 08426 BUT   1.20 videos/s, ~3.7 min left
+  [725/967] 15037 DECIDE   1.19 videos/s, ~3.4 min left
+  [750/967] 28202 HOW   1.20 videos/s, ~3.0 min left
+  [775/967] 35456 MEDICINE   1.19 videos/s, ~2.7 min left
+  [800/967] 41029 PAPER   1.20 videos/s, ~2.3 min left
+  [825/967] 49176 SAME   1.19 videos/s, ~2.0 min left
+  [850/967] 57287 TELL   1.20 videos/s, ~1.6 min left
+  [875/967] 62505 WATER   1.20 videos/s, ~1.3 min left
+  [900/967] 64307 YESTERDAY   1.19 videos/s, ~0.9 min left
+[h264 @ 0xbb39a0380] Invalid NAL unit size (745 > 472).
+[h264 @ 0xbb39a0380] Error splitting the input into NAL units.
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xbab512800] stream 1, offset 0x3b468: partial file
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xbab512800] stream 1, offset 0x3b7d3: partial file
+  [925/967] 04718 BAD   1.19 videos/s, ~0.6 min left
+  [950/967] 25067 GOOD   1.19 videos/s, ~0.2 min left
+  [967/967] 63070 WHEN   1.19 videos/s, ~0.0 min left
+
+Kept 1125 / 1180 videos. Index: data/landmarks/wlasl_vocab/index.csv
+Extracted 967 videos in 816s = 0.84 s/video with 7 workers
+Dropped per label: APPLE 2, BAD 2, BED 1, BLACK 3, BLUE 2, BOWLING 1, CANDY 2, CITY 1, COUSIN 1, DRINK 3, EAT 2, FORGET 1, GIVE 1, HAT 2, HEARING 2, MAN 1, MOTHER 1, ORANGE 3, PAPER 1, PINK 1, PURPLE 3, SAME 1, SORRY 1, TABLE 1, TALL 1, TELL 3, THIN 4, THIRSTY 2, WATER 2, WHO 3, WOMAN 1
+slenv/bin/python src/extract.py --manifest data/wlasl/manifest_vocab.csv       5262.57s user 266.87s system 667% cpu 13:47.97 total

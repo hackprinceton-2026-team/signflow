@@ -1,0 +1,14 @@
+CV cnn_f3_16 seed 0: {'arch': 'cnn', 'fs': 'feat3', 'frames': 16, 'phase2': True} | 1106 WLASL videos, 116 classes, 0 own training clips, 0 own test clips
+    pool pool_feat3_16_p2.npy: 250/1106 videos
+    pool pool_feat3_16_p2.npy: 500/1106 videos
+    pool pool_feat3_16_p2.npy: 750/1106 videos
+    pool pool_feat3_16_p2.npy: 1000/1106 videos
+  pool pool_feat3_16_p2.npy: 12756 rows in 5s
+  eval views eval_feat3_16.npy: 1142 clips x 7 views in 5s
+  fold 1 done: best epoch 3, 425s  [437s]
+  fold 2 done: best epoch 9, 523s  [534s]
+  fold 4 done: best epoch 16, 584s  [595s]
+  fold 3 done: best epoch 15, 618s  [629s]
+  fold 0 done: best epoch 15, 636s  [647s]
+CV cnn_f3_16 seed 0 finished in 647s
+EXIT 0

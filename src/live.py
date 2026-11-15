@@ -4,16 +4,29 @@
     python src/live.py --spacebar           # fallback: SPACE starts a 2.5 s recording
     python src/live.py --dominant right     # fixed dominant hand instead of the training rule
     python src/live.py --video a.mp4 --video b.mp4 --headless    # dry run without a camera
+    python src/live.py --keyword                 # keyword mode: 116-sign keyword model, top-5 to the backend
+    python src/live.py --keyword --threshold 0.25 # lower "confident" threshold (calibrated top-1 probability)
+    python src/live.py --model models/v4_cnn_vocab116.joblib       # another model (default: sign_model.joblib)
 
-Events (one JSON per line on stdout, and to every client of ws://localhost:8765):
-    {"type": "sign", "sign": "HELP", "confidence": 0.91, "ts": 1731612345.123}
+Events (one JSON per line on stdout, and to every client of ws://localhost:8765).
+Demo model (14 signs):
+    {"type": "sign", "sign": "HELP", "confidence": 0.91,
+     "candidates": [["HELP", 0.91], ["STOP", 0.05], ["DOCTOR", 0.02]], "ts": 1731612345.123}
+Keyword mode (--keyword, and every expanded-vocabulary model): one message per segmented sign,
+candidates ALWAYS sent (top-5), also when not confident:
+    {"type": "sign", "candidates": [["HEADACHE", 0.62], ["HOT", 0.14], ["SICK", 0.07], ["COLD", 0.05],
+     ["MEDICINE", 0.04]], "top1": "HEADACHE", "confident": true, "ts": 1731612345.123}
+Both:
     {"type": "end_of_sentence", "signs": ["HELP", "DOCTOR"], "ts": 1731612349.456}
+    (keyword mode adds "confident": [true, false], one flag per sign)
 Logs go to stderr, so stdout stays pure JSON.
 
 Rules (settings in src/config.py):
   - a sign starts when a wrist rises above mid-chest (HAND_UP_Y) and ends when no hand is up for
     END_FRAMES frames; segments shorter than MIN_SEGMENT_FRAMES are ignored
-  - confidence < CONF_THRESHOLD -> "?" on screen, nothing sent
+  - demo model: confidence < CONF_THRESHOLD (0.5) -> "?" on screen, nothing sent
+  - keyword mode: confident = calibrated top-1 >= --threshold (KEYWORD_THRESHOLD, 0.35); the screen
+    shows top-1 when confident, else "?" + the top-3. NOTHING (non-sign class) is never sent
   - the same sign is not sent twice in a row unless the hands were down (END_FRAMES frames) in between
   - no hand up for SENTENCE_PAUSE_S after at least one sign -> end_of_sentence
 --dominant (the released model v2_rf_feat2dom was trained with the per-clip rule):
@@ -35,8 +48,8 @@ import mediapipe as mp
 import numpy as np
 
 import config as C
-from features import LandmarkTracker, features_from_raw, read_frames
-from predict_video import MODEL_FILE, decide
+from features import LandmarkTracker, read_frames
+from predict_video import KEYWORD_MODEL_FILE, MODEL_FILE, bundle_proba, decision_for, is_keyword
 
 _draw = mp.solutions.drawing_utils
 _holistic = mp.solutions.holistic
@@ -51,8 +64,10 @@ class LiveEngine:
     """Feed it one frame at a time (step). It tracks landmarks, cuts signs out of the stream,
     predicts them and decides what gets sent. Shared by live.py and live_test.py."""
 
-    def __init__(self, model_path=MODEL_FILE, dominant="auto", spacebar=False):
+    def __init__(self, model_path=MODEL_FILE, dominant="auto", spacebar=False, threshold=None, keyword=None):
         self.bundle = joblib.load(model_path)
+        self.keyword = is_keyword(self.bundle) if keyword is None else keyword
+        self.threshold = threshold if threshold is not None else (C.KEYWORD_THRESHOLD if self.keyword else C.CONF_THRESHOLD)
         self.fs = self.bundle.get("features", "feat1")
         self.dominant = None if dominant == "auto" else dominant
         self.spacebar = spacebar
@@ -65,7 +80,7 @@ class LiveEngine:
         self.rest_after_send = True                 # hands were down since the last sent sign
         self.rested_at_start = True                 # ...as of the moment the current sign started
         self.last_sent = None
-        self.sentence = []
+        self.sentence, self.sentence_conf = [], []
         self.last = None                            # last prediction (for the screen)
         self.results = None                         # MediaPipe results (for drawing)
         self.t0 = 0.0
@@ -82,16 +97,18 @@ class LiveEngine:
         wrists = [row[1]] * int(row[135]) + [row[64]] * int(row[136])   # y of each present wrist
         return any((y - cy) / width < C.HAND_UP_Y for y in wrists)
 
+    def rule_text(self):
+        return (f"keyword mode: confident = calibrated top-1 >= {self.threshold}, top-5 always sent" if self.keyword
+                else f"threshold {self.threshold}")
+
     def predict(self, rows):
-        """rows -> (decision dict from decide(), top3 list) or (None, error message)."""
+        """rows -> (decision dict from predict_video.decision_for(), top-5 list) or (None, error message)."""
         try:
-            x = features_from_raw(np.array(rows), self.fs, self.dominant)
+            proba, classes = bundle_proba(self.bundle, np.array(rows), self.dominant)
         except ValueError as e:                     # no hands / no shoulders in the segment
             return None, str(e)
-        proba = self.bundle["model"].predict_proba(self.bundle["scaler"].transform([x]))[0]
-        classes = self.bundle["model"].classes_
-        top3 = [(str(classes[i]), float(proba[i])) for i in np.argsort(-proba)[:3]]
-        return decide(proba, classes), top3
+        top = [(str(classes[i]), float(proba[i])) for i in np.argsort(-proba)[:5]]
+        return decision_for(self.bundle, proba, classes, self.threshold, self.keyword), top
 
     def step(self, rgb, t, space=False):
         """Process one RGB frame at time t (seconds). Returns a list of events:
@@ -138,10 +155,14 @@ class LiveEngine:
         if segment is not None:
             self.state = "predicting"
             decision, top3 = self.predict(segment)
-            event = {"kind": "prediction", "decision": decision, "top3": top3, "frames": len(segment), "t": t}
+            hand_frames = int(sum(r[135] + r[136] > 0 for r in segment))
+            event = {"kind": "prediction", "decision": decision, "top3": top3, "frames": len(segment),
+                     "hand_frames": hand_frames, "t": t}
             if decision is None:
                 event["error"] = top3
                 self.last = {"sign": "?", "confidence": 0.0, "note": top3}
+            elif self.keyword:
+                self._keyword_send(decision, event, events)
             elif decision["sign"] == "?":
                 self.last = dict(decision, note=f"below {C.CONF_THRESHOLD}: not sent")
             elif decision["sign"] == self.last_sent and not self.rested_at_start:
@@ -149,7 +170,7 @@ class LiveEngine:
                 self.last = dict(decision, note="repeat without hands down: not sent")
             else:
                 msg = {"type": "sign", "sign": decision["sign"], "confidence": decision["confidence"],
-                       "ts": round(time.time(), 3)}
+                       "candidates": decision["candidates"], "ts": round(time.time(), 3)}
                 events.append({"kind": "send", "msg": msg})
                 self.sentence.append(decision["sign"])
                 self.last_sent, self.rest_after_send = decision["sign"], False
@@ -160,10 +181,31 @@ class LiveEngine:
 
         if (self.sentence and self.state == "waiting" and self.last_up_t is not None
                 and t - self.last_up_t >= C.SENTENCE_PAUSE_S and not up):
-            events.append({"kind": "send", "msg": {"type": "end_of_sentence", "signs": self.sentence,
-                                                   "ts": round(time.time(), 3)}})
-            self.sentence = []
+            msg = {"type": "end_of_sentence", "signs": self.sentence, "ts": round(time.time(), 3)}
+            if self.keyword:
+                msg["confident"] = self.sentence_conf
+            events.append({"kind": "send", "msg": msg})
+            self.sentence, self.sentence_conf = [], []
         return events
+
+    def _keyword_send(self, d, event, events):
+        """Keyword mode: every segment is sent with its top-5, unless top-1 is NOTHING or it repeats
+        the last sent sign without the hands going down in between."""
+        if d["nothing"]:
+            event["nothing"] = True
+            self.last = dict(d, note="NOTHING (not a sign): not sent")
+        elif d["top1"] == self.last_sent and not self.rested_at_start:
+            event["debounced"] = True
+            self.last = dict(d, note="repeat without hands down: not sent")
+        else:
+            msg = {"type": "sign", "candidates": d["candidates"], "top1": d["top1"], "confident": d["confident"],
+                   "ts": round(time.time(), 3)}
+            events.append({"kind": "send", "msg": msg})
+            self.sentence.append(d["top1"])
+            self.sentence_conf.append(d["confident"])
+            self.last_sent, self.rest_after_send = d["top1"], False
+            self.down_run = 0
+            self.last = dict(d, note="sent" + ("" if d["confident"] else f" (not confident, < {self.threshold})"))
 
     def flush(self, t):
         """End of input: close an open segment and sentence by feeding 'no hand' time."""
@@ -208,9 +250,14 @@ def draw(engine, bgr, extra=None):
         put(view, f"{engine.last['sign']}  {engine.last['confidence']:.2f}", (20, 120), 2.2,
             (0, 255, 0) if good else (0, 200, 255), 4)
         note = engine.last.get("note", "")
-        if engine.last.get("best_guess"):
-            note = f"best guess {engine.last['best_guess']}, {note}"
-        put(view, note, (20, 160), 0.6)
+        if engine.keyword and engine.last.get("candidates"):
+            if not good:                                    # keyword mode: "?" + the top-3
+                put(view, "  ".join(f"{s} {p:.2f}" for s, p in engine.last["candidates"][:3]), (20, 165), 0.9, (0, 200, 255))
+            put(view, note, (20, 200), 0.6)
+        else:
+            if engine.last.get("best_guess"):
+                note = f"best guess {engine.last['best_guess']}, {note}"
+            put(view, note, (20, 160), 0.6)
     put(view, "Sentence: " + " ".join(engine.sentence), (20, h - 50), 0.9, (255, 255, 0))
     put(view, "Q = quit" + ("   SPACE = sign" if engine.spacebar else ""), (20, h - 15), 0.6)
     for i, line in enumerate(extra or []):
@@ -290,7 +337,15 @@ def add_common_args(ap):
     ap.add_argument("--video", action="append", help="dry run: read these video files instead of the camera")
     ap.add_argument("--gap", type=float, default=2.0, help="seconds of empty frames after each --video file")
     ap.add_argument("--headless", action="store_true", help="no window (for dry runs)")
-    ap.add_argument("--model", default=str(MODEL_FILE))
+    ap.add_argument("--model", help="model file (default: models/sign_model.joblib; with --keyword: models/keyword_model.joblib)")
+    ap.add_argument("--keyword", action="store_true", help="keyword mode: 116-sign keyword model, top-5 always sent")
+    ap.add_argument("--threshold", type=float,
+                    help=f"confidence threshold (keyword mode: calibrated top-1, default {C.KEYWORD_THRESHOLD}; demo {C.CONF_THRESHOLD})")
+
+
+def resolve_model(args):
+    args.model = args.model or str(KEYWORD_MODEL_FILE if args.keyword else MODEL_FILE)
+    return args.model
 
 
 def main():
@@ -302,10 +357,9 @@ def main():
     if args.spacebar and args.headless:
         ap.error("--spacebar needs the window (keyboard)")
 
-    engine = LiveEngine(args.model, args.dominant, args.spacebar)
-    log(f"model {engine.bundle.get('version', '?')}_{engine.bundle['model_name']}_{engine.bundle.get('feature_set', engine.fs)}"
-        f" | dominant {args.dominant} | {'spacebar' if args.spacebar else 'auto segmentation'} | "
-        f"threshold {C.CONF_THRESHOLD}")
+    engine = LiveEngine(resolve_model(args), args.dominant, args.spacebar, args.threshold, True if args.keyword else None)
+    log(f"model {args.model} ({len(engine.bundle['labels'])} signs) | dominant {args.dominant} | "
+        f"{'spacebar' if args.spacebar else 'auto segmentation'} | {engine.rule_text()}")
     ws = None if args.no_ws else Broadcaster(C.WS_HOST, C.WS_PORT)
 
     def emit(events):
@@ -318,7 +372,7 @@ def main():
             elif e["kind"] == "prediction":
                 d = e["decision"]
                 status = e.get("error") or (f"{d['sign']} {d['confidence']:.2f}" + (" (debounced)" if e.get("debounced") else ""))
-                log(f"segment {e['frames']} frames -> {status}   top3: " + ", ".join(f"{s} {p:.2f}" for s, p in e["top3"])
+                log(f"segment {e['frames']} frames -> {status}   top: " + ", ".join(f"{s} {p:.2f}" for s, p in e["top3"])
                     if not e.get("error") else f"segment {e['frames']} frames -> no prediction: {status}")
             elif e["kind"] == "ignored":
                 log(f"ignored short movement ({e['frames']} frames)")

@@ -1,0 +1,1592 @@
+{
+  "version": "v4",
+  "model": "cnn",
+  "features": "feat2dom",
+  "date": "2026-11-15T00:08:26",
+  "data": {
+    "source": "wlasl_vocab",
+    "n_videos": 1106,
+    "n_signers": 64,
+    "labels": [
+      "ACCIDENT",
+      "AFRICA",
+      "AGAIN",
+      "ALL",
+      "APPLE",
+      "BAD",
+      "BASKETBALL",
+      "BATHROOM",
+      "BED",
+      "BEFORE",
+      "BIRD",
+      "BIRTHDAY",
+      "BLACK",
+      "BLUE",
+      "BOOK",
+      "BOWLING",
+      "BROWN",
+      "BUT",
+      "CAN",
+      "CANDY",
+      "CHAIR",
+      "CHANGE",
+      "CHEAT",
+      "CITY",
+      "COLD",
+      "COLOR",
+      "COMPUTER",
+      "COOK",
+      "COOL",
+      "CORN",
+      "COUSIN",
+      "COW",
+      "DANCE",
+      "DARK",
+      "DEAF",
+      "DECIDE",
+      "DOCTOR",
+      "DOG",
+      "DRINK",
+      "ENJOY",
+      "FAMILY",
+      "FINE",
+      "FINISH",
+      "FISH",
+      "FOOD",
+      "FORGET",
+      "FULL",
+      "GIVE",
+      "GO",
+      "GOOD",
+      "GRADUATE",
+      "HAT",
+      "HEADACHE",
+      "HEARING",
+      "HELP",
+      "HOT",
+      "HOW",
+      "HUNGRY",
+      "JACKET",
+      "KISS",
+      "LANGUAGE",
+      "LAST",
+      "LATER",
+      "LETTER",
+      "LIKE",
+      "MAN",
+      "MANY",
+      "MEDICINE",
+      "MEET",
+      "MOTHER",
+      "NEED",
+      "NO",
+      "NOW",
+      "ORANGE",
+      "PAINT",
+      "PAPER",
+      "PINK",
+      "PIZZA",
+      "PLAY",
+      "PLEASE",
+      "PULL",
+      "READY",
+      "RIGHT",
+      "SAME",
+      "SCHOOL",
+      "SECRETARY",
+      "SHIRT",
+      "SHORT",
+      "SICK",
+      "SON",
+      "SORRY",
+      "STOP",
+      "STUDY",
+      "TALL",
+      "TELL",
+      "THANKSGIVING",
+      "THANKYOU",
+      "THIN",
+      "THIRSTY",
+      "THURSDAY",
+      "TIME",
+      "TODAY",
+      "WAIT",
+      "WALK",
+      "WANT",
+      "WATER",
+      "WHAT",
+      "WHEN",
+      "WHITE",
+      "WHO",
+      "WOMAN",
+      "WORK",
+      "WRONG",
+      "YEAR",
+      "YES",
+      "YESTERDAY"
+    ],
+    "dropped_glosses": {
+      "CLOTHES": 5,
+      "EAT": 5,
+      "PURPLE": 5,
+      "TABLE": 4
+    },
+    "min_videos": 6,
+    "demo_signs_exempt_from_min": {
+      "STOP": 5
+    }
+  },
+  "protocol": {
+    "cv": "GroupKFold(5, shuffle=True, random_state=0) by signer_id",
+    "aug_copies": 10,
+    "cnn_final_epochs": 12,
+    "cnn_fold_best_epochs": [
+      19,
+      11,
+      10,
+      21,
+      12
+    ]
+  },
+  "cv": {
+    "top1_mean": 0.6190265635785437,
+    "top1_std": 0.059389551290025565,
+    "top3_mean": 0.786882687808146,
+    "top3_std": 0.052974518793767744,
+    "top5_mean": 0.837340866913052,
+    "top5_std": 0.04738042095586281,
+    "top1_folds": [
+      0.6628571428571428,
+      0.6506849315068494,
+      0.6779661016949152,
+      0.585,
+      0.5186246418338109
+    ],
+    "per_class": {
+      "ACCIDENT": 0.6153846153846154,
+      "AFRICA": 0.5555555555555556,
+      "AGAIN": 0.125,
+      "ALL": 0.625,
+      "APPLE": 0.4444444444444444,
+      "BAD": 0.25,
+      "BASKETBALL": 0.9166666666666666,
+      "BATHROOM": 1.0,
+      "BED": 0.6666666666666666,
+      "BEFORE": 0.5,
+      "BIRD": 1.0,
+      "BIRTHDAY": 0.6666666666666666,
+      "BLACK": 0.2857142857142857,
+      "BLUE": 0.6666666666666666,
+      "BOOK": 0.6666666666666666,
+      "BOWLING": 0.75,
+      "BROWN": 0.875,
+      "BUT": 0.42857142857142855,
+      "CAN": 0.8888888888888888,
+      "CANDY": 0.18181818181818182,
+      "CHAIR": 0.8571428571428571,
+      "CHANGE": 0.75,
+      "CHEAT": 0.5,
+      "CITY": 0.5,
+      "COLD": 0.9166666666666666,
+      "COLOR": 0.625,
+      "COMPUTER": 0.5,
+      "COOK": 0.25,
+      "COOL": 0.1875,
+      "CORN": 0.4166666666666667,
+      "COUSIN": 0.6153846153846154,
+      "COW": 0.6666666666666666,
+      "DANCE": 0.5714285714285714,
+      "DARK": 0.75,
+      "DEAF": 0.8181818181818182,
+      "DECIDE": 0.7777777777777778,
+      "DOCTOR": 0.6,
+      "DOG": 0.5454545454545454,
+      "DRINK": 0.8333333333333334,
+      "ENJOY": 0.75,
+      "FAMILY": 0.8181818181818182,
+      "FINE": 0.3333333333333333,
+      "FINISH": 0.4444444444444444,
+      "FISH": 0.5,
+      "FOOD": 0.8571428571428571,
+      "FORGET": 0.8333333333333334,
+      "FULL": 0.6,
+      "GIVE": 0.6666666666666666,
+      "GO": 0.4,
+      "GOOD": 0.6,
+      "GRADUATE": 0.4,
+      "HAT": 0.42857142857142855,
+      "HEADACHE": 1.0,
+      "HEARING": 0.6666666666666666,
+      "HELP": 0.5,
+      "HOT": 0.7,
+      "HOW": 0.7777777777777778,
+      "HUNGRY": 0.8333333333333334,
+      "JACKET": 0.5714285714285714,
+      "KISS": 0.6666666666666666,
+      "LANGUAGE": 0.5,
+      "LAST": 0.3333333333333333,
+      "LATER": 0.4166666666666667,
+      "LETTER": 0.18181818181818182,
+      "LIKE": 0.5,
+      "MAN": 0.9090909090909091,
+      "MANY": 0.5,
+      "MEDICINE": 0.5,
+      "MEET": 0.8888888888888888,
+      "MOTHER": 0.9,
+      "NEED": 0.5,
+      "NO": 0.7272727272727273,
+      "NOW": 0.6666666666666666,
+      "ORANGE": 0.8571428571428571,
+      "PAINT": 0.7142857142857143,
+      "PAPER": 0.7142857142857143,
+      "PINK": 0.5,
+      "PIZZA": 0.25,
+      "PLAY": 0.8181818181818182,
+      "PLEASE": 1.0,
+      "PULL": 0.2222222222222222,
+      "READY": 1.0,
+      "RIGHT": 0.3333333333333333,
+      "SAME": 0.25,
+      "SCHOOL": 0.4444444444444444,
+      "SECRETARY": 0.3,
+      "SHIRT": 0.8333333333333334,
+      "SHORT": 0.23076923076923078,
+      "SICK": 0.875,
+      "SON": 0.9,
+      "SORRY": 1.0,
+      "STOP": 0.0,
+      "STUDY": 0.8,
+      "TALL": 0.5833333333333334,
+      "TELL": 0.14285714285714285,
+      "THANKSGIVING": 0.6923076923076923,
+      "THANKYOU": 0.7142857142857143,
+      "THIN": 0.3333333333333333,
+      "THIRSTY": 0.6666666666666666,
+      "THURSDAY": 0.8181818181818182,
+      "TIME": 0.875,
+      "TODAY": 0.3333333333333333,
+      "WAIT": 0.5,
+      "WALK": 0.9090909090909091,
+      "WANT": 0.4444444444444444,
+      "WATER": 0.8571428571428571,
+      "WHAT": 0.4166666666666667,
+      "WHEN": 0.875,
+      "WHITE": 0.6,
+      "WHO": 0.5454545454545454,
+      "WOMAN": 0.2,
+      "WORK": 0.7,
+      "WRONG": 0.875,
+      "YEAR": 0.9,
+      "YES": 0.4166666666666667,
+      "YESTERDAY": 0.9
+    },
+    "n_per_class": {
+      "ACCIDENT": 13,
+      "AFRICA": 9,
+      "AGAIN": 8,
+      "ALL": 8,
+      "APPLE": 9,
+      "BAD": 8,
+      "BASKETBALL": 12,
+      "BATHROOM": 7,
+      "BED": 12,
+      "BEFORE": 16,
+      "BIRD": 10,
+      "BIRTHDAY": 6,
+      "BLACK": 7,
+      "BLUE": 6,
+      "BOOK": 6,
+      "BOWLING": 12,
+      "BROWN": 8,
+      "BUT": 7,
+      "CAN": 9,
+      "CANDY": 11,
+      "CHAIR": 7,
+      "CHANGE": 12,
+      "CHEAT": 10,
+      "CITY": 8,
+      "COLD": 12,
+      "COLOR": 8,
+      "COMPUTER": 14,
+      "COOK": 8,
+      "COOL": 16,
+      "CORN": 12,
+      "COUSIN": 13,
+      "COW": 9,
+      "DANCE": 7,
+      "DARK": 12,
+      "DEAF": 11,
+      "DECIDE": 9,
+      "DOCTOR": 10,
+      "DOG": 11,
+      "DRINK": 12,
+      "ENJOY": 8,
+      "FAMILY": 11,
+      "FINE": 9,
+      "FINISH": 9,
+      "FISH": 10,
+      "FOOD": 7,
+      "FORGET": 6,
+      "FULL": 10,
+      "GIVE": 9,
+      "GO": 15,
+      "GOOD": 10,
+      "GRADUATE": 10,
+      "HAT": 7,
+      "HEADACHE": 9,
+      "HEARING": 6,
+      "HELP": 14,
+      "HOT": 10,
+      "HOW": 9,
+      "HUNGRY": 6,
+      "JACKET": 7,
+      "KISS": 9,
+      "LANGUAGE": 10,
+      "LAST": 12,
+      "LATER": 12,
+      "LETTER": 11,
+      "LIKE": 10,
+      "MAN": 11,
+      "MANY": 10,
+      "MEDICINE": 8,
+      "MEET": 9,
+      "MOTHER": 10,
+      "NEED": 6,
+      "NO": 11,
+      "NOW": 9,
+      "ORANGE": 7,
+      "PAINT": 7,
+      "PAPER": 7,
+      "PINK": 8,
+      "PIZZA": 12,
+      "PLAY": 11,
+      "PLEASE": 7,
+      "PULL": 9,
+      "READY": 10,
+      "RIGHT": 9,
+      "SAME": 8,
+      "SCHOOL": 9,
+      "SECRETARY": 10,
+      "SHIRT": 12,
+      "SHORT": 13,
+      "SICK": 8,
+      "SON": 10,
+      "SORRY": 6,
+      "STOP": 5,
+      "STUDY": 10,
+      "TALL": 12,
+      "TELL": 7,
+      "THANKSGIVING": 13,
+      "THANKYOU": 7,
+      "THIN": 12,
+      "THIRSTY": 6,
+      "THURSDAY": 11,
+      "TIME": 8,
+      "TODAY": 9,
+      "WAIT": 10,
+      "WALK": 11,
+      "WANT": 9,
+      "WATER": 7,
+      "WHAT": 12,
+      "WHEN": 8,
+      "WHITE": 10,
+      "WHO": 11,
+      "WOMAN": 10,
+      "WORK": 10,
+      "WRONG": 8,
+      "YEAR": 10,
+      "YES": 12,
+      "YESTERDAY": 10
+    },
+    "demo14": {
+      "n": 120,
+      "top1_full_vocab": 0.7166666666666667,
+      "top5_full_vocab": 0.9083333333333333,
+      "top1_restricted_to_14": 0.9333333333333333,
+      "per_sign": {
+        "BATHROOM": 1.0,
+        "DOCTOR": 0.6,
+        "DRINK": 0.8333333333333334,
+        "FOOD": 0.8571428571428571,
+        "HELP": 0.5,
+        "HUNGRY": 0.8333333333333334,
+        "NO": 0.7272727272727273,
+        "PLEASE": 1.0,
+        "READY": 1.0,
+        "SORRY": 1.0,
+        "STOP": 0.0,
+        "THANKYOU": 0.7142857142857143,
+        "THIRSTY": 0.6666666666666666,
+        "YES": 0.4166666666666667
+      },
+      "confused_with": {
+        "BATHROOM": {},
+        "DOCTOR": {
+          "DANCE": 1,
+          "MEDICINE": 1,
+          "PAPER": 1,
+          "SAME": 1
+        },
+        "DRINK": {
+          "YESTERDAY": 1,
+          "WHO": 1
+        },
+        "FOOD": {
+          "TELL": 1
+        },
+        "HELP": {
+          "GRADUATE": 3,
+          "PULL": 2,
+          "DANCE": 1,
+          "COOK": 1
+        },
+        "HUNGRY": {
+          "WHITE": 1
+        },
+        "NO": {
+          "PIZZA": 2,
+          "DEAF": 1
+        },
+        "PLEASE": {},
+        "READY": {},
+        "SORRY": {},
+        "STOP": {
+          "COOK": 2,
+          "HELP": 1,
+          "GRADUATE": 1,
+          "BOOK": 1
+        },
+        "THANKYOU": {
+          "GOOD": 1,
+          "FISH": 1
+        },
+        "THIRSTY": {
+          "WHITE": 1,
+          "TELL": 1
+        },
+        "YES": {
+          "NEED": 4,
+          "BIRD": 1,
+          "PIZZA": 1,
+          "SAME": 1
+        }
+      }
+    },
+    "calibration_grid": [
+      {
+        "min_conf": 0.0,
+        "min_margin": 0.0,
+        "shown": 1.0,
+        "acc_shown": 0.604882459312839,
+        "wrong_shown": 0.39511754068716093
+      },
+      {
+        "min_conf": 0.0,
+        "min_margin": 0.05,
+        "shown": 0.8444846292947559,
+        "acc_shown": 0.6777301927194861,
+        "wrong_shown": 0.2721518987341772
+      },
+      {
+        "min_conf": 0.0,
+        "min_margin": 0.1,
+        "shown": 0.7414104882459313,
+        "acc_shown": 0.7158536585365853,
+        "wrong_shown": 0.21066907775768534
+      },
+      {
+        "min_conf": 0.0,
+        "min_margin": 0.15,
+        "shown": 0.6690777576853526,
+        "acc_shown": 0.7567567567567568,
+        "wrong_shown": 0.162748643761302
+      },
+      {
+        "min_conf": 0.0,
+        "min_margin": 0.2,
+        "shown": 0.596745027124774,
+        "acc_shown": 0.7984848484848485,
+        "wrong_shown": 0.12025316455696203
+      },
+      {
+        "min_conf": 0.0,
+        "min_margin": 0.25,
+        "shown": 0.5479204339963833,
+        "acc_shown": 0.8250825082508251,
+        "wrong_shown": 0.09584086799276673
+      },
+      {
+        "min_conf": 0.0,
+        "min_margin": 0.3,
+        "shown": 0.4909584086799277,
+        "acc_shown": 0.8360957642725598,
+        "wrong_shown": 0.08047016274864376
+      },
+      {
+        "min_conf": 0.0,
+        "min_margin": 0.4,
+        "shown": 0.41500904159132007,
+        "acc_shown": 0.8801742919389978,
+        "wrong_shown": 0.04972875226039783
+      },
+      {
+        "min_conf": 0.1,
+        "min_margin": 0.0,
+        "shown": 0.9593128390596745,
+        "acc_shown": 0.6229971724787936,
+        "wrong_shown": 0.3616636528028933
+      },
+      {
+        "min_conf": 0.1,
+        "min_margin": 0.05,
+        "shown": 0.8435804701627486,
+        "acc_shown": 0.6784565916398714,
+        "wrong_shown": 0.27124773960216997
+      },
+      {
+        "min_conf": 0.1,
+        "min_margin": 0.1,
+        "shown": 0.7414104882459313,
+        "acc_shown": 0.7158536585365853,
+        "wrong_shown": 0.21066907775768534
+      },
+      {
+        "min_conf": 0.1,
+        "min_margin": 0.15,
+        "shown": 0.6690777576853526,
+        "acc_shown": 0.7567567567567568,
+        "wrong_shown": 0.162748643761302
+      },
+      {
+        "min_conf": 0.1,
+        "min_margin": 0.2,
+        "shown": 0.596745027124774,
+        "acc_shown": 0.7984848484848485,
+        "wrong_shown": 0.12025316455696203
+      },
+      {
+        "min_conf": 0.1,
+        "min_margin": 0.25,
+        "shown": 0.5479204339963833,
+        "acc_shown": 0.8250825082508251,
+        "wrong_shown": 0.09584086799276673
+      },
+      {
+        "min_conf": 0.1,
+        "min_margin": 0.3,
+        "shown": 0.4909584086799277,
+        "acc_shown": 0.8360957642725598,
+        "wrong_shown": 0.08047016274864376
+      },
+      {
+        "min_conf": 0.1,
+        "min_margin": 0.4,
+        "shown": 0.41500904159132007,
+        "acc_shown": 0.8801742919389978,
+        "wrong_shown": 0.04972875226039783
+      },
+      {
+        "min_conf": 0.15,
+        "min_margin": 0.0,
+        "shown": 0.8743218806509946,
+        "acc_shown": 0.655635987590486,
+        "wrong_shown": 0.3010849909584087
+      },
+      {
+        "min_conf": 0.15,
+        "min_margin": 0.05,
+        "shown": 0.8245931283905967,
+        "acc_shown": 0.6831140350877193,
+        "wrong_shown": 0.2613019891500904
+      },
+      {
+        "min_conf": 0.15,
+        "min_margin": 0.1,
+        "shown": 0.7414104882459313,
+        "acc_shown": 0.7158536585365853,
+        "wrong_shown": 0.21066907775768534
+      },
+      {
+        "min_conf": 0.15,
+        "min_margin": 0.15,
+        "shown": 0.6690777576853526,
+        "acc_shown": 0.7567567567567568,
+        "wrong_shown": 0.162748643761302
+      },
+      {
+        "min_conf": 0.15,
+        "min_margin": 0.2,
+        "shown": 0.596745027124774,
+        "acc_shown": 0.7984848484848485,
+        "wrong_shown": 0.12025316455696203
+      },
+      {
+        "min_conf": 0.15,
+        "min_margin": 0.25,
+        "shown": 0.5479204339963833,
+        "acc_shown": 0.8250825082508251,
+        "wrong_shown": 0.09584086799276673
+      },
+      {
+        "min_conf": 0.15,
+        "min_margin": 0.3,
+        "shown": 0.4909584086799277,
+        "acc_shown": 0.8360957642725598,
+        "wrong_shown": 0.08047016274864376
+      },
+      {
+        "min_conf": 0.15,
+        "min_margin": 0.4,
+        "shown": 0.41500904159132007,
+        "acc_shown": 0.8801742919389978,
+        "wrong_shown": 0.04972875226039783
+      },
+      {
+        "min_conf": 0.2,
+        "min_margin": 0.0,
+        "shown": 0.7938517179023508,
+        "acc_shown": 0.6924829157175398,
+        "wrong_shown": 0.244122965641953
+      },
+      {
+        "min_conf": 0.2,
+        "min_margin": 0.05,
+        "shown": 0.7667269439421338,
+        "acc_shown": 0.7075471698113207,
+        "wrong_shown": 0.22423146473779385
+      },
+      {
+        "min_conf": 0.2,
+        "min_margin": 0.1,
+        "shown": 0.7278481012658228,
+        "acc_shown": 0.7217391304347827,
+        "wrong_shown": 0.20253164556962025
+      },
+      {
+        "min_conf": 0.2,
+        "min_margin": 0.15,
+        "shown": 0.6681735985533453,
+        "acc_shown": 0.7577807848443843,
+        "wrong_shown": 0.16184448462929477
+      },
+      {
+        "min_conf": 0.2,
+        "min_margin": 0.2,
+        "shown": 0.596745027124774,
+        "acc_shown": 0.7984848484848485,
+        "wrong_shown": 0.12025316455696203
+      },
+      {
+        "min_conf": 0.2,
+        "min_margin": 0.25,
+        "shown": 0.5479204339963833,
+        "acc_shown": 0.8250825082508251,
+        "wrong_shown": 0.09584086799276673
+      },
+      {
+        "min_conf": 0.2,
+        "min_margin": 0.3,
+        "shown": 0.4909584086799277,
+        "acc_shown": 0.8360957642725598,
+        "wrong_shown": 0.08047016274864376
+      },
+      {
+        "min_conf": 0.2,
+        "min_margin": 0.4,
+        "shown": 0.41500904159132007,
+        "acc_shown": 0.8801742919389978,
+        "wrong_shown": 0.04972875226039783
+      },
+      {
+        "min_conf": 0.25,
+        "min_margin": 0.0,
+        "shown": 0.7115732368896925,
+        "acc_shown": 0.7242693773824651,
+        "wrong_shown": 0.1962025316455696
+      },
+      {
+        "min_conf": 0.25,
+        "min_margin": 0.05,
+        "shown": 0.7043399638336347,
+        "acc_shown": 0.7291399229781772,
+        "wrong_shown": 0.19077757685352623
+      },
+      {
+        "min_conf": 0.25,
+        "min_margin": 0.1,
+        "shown": 0.6844484629294756,
+        "acc_shown": 0.7384412153236459,
+        "wrong_shown": 0.17902350813743217
+      },
+      {
+        "min_conf": 0.25,
+        "min_margin": 0.15,
+        "shown": 0.650994575045208,
+        "acc_shown": 0.7638888888888888,
+        "wrong_shown": 0.15370705244122965
+      },
+      {
+        "min_conf": 0.25,
+        "min_margin": 0.2,
+        "shown": 0.596745027124774,
+        "acc_shown": 0.7984848484848485,
+        "wrong_shown": 0.12025316455696203
+      },
+      {
+        "min_conf": 0.25,
+        "min_margin": 0.25,
+        "shown": 0.5479204339963833,
+        "acc_shown": 0.8250825082508251,
+        "wrong_shown": 0.09584086799276673
+      },
+      {
+        "min_conf": 0.25,
+        "min_margin": 0.3,
+        "shown": 0.4909584086799277,
+        "acc_shown": 0.8360957642725598,
+        "wrong_shown": 0.08047016274864376
+      },
+      {
+        "min_conf": 0.25,
+        "min_margin": 0.4,
+        "shown": 0.41500904159132007,
+        "acc_shown": 0.8801742919389978,
+        "wrong_shown": 0.04972875226039783
+      },
+      {
+        "min_conf": 0.3,
+        "min_margin": 0.0,
+        "shown": 0.6491862567811935,
+        "acc_shown": 0.7576601671309192,
+        "wrong_shown": 0.15732368896925858
+      },
+      {
+        "min_conf": 0.3,
+        "min_margin": 0.05,
+        "shown": 0.64376130198915,
+        "acc_shown": 0.7612359550561798,
+        "wrong_shown": 0.15370705244122965
+      },
+      {
+        "min_conf": 0.3,
+        "min_margin": 0.1,
+        "shown": 0.6329113924050633,
+        "acc_shown": 0.7657142857142857,
+        "wrong_shown": 0.14828209764918626
+      },
+      {
+        "min_conf": 0.3,
+        "min_margin": 0.15,
+        "shown": 0.6193490054249547,
+        "acc_shown": 0.7795620437956204,
+        "wrong_shown": 0.13652802893309224
+      },
+      {
+        "min_conf": 0.3,
+        "min_margin": 0.2,
+        "shown": 0.5858951175406871,
+        "acc_shown": 0.7993827160493827,
+        "wrong_shown": 0.11754068716094032
+      },
+      {
+        "min_conf": 0.3,
+        "min_margin": 0.25,
+        "shown": 0.546112115732369,
+        "acc_shown": 0.8245033112582781,
+        "wrong_shown": 0.09584086799276673
+      },
+      {
+        "min_conf": 0.3,
+        "min_margin": 0.3,
+        "shown": 0.4909584086799277,
+        "acc_shown": 0.8360957642725598,
+        "wrong_shown": 0.08047016274864376
+      },
+      {
+        "min_conf": 0.3,
+        "min_margin": 0.4,
+        "shown": 0.41500904159132007,
+        "acc_shown": 0.8801742919389978,
+        "wrong_shown": 0.04972875226039783
+      },
+      {
+        "min_conf": 0.35,
+        "min_margin": 0.0,
+        "shown": 0.5741410488245932,
+        "acc_shown": 0.7889763779527559,
+        "wrong_shown": 0.12115732368896925
+      },
+      {
+        "min_conf": 0.35,
+        "min_margin": 0.05,
+        "shown": 0.5723327305605787,
+        "acc_shown": 0.7898894154818326,
+        "wrong_shown": 0.12025316455696203
+      },
+      {
+        "min_conf": 0.35,
+        "min_margin": 0.1,
+        "shown": 0.566003616636528,
+        "acc_shown": 0.7907348242811502,
+        "wrong_shown": 0.11844484629294756
+      },
+      {
+        "min_conf": 0.35,
+        "min_margin": 0.15,
+        "shown": 0.5587703435804702,
+        "acc_shown": 0.8009708737864077,
+        "wrong_shown": 0.1112115732368897
+      },
+      {
+        "min_conf": 0.35,
+        "min_margin": 0.2,
+        "shown": 0.5406871609403255,
+        "acc_shown": 0.81438127090301,
+        "wrong_shown": 0.1003616636528029
+      },
+      {
+        "min_conf": 0.35,
+        "min_margin": 0.25,
+        "shown": 0.5216998191681737,
+        "acc_shown": 0.82842287694974,
+        "wrong_shown": 0.08951175406871609
+      },
+      {
+        "min_conf": 0.35,
+        "min_margin": 0.3,
+        "shown": 0.4909584086799277,
+        "acc_shown": 0.8360957642725598,
+        "wrong_shown": 0.08047016274864376
+      },
+      {
+        "min_conf": 0.35,
+        "min_margin": 0.4,
+        "shown": 0.41500904159132007,
+        "acc_shown": 0.8801742919389978,
+        "wrong_shown": 0.04972875226039783
+      },
+      {
+        "min_conf": 0.4,
+        "min_margin": 0.0,
+        "shown": 0.5117540687160941,
+        "acc_shown": 0.8162544169611308,
+        "wrong_shown": 0.09403254972875226
+      },
+      {
+        "min_conf": 0.4,
+        "min_margin": 0.05,
+        "shown": 0.5117540687160941,
+        "acc_shown": 0.8162544169611308,
+        "wrong_shown": 0.09403254972875226
+      },
+      {
+        "min_conf": 0.4,
+        "min_margin": 0.1,
+        "shown": 0.5090415913200723,
+        "acc_shown": 0.8170515097690941,
+        "wrong_shown": 0.09312839059674503
+      },
+      {
+        "min_conf": 0.4,
+        "min_margin": 0.15,
+        "shown": 0.5045207956600362,
+        "acc_shown": 0.8243727598566308,
+        "wrong_shown": 0.08860759493670886
+      },
+      {
+        "min_conf": 0.4,
+        "min_margin": 0.2,
+        "shown": 0.4972875226039783,
+        "acc_shown": 0.8309090909090909,
+        "wrong_shown": 0.08408679927667269
+      },
+      {
+        "min_conf": 0.4,
+        "min_margin": 0.25,
+        "shown": 0.4873417721518987,
+        "acc_shown": 0.8441558441558441,
+        "wrong_shown": 0.0759493670886076
+      },
+      {
+        "min_conf": 0.4,
+        "min_margin": 0.3,
+        "shown": 0.472875226039783,
+        "acc_shown": 0.8489483747609943,
+        "wrong_shown": 0.07142857142857142
+      },
+      {
+        "min_conf": 0.4,
+        "min_margin": 0.4,
+        "shown": 0.41500904159132007,
+        "acc_shown": 0.8801742919389978,
+        "wrong_shown": 0.04972875226039783
+      },
+      {
+        "min_conf": 0.45,
+        "min_margin": 0.0,
+        "shown": 0.4602169981916817,
+        "acc_shown": 0.8408644400785854,
+        "wrong_shown": 0.07323688969258589
+      },
+      {
+        "min_conf": 0.45,
+        "min_margin": 0.05,
+        "shown": 0.4602169981916817,
+        "acc_shown": 0.8408644400785854,
+        "wrong_shown": 0.07323688969258589
+      },
+      {
+        "min_conf": 0.45,
+        "min_margin": 0.1,
+        "shown": 0.4602169981916817,
+        "acc_shown": 0.8408644400785854,
+        "wrong_shown": 0.07323688969258589
+      },
+      {
+        "min_conf": 0.45,
+        "min_margin": 0.15,
+        "shown": 0.45840867992766726,
+        "acc_shown": 0.8441814595660749,
+        "wrong_shown": 0.07142857142857142
+      },
+      {
+        "min_conf": 0.45,
+        "min_margin": 0.2,
+        "shown": 0.45298372513562385,
+        "acc_shown": 0.8483033932135728,
+        "wrong_shown": 0.06871609403254973
+      },
+      {
+        "min_conf": 0.45,
+        "min_margin": 0.25,
+        "shown": 0.4484629294755877,
+        "acc_shown": 0.8548387096774194,
+        "wrong_shown": 0.0650994575045208
+      },
+      {
+        "min_conf": 0.45,
+        "min_margin": 0.3,
+        "shown": 0.4430379746835443,
+        "acc_shown": 0.8612244897959184,
+        "wrong_shown": 0.06148282097649186
+      },
+      {
+        "min_conf": 0.45,
+        "min_margin": 0.4,
+        "shown": 0.4141048824593128,
+        "acc_shown": 0.8799126637554585,
+        "wrong_shown": 0.04972875226039783
+      },
+      {
+        "min_conf": 0.5,
+        "min_margin": 0.0,
+        "shown": 0.41139240506329117,
+        "acc_shown": 0.8593406593406593,
+        "wrong_shown": 0.05786618444846293
+      },
+      {
+        "min_conf": 0.5,
+        "min_margin": 0.05,
+        "shown": 0.41139240506329117,
+        "acc_shown": 0.8593406593406593,
+        "wrong_shown": 0.05786618444846293
+      },
+      {
+        "min_conf": 0.5,
+        "min_margin": 0.1,
+        "shown": 0.41139240506329117,
+        "acc_shown": 0.8593406593406593,
+        "wrong_shown": 0.05786618444846293
+      },
+      {
+        "min_conf": 0.5,
+        "min_margin": 0.15,
+        "shown": 0.4104882459312839,
+        "acc_shown": 0.8612334801762115,
+        "wrong_shown": 0.056962025316455694
+      },
+      {
+        "min_conf": 0.5,
+        "min_margin": 0.2,
+        "shown": 0.40867992766726946,
+        "acc_shown": 0.8628318584070797,
+        "wrong_shown": 0.05605786618444846
+      },
+      {
+        "min_conf": 0.5,
+        "min_margin": 0.25,
+        "shown": 0.4050632911392405,
+        "acc_shown": 0.8683035714285714,
+        "wrong_shown": 0.05334538878842676
+      },
+      {
+        "min_conf": 0.5,
+        "min_margin": 0.3,
+        "shown": 0.40415913200723325,
+        "acc_shown": 0.8702460850111857,
+        "wrong_shown": 0.05244122965641953
+      },
+      {
+        "min_conf": 0.5,
+        "min_margin": 0.4,
+        "shown": 0.3933092224231465,
+        "acc_shown": 0.8781609195402299,
+        "wrong_shown": 0.04792043399638336
+      },
+      {
+        "min_conf": 0.6,
+        "min_margin": 0.0,
+        "shown": 0.33273056057866185,
+        "acc_shown": 0.9130434782608695,
+        "wrong_shown": 0.028933092224231464
+      },
+      {
+        "min_conf": 0.6,
+        "min_margin": 0.05,
+        "shown": 0.33273056057866185,
+        "acc_shown": 0.9130434782608695,
+        "wrong_shown": 0.028933092224231464
+      },
+      {
+        "min_conf": 0.6,
+        "min_margin": 0.1,
+        "shown": 0.33273056057866185,
+        "acc_shown": 0.9130434782608695,
+        "wrong_shown": 0.028933092224231464
+      },
+      {
+        "min_conf": 0.6,
+        "min_margin": 0.15,
+        "shown": 0.33273056057866185,
+        "acc_shown": 0.9130434782608695,
+        "wrong_shown": 0.028933092224231464
+      },
+      {
+        "min_conf": 0.6,
+        "min_margin": 0.2,
+        "shown": 0.33273056057866185,
+        "acc_shown": 0.9130434782608695,
+        "wrong_shown": 0.028933092224231464
+      },
+      {
+        "min_conf": 0.6,
+        "min_margin": 0.25,
+        "shown": 0.33273056057866185,
+        "acc_shown": 0.9130434782608695,
+        "wrong_shown": 0.028933092224231464
+      },
+      {
+        "min_conf": 0.6,
+        "min_margin": 0.3,
+        "shown": 0.33273056057866185,
+        "acc_shown": 0.9130434782608695,
+        "wrong_shown": 0.028933092224231464
+      },
+      {
+        "min_conf": 0.6,
+        "min_margin": 0.4,
+        "shown": 0.3318264014466546,
+        "acc_shown": 0.9128065395095368,
+        "wrong_shown": 0.028933092224231464
+      },
+      {
+        "min_conf": 0.7,
+        "min_margin": 0.0,
+        "shown": 0.25587703435804704,
+        "acc_shown": 0.9293286219081273,
+        "wrong_shown": 0.018083182640144666
+      },
+      {
+        "min_conf": 0.7,
+        "min_margin": 0.05,
+        "shown": 0.25587703435804704,
+        "acc_shown": 0.9293286219081273,
+        "wrong_shown": 0.018083182640144666
+      },
+      {
+        "min_conf": 0.7,
+        "min_margin": 0.1,
+        "shown": 0.25587703435804704,
+        "acc_shown": 0.9293286219081273,
+        "wrong_shown": 0.018083182640144666
+      },
+      {
+        "min_conf": 0.7,
+        "min_margin": 0.15,
+        "shown": 0.25587703435804704,
+        "acc_shown": 0.9293286219081273,
+        "wrong_shown": 0.018083182640144666
+      },
+      {
+        "min_conf": 0.7,
+        "min_margin": 0.2,
+        "shown": 0.25587703435804704,
+        "acc_shown": 0.9293286219081273,
+        "wrong_shown": 0.018083182640144666
+      },
+      {
+        "min_conf": 0.7,
+        "min_margin": 0.25,
+        "shown": 0.25587703435804704,
+        "acc_shown": 0.9293286219081273,
+        "wrong_shown": 0.018083182640144666
+      },
+      {
+        "min_conf": 0.7,
+        "min_margin": 0.3,
+        "shown": 0.25587703435804704,
+        "acc_shown": 0.9293286219081273,
+        "wrong_shown": 0.018083182640144666
+      },
+      {
+        "min_conf": 0.7,
+        "min_margin": 0.4,
+        "shown": 0.25587703435804704,
+        "acc_shown": 0.9293286219081273,
+        "wrong_shown": 0.018083182640144666
+      }
+    ],
+    "calibration_rule": {
+      "min_conf": 0.0,
+      "min_margin": 0.4,
+      "shown": 0.41500904159132007,
+      "acc_shown": 0.8801742919389978,
+      "wrong_shown": 0.04972875226039783
+    }
+  },
+  "webcam": {
+    "n": 17,
+    "top1": 0.5882352941176471,
+    "top3": 0.9411764705882353,
+    "top5": 1.0,
+    "v2_top1": 0.8235294117647058,
+    "clips": [
+      {
+        "video": "HELP-20261114-200810",
+        "true": "HELP",
+        "pred": "STOP",
+        "conf": 0.326,
+        "margin": 0.203,
+        "true_rank": 2,
+        "shown_by_rule": false,
+        "top3": [
+          [
+            "STOP",
+            0.326
+          ],
+          [
+            "HELP",
+            0.123
+          ],
+          [
+            "WHAT",
+            0.066
+          ]
+        ],
+        "v2_pred": "STOP",
+        "v2_conf": 0.773
+      },
+      {
+        "video": "HELP-20261114-200819",
+        "true": "HELP",
+        "pred": "HELP",
+        "conf": 0.796,
+        "margin": 0.731,
+        "true_rank": 1,
+        "shown_by_rule": true,
+        "top3": [
+          [
+            "HELP",
+            0.796
+          ],
+          [
+            "GOOD",
+            0.065
+          ],
+          [
+            "DARK",
+            0.026
+          ]
+        ],
+        "v2_pred": "HELP",
+        "v2_conf": 0.563
+      },
+      {
+        "video": "HELP-20261114-200832",
+        "true": "HELP",
+        "pred": "HELP",
+        "conf": 0.841,
+        "margin": 0.782,
+        "true_rank": 1,
+        "shown_by_rule": true,
+        "top3": [
+          [
+            "HELP",
+            0.841
+          ],
+          [
+            "GOOD",
+            0.059
+          ],
+          [
+            "LETTER",
+            0.016
+          ]
+        ],
+        "v2_pred": "HELP",
+        "v2_conf": 0.603
+      },
+      {
+        "video": "HELP-20261114-200841",
+        "true": "HELP",
+        "pred": "HELP",
+        "conf": 0.816,
+        "margin": 0.764,
+        "true_rank": 1,
+        "shown_by_rule": true,
+        "top3": [
+          [
+            "HELP",
+            0.816
+          ],
+          [
+            "GOOD",
+            0.052
+          ],
+          [
+            "LETTER",
+            0.032
+          ]
+        ],
+        "v2_pred": "HELP",
+        "v2_conf": 0.573
+      },
+      {
+        "video": "HELP-20261114-200848",
+        "true": "HELP",
+        "pred": "HELP",
+        "conf": 0.841,
+        "margin": 0.789,
+        "true_rank": 1,
+        "shown_by_rule": true,
+        "top3": [
+          [
+            "HELP",
+            0.841
+          ],
+          [
+            "GOOD",
+            0.053
+          ],
+          [
+            "LETTER",
+            0.024
+          ]
+        ],
+        "v2_pred": "HELP",
+        "v2_conf": 0.59
+      },
+      {
+        "video": "NO-20261114-204612",
+        "true": "NO",
+        "pred": "RIGHT",
+        "conf": 0.326,
+        "margin": 0.134,
+        "true_rank": 2,
+        "shown_by_rule": false,
+        "top3": [
+          [
+            "RIGHT",
+            0.326
+          ],
+          [
+            "NO",
+            0.191
+          ],
+          [
+            "SHORT",
+            0.101
+          ]
+        ],
+        "v2_pred": "NO",
+        "v2_conf": 0.707
+      },
+      {
+        "video": "NO-20261114-204621",
+        "true": "NO",
+        "pred": "DEAF",
+        "conf": 0.197,
+        "margin": 0.039,
+        "true_rank": 4,
+        "shown_by_rule": false,
+        "top3": [
+          [
+            "DEAF",
+            0.197
+          ],
+          [
+            "SHORT",
+            0.158
+          ],
+          [
+            "RIGHT",
+            0.149
+          ]
+        ],
+        "v2_pred": "NO",
+        "v2_conf": 0.597
+      },
+      {
+        "video": "NO-20261114-204630",
+        "true": "NO",
+        "pred": "RIGHT",
+        "conf": 0.352,
+        "margin": 0.214,
+        "true_rank": 2,
+        "shown_by_rule": false,
+        "top3": [
+          [
+            "RIGHT",
+            0.352
+          ],
+          [
+            "NO",
+            0.138
+          ],
+          [
+            "DEAF",
+            0.1
+          ]
+        ],
+        "v2_pred": "NO",
+        "v2_conf": 0.553
+      },
+      {
+        "video": "STOP-20261114-204508",
+        "true": "STOP",
+        "pred": "STOP",
+        "conf": 0.6,
+        "margin": 0.505,
+        "true_rank": 1,
+        "shown_by_rule": true,
+        "top3": [
+          [
+            "STOP",
+            0.6
+          ],
+          [
+            "COOK",
+            0.095
+          ],
+          [
+            "GRADUATE",
+            0.08
+          ]
+        ],
+        "v2_pred": "STOP",
+        "v2_conf": 0.773
+      },
+      {
+        "video": "STOP-20261114-204517",
+        "true": "STOP",
+        "pred": "STOP",
+        "conf": 0.42,
+        "margin": 0.292,
+        "true_rank": 1,
+        "shown_by_rule": false,
+        "top3": [
+          [
+            "STOP",
+            0.42
+          ],
+          [
+            "COOK",
+            0.128
+          ],
+          [
+            "GRADUATE",
+            0.103
+          ]
+        ],
+        "v2_pred": "STOP",
+        "v2_conf": 0.563
+      },
+      {
+        "video": "STOP-20261114-204526",
+        "true": "STOP",
+        "pred": "STOP",
+        "conf": 0.396,
+        "margin": 0.202,
+        "true_rank": 1,
+        "shown_by_rule": false,
+        "top3": [
+          [
+            "STOP",
+            0.396
+          ],
+          [
+            "COOK",
+            0.194
+          ],
+          [
+            "GRADUATE",
+            0.121
+          ]
+        ],
+        "v2_pred": "STOP",
+        "v2_conf": 0.7
+      },
+      {
+        "video": "THANKYOU-20261114-204822",
+        "true": "THANKYOU",
+        "pred": "THANKYOU",
+        "conf": 0.417,
+        "margin": 0.294,
+        "true_rank": 1,
+        "shown_by_rule": false,
+        "top3": [
+          [
+            "THANKYOU",
+            0.417
+          ],
+          [
+            "GIVE",
+            0.123
+          ],
+          [
+            "FISH",
+            0.057
+          ]
+        ],
+        "v2_pred": "THANKYOU",
+        "v2_conf": 0.96
+      },
+      {
+        "video": "THANKYOU-20261114-204830",
+        "true": "THANKYOU",
+        "pred": "THANKYOU",
+        "conf": 0.516,
+        "margin": 0.332,
+        "true_rank": 1,
+        "shown_by_rule": false,
+        "top3": [
+          [
+            "THANKYOU",
+            0.516
+          ],
+          [
+            "GOOD",
+            0.183
+          ],
+          [
+            "GIVE",
+            0.067
+          ]
+        ],
+        "v2_pred": "THANKYOU",
+        "v2_conf": 0.72
+      },
+      {
+        "video": "THANKYOU-20261114-204838",
+        "true": "THANKYOU",
+        "pred": "GIVE",
+        "conf": 0.235,
+        "margin": 0.003,
+        "true_rank": 2,
+        "shown_by_rule": false,
+        "top3": [
+          [
+            "GIVE",
+            0.235
+          ],
+          [
+            "THANKYOU",
+            0.232
+          ],
+          [
+            "COLOR",
+            0.051
+          ]
+        ],
+        "v2_pred": "THANKYOU",
+        "v2_conf": 0.9
+      },
+      {
+        "video": "YES-20261114-204726",
+        "true": "YES",
+        "pred": "YESTERDAY",
+        "conf": 0.172,
+        "margin": 0.069,
+        "true_rank": 2,
+        "shown_by_rule": false,
+        "top3": [
+          [
+            "YESTERDAY",
+            0.172
+          ],
+          [
+            "YES",
+            0.103
+          ],
+          [
+            "SHORT",
+            0.087
+          ]
+        ],
+        "v2_pred": "DRINK",
+        "v2_conf": 0.34
+      },
+      {
+        "video": "YES-20261114-204734",
+        "true": "YES",
+        "pred": "BATHROOM",
+        "conf": 0.189,
+        "margin": 0.028,
+        "true_rank": 2,
+        "shown_by_rule": false,
+        "top3": [
+          [
+            "BATHROOM",
+            0.189
+          ],
+          [
+            "YES",
+            0.161
+          ],
+          [
+            "YESTERDAY",
+            0.115
+          ]
+        ],
+        "v2_pred": "YES",
+        "v2_conf": 0.407
+      },
+      {
+        "video": "YES-20261114-204742",
+        "true": "YES",
+        "pred": "YES",
+        "conf": 0.302,
+        "margin": 0.222,
+        "true_rank": 1,
+        "shown_by_rule": false,
+        "top3": [
+          [
+            "YES",
+            0.302
+          ],
+          [
+            "YESTERDAY",
+            0.08
+          ],
+          [
+            "BATHROOM",
+            0.065
+          ]
+        ],
+        "v2_pred": "BATHROOM",
+        "v2_conf": 0.34
+      }
+    ]
+  },
+  "train_seconds": 712.7
+}

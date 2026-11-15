@@ -1,0 +1,8 @@
+CV tf_f3_32 seed 0: {'arch': 'transformer', 'fs': 'feat3', 'frames': 32, 'phase2': True} | 1106 WLASL videos, 116 classes, 0 own training clips, 0 own test clips
+  fold 1 done: best epoch 6, 337s  [368s]
+  fold 4 done: best epoch 15, 409s  [439s]
+  fold 0 done: best epoch 12, 431s  [461s]
+  fold 2 done: best epoch 17, 532s  [563s]
+  fold 3 done: best epoch 32, 750s  [781s]
+CV tf_f3_32 seed 0 finished in 781s
+EXIT 0

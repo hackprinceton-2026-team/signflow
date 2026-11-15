@@ -1,0 +1,21 @@
+DATA 1180 extracted videos, 1125 usable; 116 glosses kept (>= 6 usable videos), 4 dropped; 1106 videos, 64 signers
+     dropped: CLOTHES (5), EAT (5), PURPLE (5), TABLE (4)
+     kept although < 6 (demo signs): STOP (5)
+FOLDS GroupKFold(5, shuffle, seed 0) by signer; test videos per fold [175, 146, 236, 200, 349]; no signer overlap (asserted)
+Building augmented training sets per fold ...
+  done in 8s (10241 rows in fold 0)
+WEBCAM 17 test clips loaded (never trained on)
+  rf fold 0: top-1 58.9%  top-5 81.7%  [43s]
+  rf fold 1: top-1 60.3%  top-5 79.5%  [88s]
+  rf fold 2: top-1 61.4%  top-5 85.6%  [131s]
+  rf fold 3: top-1 53.5%  top-5 79.5%  [175s]
+  rf fold 4: top-1 49.9%  top-5 75.1%  [213s]
+rf: top-1 56.8% ± 4.4%, top-3 73.4%, top-5 80.3%; demo-14 67.5% (restricted 92.5%); webcam 71%; saved models/v4_rf_vocab116.joblib [273s]
+  cnn fold 0: top-1 66.3%  top-5 88.6%  (best epoch 19)  [133s]
+  cnn fold 1: top-1 65.1%  top-5 80.8%  (best epoch 11)  [214s]
+  cnn fold 2: top-1 67.8%  top-5 88.6%  (best epoch 10)  [300s]
+  cnn fold 3: top-1 58.5%  top-5 84.5%  (best epoch 21)  [483s]
+  cnn fold 4: top-1 51.9%  top-5 76.2%  (best epoch 12)  [593s]
+cnn: top-1 61.9% ± 5.9%, top-3 78.7%, top-5 83.7%; demo-14 71.7% (restricted 93.3%); webcam 59%; saved models/v4_cnn_vocab116.joblib [713s]
+Total 17.2 min. models/sign_model.joblib untouched.
+slenv/bin/python src/train_vocab.py --version v4  4426.06s user 317.37s system 452% cpu 17:28.31 total

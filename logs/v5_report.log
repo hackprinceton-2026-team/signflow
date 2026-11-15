@@ -1,0 +1,13 @@
+ - New trainer without Phase 2 (`cnn_f2_16_nobal`, same features/augmentation as v4) vs v4: macro top-1 61.2% -> 61.2%, macro top-5 83.3% -> 83.9% (trainer differences only: fixed validation signers per fold, early stopping on (top-1 + top-5) / 2).
+ - Phase 2 data (balanced sampling, segmentation jitter, mirror, extra copies): `cnn_f2_16_nobal` -> `cnn_f2_16`: macro top-1 61.2% -> 63.1%, macro top-5 83.9% -> 85.1% -> helped.
+ - features v3 (angles, fingertip and face distances, acceleration): `cnn_f2_16` -> `cnn_f3_16`: macro top-1 63.1% -> 67.8%, macro top-5 85.1% -> 88.9% -> helped.
+ - 32 frames instead of 16 (transformer): `tf_f3_16` -> `tf_f3_32`: macro top-1 69.7% -> 70.8%, macro top-5 88.0% -> 87.6% -> helped.
+ - transformer instead of 1D-CNN (16 frames): `cnn_f3_16` -> `tf_f3_16`: macro top-1 67.8% -> 69.7%, macro top-5 88.9% -> 88.0% -> helped.
+ - Best single model (macro top-1, then macro top-5): `tf_f3_32`.
+ - `cnn_f3_32` was stopped after 1 of 5 folds to stay within the 2 h training budget (one thread per fold; projected > 1 h for the run, and the 5-seed ensemble would have been ~5x more): fold 1 (n = 146): top-1 76.0% / top-5 89.7% vs `tf_f3_32` 73.3% / 89.0%, 28 min for this fold. Promising but not a complete result, so it was not selected. It is the first thing to try with more CPU time.
+ - Ensemble of 5 seeds (logits averaged): macro top-1 70.8% -> 75.6%, macro top-5 87.6% -> 90.9% -> helped, kept.
+ - Test-time augmentation (7 views: segment start/end +-10%, scale 0.95/1.05): macro top-1 75.6% -> 75.5%, macro top-5 90.9% -> 90.9% -> did not help (latency checked in `final`, budget 150 ms).
+ - Pair specialists (10 pairs per fold, kept if better on that fold's validation signers: 7 of 50 kept): macro top-1 75.6% -> 75.4%, macro top-5 90.9% -> 90.9% -> did not help, not used.
+ - Temperature scaling (fitted per fold on the validation signers, fold temperatures [0.847, 0.851, 0.751, 0.834, 0.74]): ECE on held-out signers 0.075 -> 0.065 -> helped, kept (final model: median temperature). Ranking is unchanged, so top-k is unaffected.
+ - Promotion rule vs v4_cnn on held-out signers: macro top-1 61.2% -> 75.6% (higher), macro top-5 83.3% -> 90.9% (not lower); the webcam top-5 part is checked on the final model.
+best: tf_f3_32 x5 seeds; reports/v5_eval.md written

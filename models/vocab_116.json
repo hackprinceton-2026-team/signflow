@@ -1,0 +1,1007 @@
+{
+ "description": "Vocabulary of the 116-sign keyword model: per gloss (model label) the English word(s), simple synonyms the backend may use when building a sentence, and a category. NOTHING (non-sign class, if a model has it) is never sent and is not listed.",
+ "categories": [
+  "health",
+  "people",
+  "time",
+  "food",
+  "feelings",
+  "actions",
+  "questions",
+  "other"
+ ],
+ "n": 116,
+ "signs": {
+  "ACCIDENT": {
+   "words": [
+    "accident"
+   ],
+   "synonyms": [
+    "crash",
+    "injury"
+   ],
+   "category": "health"
+  },
+  "AFRICA": {
+   "words": [
+    "Africa"
+   ],
+   "synonyms": [],
+   "category": "other"
+  },
+  "AGAIN": {
+   "words": [
+    "again"
+   ],
+   "synonyms": [
+    "repeat",
+    "once more"
+   ],
+   "category": "actions"
+  },
+  "ALL": {
+   "words": [
+    "all"
+   ],
+   "synonyms": [
+    "every",
+    "everyone",
+    "everything"
+   ],
+   "category": "other"
+  },
+  "APPLE": {
+   "words": [
+    "apple"
+   ],
+   "synonyms": [],
+   "category": "food"
+  },
+  "BAD": {
+   "words": [
+    "bad"
+   ],
+   "synonyms": [
+    "not good",
+    "awful"
+   ],
+   "category": "feelings"
+  },
+  "BASKETBALL": {
+   "words": [
+    "basketball"
+   ],
+   "synonyms": [],
+   "category": "other"
+  },
+  "BATHROOM": {
+   "words": [
+    "bathroom"
+   ],
+   "synonyms": [
+    "toilet",
+    "restroom"
+   ],
+   "category": "health"
+  },
+  "BED": {
+   "words": [
+    "bed"
+   ],
+   "synonyms": [
+    "sleep",
+    "go to bed"
+   ],
+   "category": "other"
+  },
+  "BEFORE": {
+   "words": [
+    "before"
+   ],
+   "synonyms": [
+    "earlier",
+    "previously"
+   ],
+   "category": "time"
+  },
+  "BIRD": {
+   "words": [
+    "bird"
+   ],
+   "synonyms": [],
+   "category": "other"
+  },
+  "BIRTHDAY": {
+   "words": [
+    "birthday"
+   ],
+   "synonyms": [],
+   "category": "time"
+  },
+  "BLACK": {
+   "words": [
+    "black"
+   ],
+   "synonyms": [],
+   "category": "other"
+  },
+  "BLUE": {
+   "words": [
+    "blue"
+   ],
+   "synonyms": [],
+   "category": "other"
+  },
+  "BOOK": {
+   "words": [
+    "book"
+   ],
+   "synonyms": [],
+   "category": "other"
+  },
+  "BOWLING": {
+   "words": [
+    "bowling"
+   ],
+   "synonyms": [],
+   "category": "other"
+  },
+  "BROWN": {
+   "words": [
+    "brown"
+   ],
+   "synonyms": [],
+   "category": "other"
+  },
+  "BUT": {
+   "words": [
+    "but"
+   ],
+   "synonyms": [
+    "however"
+   ],
+   "category": "other"
+  },
+  "CAN": {
+   "words": [
+    "can"
+   ],
+   "synonyms": [
+    "able to",
+    "could"
+   ],
+   "category": "other"
+  },
+  "CANDY": {
+   "words": [
+    "candy"
+   ],
+   "synonyms": [
+    "sweets"
+   ],
+   "category": "food"
+  },
+  "CHAIR": {
+   "words": [
+    "chair"
+   ],
+   "synonyms": [
+    "seat",
+    "sit"
+   ],
+   "category": "other"
+  },
+  "CHANGE": {
+   "words": [
+    "change"
+   ],
+   "synonyms": [
+    "switch",
+    "adjust"
+   ],
+   "category": "actions"
+  },
+  "CHEAT": {
+   "words": [
+    "cheat"
+   ],
+   "synonyms": [],
+   "category": "actions"
+  },
+  "CITY": {
+   "words": [
+    "city"
+   ],
+   "synonyms": [
+    "town"
+   ],
+   "category": "other"
+  },
+  "COLD": {
+   "words": [
+    "cold"
+   ],
+   "synonyms": [
+    "chilly",
+    "freezing",
+    "a cold"
+   ],
+   "category": "health"
+  },
+  "COLOR": {
+   "words": [
+    "color"
+   ],
+   "synonyms": [],
+   "category": "other"
+  },
+  "COMPUTER": {
+   "words": [
+    "computer"
+   ],
+   "synonyms": [
+    "laptop"
+   ],
+   "category": "other"
+  },
+  "COOK": {
+   "words": [
+    "cook"
+   ],
+   "synonyms": [
+    "kitchen",
+    "make food"
+   ],
+   "category": "food"
+  },
+  "COOL": {
+   "words": [
+    "cool"
+   ],
+   "synonyms": [
+    "neat",
+    "awesome"
+   ],
+   "category": "feelings"
+  },
+  "CORN": {
+   "words": [
+    "corn"
+   ],
+   "synonyms": [],
+   "category": "food"
+  },
+  "COUSIN": {
+   "words": [
+    "cousin"
+   ],
+   "synonyms": [],
+   "category": "people"
+  },
+  "COW": {
+   "words": [
+    "cow"
+   ],
+   "synonyms": [],
+   "category": "other"
+  },
+  "DANCE": {
+   "words": [
+    "dance"
+   ],
+   "synonyms": [],
+   "category": "actions"
+  },
+  "DARK": {
+   "words": [
+    "dark"
+   ],
+   "synonyms": [],
+   "category": "other"
+  },
+  "DEAF": {
+   "words": [
+    "deaf"
+   ],
+   "synonyms": [],
+   "category": "people"
+  },
+  "DECIDE": {
+   "words": [
+    "decide"
+   ],
+   "synonyms": [
+    "choose",
+    "decision"
+   ],
+   "category": "actions"
+  },
+  "DOCTOR": {
+   "words": [
+    "doctor"
+   ],
+   "synonyms": [
+    "physician",
+    "medic"
+   ],
+   "category": "health"
+  },
+  "DOG": {
+   "words": [
+    "dog"
+   ],
+   "synonyms": [],
+   "category": "other"
+  },
+  "DRINK": {
+   "words": [
+    "drink"
+   ],
+   "synonyms": [
+    "beverage"
+   ],
+   "category": "food"
+  },
+  "ENJOY": {
+   "words": [
+    "enjoy"
+   ],
+   "synonyms": [
+    "like",
+    "have fun"
+   ],
+   "category": "feelings"
+  },
+  "FAMILY": {
+   "words": [
+    "family"
+   ],
+   "synonyms": [],
+   "category": "people"
+  },
+  "FINE": {
+   "words": [
+    "fine"
+   ],
+   "synonyms": [
+    "okay",
+    "alright"
+   ],
+   "category": "feelings"
+  },
+  "FINISH": {
+   "words": [
+    "finish"
+   ],
+   "synonyms": [
+    "done",
+    "already",
+    "over"
+   ],
+   "category": "actions"
+  },
+  "FISH": {
+   "words": [
+    "fish"
+   ],
+   "synonyms": [],
+   "category": "food"
+  },
+  "FOOD": {
+   "words": [
+    "food"
+   ],
+   "synonyms": [
+    "eat",
+    "meal"
+   ],
+   "category": "food"
+  },
+  "FORGET": {
+   "words": [
+    "forget"
+   ],
+   "synonyms": [
+    "forgot"
+   ],
+   "category": "actions"
+  },
+  "FULL": {
+   "words": [
+    "full"
+   ],
+   "synonyms": [
+    "had enough",
+    "satisfied"
+   ],
+   "category": "feelings"
+  },
+  "GIVE": {
+   "words": [
+    "give"
+   ],
+   "synonyms": [],
+   "category": "actions"
+  },
+  "GO": {
+   "words": [
+    "go"
+   ],
+   "synonyms": [
+    "leave"
+   ],
+   "category": "actions"
+  },
+  "GOOD": {
+   "words": [
+    "good"
+   ],
+   "synonyms": [
+    "well",
+    "fine"
+   ],
+   "category": "feelings"
+  },
+  "GRADUATE": {
+   "words": [
+    "graduate"
+   ],
+   "synonyms": [
+    "graduation"
+   ],
+   "category": "actions"
+  },
+  "HAT": {
+   "words": [
+    "hat"
+   ],
+   "synonyms": [
+    "cap"
+   ],
+   "category": "other"
+  },
+  "HEADACHE": {
+   "words": [
+    "headache"
+   ],
+   "synonyms": [
+    "head hurts",
+    "head pain"
+   ],
+   "category": "health"
+  },
+  "HEARING": {
+   "words": [
+    "hearing"
+   ],
+   "synonyms": [
+    "hearing person"
+   ],
+   "category": "people"
+  },
+  "HELP": {
+   "words": [
+    "help"
+   ],
+   "synonyms": [
+    "assist",
+    "support"
+   ],
+   "category": "actions"
+  },
+  "HOT": {
+   "words": [
+    "hot"
+   ],
+   "synonyms": [
+    "warm",
+    "heat"
+   ],
+   "category": "health"
+  },
+  "HOW": {
+   "words": [
+    "how"
+   ],
+   "synonyms": [],
+   "category": "questions"
+  },
+  "HUNGRY": {
+   "words": [
+    "hungry"
+   ],
+   "synonyms": [
+    "want food"
+   ],
+   "category": "food"
+  },
+  "JACKET": {
+   "words": [
+    "jacket"
+   ],
+   "synonyms": [
+    "coat"
+   ],
+   "category": "other"
+  },
+  "KISS": {
+   "words": [
+    "kiss"
+   ],
+   "synonyms": [],
+   "category": "actions"
+  },
+  "LANGUAGE": {
+   "words": [
+    "language"
+   ],
+   "synonyms": [],
+   "category": "other"
+  },
+  "LAST": {
+   "words": [
+    "last"
+   ],
+   "synonyms": [
+    "final",
+    "previous"
+   ],
+   "category": "time"
+  },
+  "LATER": {
+   "words": [
+    "later"
+   ],
+   "synonyms": [
+    "after",
+    "soon"
+   ],
+   "category": "time"
+  },
+  "LETTER": {
+   "words": [
+    "letter"
+   ],
+   "synonyms": [
+    "mail"
+   ],
+   "category": "other"
+  },
+  "LIKE": {
+   "words": [
+    "like"
+   ],
+   "synonyms": [
+    "enjoy"
+   ],
+   "category": "feelings"
+  },
+  "MAN": {
+   "words": [
+    "man"
+   ],
+   "synonyms": [
+    "male",
+    "guy"
+   ],
+   "category": "people"
+  },
+  "MANY": {
+   "words": [
+    "many"
+   ],
+   "synonyms": [
+    "a lot",
+    "lots"
+   ],
+   "category": "other"
+  },
+  "MEDICINE": {
+   "words": [
+    "medicine"
+   ],
+   "synonyms": [
+    "pills",
+    "medication",
+    "drug"
+   ],
+   "category": "health"
+  },
+  "MEET": {
+   "words": [
+    "meet"
+   ],
+   "synonyms": [
+    "meeting"
+   ],
+   "category": "actions"
+  },
+  "MOTHER": {
+   "words": [
+    "mother"
+   ],
+   "synonyms": [
+    "mom",
+    "mum"
+   ],
+   "category": "people"
+  },
+  "NEED": {
+   "words": [
+    "need"
+   ],
+   "synonyms": [
+    "must",
+    "have to"
+   ],
+   "category": "actions"
+  },
+  "NO": {
+   "words": [
+    "no"
+   ],
+   "synonyms": [
+    "not"
+   ],
+   "category": "other"
+  },
+  "NOW": {
+   "words": [
+    "now"
+   ],
+   "synonyms": [
+    "currently",
+    "right now"
+   ],
+   "category": "time"
+  },
+  "ORANGE": {
+   "words": [
+    "orange"
+   ],
+   "synonyms": [],
+   "category": "food"
+  },
+  "PAINT": {
+   "words": [
+    "paint"
+   ],
+   "synonyms": [],
+   "category": "actions"
+  },
+  "PAPER": {
+   "words": [
+    "paper"
+   ],
+   "synonyms": [],
+   "category": "other"
+  },
+  "PINK": {
+   "words": [
+    "pink"
+   ],
+   "synonyms": [],
+   "category": "other"
+  },
+  "PIZZA": {
+   "words": [
+    "pizza"
+   ],
+   "synonyms": [],
+   "category": "food"
+  },
+  "PLAY": {
+   "words": [
+    "play"
+   ],
+   "synonyms": [],
+   "category": "actions"
+  },
+  "PLEASE": {
+   "words": [
+    "please"
+   ],
+   "synonyms": [],
+   "category": "other"
+  },
+  "PULL": {
+   "words": [
+    "pull"
+   ],
+   "synonyms": [],
+   "category": "actions"
+  },
+  "READY": {
+   "words": [
+    "ready"
+   ],
+   "synonyms": [
+    "prepared"
+   ],
+   "category": "other"
+  },
+  "RIGHT": {
+   "words": [
+    "right"
+   ],
+   "synonyms": [
+    "correct",
+    "true"
+   ],
+   "category": "other"
+  },
+  "SAME": {
+   "words": [
+    "same"
+   ],
+   "synonyms": [
+    "also",
+    "too",
+    "similar"
+   ],
+   "category": "other"
+  },
+  "SCHOOL": {
+   "words": [
+    "school"
+   ],
+   "synonyms": [],
+   "category": "other"
+  },
+  "SECRETARY": {
+   "words": [
+    "secretary"
+   ],
+   "synonyms": [],
+   "category": "people"
+  },
+  "SHIRT": {
+   "words": [
+    "shirt"
+   ],
+   "synonyms": [],
+   "category": "other"
+  },
+  "SHORT": {
+   "words": [
+    "short"
+   ],
+   "synonyms": [
+    "small",
+    "brief"
+   ],
+   "category": "other"
+  },
+  "SICK": {
+   "words": [
+    "sick"
+   ],
+   "synonyms": [
+    "ill",
+    "unwell"
+   ],
+   "category": "health"
+  },
+  "SON": {
+   "words": [
+    "son"
+   ],
+   "synonyms": [],
+   "category": "people"
+  },
+  "SORRY": {
+   "words": [
+    "sorry"
+   ],
+   "synonyms": [
+    "apologize"
+   ],
+   "category": "feelings"
+  },
+  "STOP": {
+   "words": [
+    "stop"
+   ],
+   "synonyms": [
+    "halt",
+    "enough"
+   ],
+   "category": "actions"
+  },
+  "STUDY": {
+   "words": [
+    "study"
+   ],
+   "synonyms": [
+    "learn"
+   ],
+   "category": "actions"
+  },
+  "TALL": {
+   "words": [
+    "tall"
+   ],
+   "synonyms": [],
+   "category": "other"
+  },
+  "TELL": {
+   "words": [
+    "tell"
+   ],
+   "synonyms": [
+    "say",
+    "inform"
+   ],
+   "category": "actions"
+  },
+  "THANKSGIVING": {
+   "words": [
+    "Thanksgiving"
+   ],
+   "synonyms": [],
+   "category": "time"
+  },
+  "THANKYOU": {
+   "words": [
+    "thank you"
+   ],
+   "synonyms": [
+    "thanks"
+   ],
+   "category": "other"
+  },
+  "THIN": {
+   "words": [
+    "thin"
+   ],
+   "synonyms": [
+    "skinny"
+   ],
+   "category": "other"
+  },
+  "THIRSTY": {
+   "words": [
+    "thirsty"
+   ],
+   "synonyms": [
+    "want a drink"
+   ],
+   "category": "food"
+  },
+  "THURSDAY": {
+   "words": [
+    "Thursday"
+   ],
+   "synonyms": [],
+   "category": "time"
+  },
+  "TIME": {
+   "words": [
+    "time"
+   ],
+   "synonyms": [
+    "what time"
+   ],
+   "category": "time"
+  },
+  "TODAY": {
+   "words": [
+    "today"
+   ],
+   "synonyms": [],
+   "category": "time"
+  },
+  "WAIT": {
+   "words": [
+    "wait"
+   ],
+   "synonyms": [
+    "hold on"
+   ],
+   "category": "actions"
+  },
+  "WALK": {
+   "words": [
+    "walk"
+   ],
+   "synonyms": [],
+   "category": "actions"
+  },
+  "WANT": {
+   "words": [
+    "want"
+   ],
+   "synonyms": [
+    "wish"
+   ],
+   "category": "actions"
+  },
+  "WATER": {
+   "words": [
+    "water"
+   ],
+   "synonyms": [],
+   "category": "food"
+  },
+  "WHAT": {
+   "words": [
+    "what"
+   ],
+   "synonyms": [],
+   "category": "questions"
+  },
+  "WHEN": {
+   "words": [
+    "when"
+   ],
+   "synonyms": [],
+   "category": "questions"
+  },
+  "WHITE": {
+   "words": [
+    "white"
+   ],
+   "synonyms": [],
+   "category": "other"
+  },
+  "WHO": {
+   "words": [
+    "who"
+   ],
+   "synonyms": [],
+   "category": "questions"
+  },
+  "WOMAN": {
+   "words": [
+    "woman"
+   ],
+   "synonyms": [
+    "female",
+    "lady"
+   ],
+   "category": "people"
+  },
+  "WORK": {
+   "words": [
+    "work"
+   ],
+   "synonyms": [
+    "job"
+   ],
+   "category": "actions"
+  },
+  "WRONG": {
+   "words": [
+    "wrong"
+   ],
+   "synonyms": [
+    "mistake",
+    "incorrect"
+   ],
+   "category": "other"
+  },
+  "YEAR": {
+   "words": [
+    "year"
+   ],
+   "synonyms": [],
+   "category": "time"
+  },
+  "YES": {
+   "words": [
+    "yes"
+   ],
+   "synonyms": [
+    "okay"
+   ],
+   "category": "other"
+  },
+  "YESTERDAY": {
+   "words": [
+    "yesterday"
+   ],
+   "synonyms": [],
+   "category": "time"
+  }
+ }
+}

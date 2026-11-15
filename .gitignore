@@ -23,3 +23,18 @@ models/v2_rf_feat2.joblib
 models/v2_rf_feat2mirror.joblib
 models/v2_gru_*.joblib
 models/sign_model.replaced-*.joblib
+# expanded-vocabulary experiment: the RandomForest is ~960 MB (kept on disk; metrics .json committed)
+models/v4_rf_*.joblib
+data/wlasl/nslt_*.json
+data/wlasl/_bulk/
+# v5 keyword model: caches, regenerable landmark folders (their index.csv files ARE committed),
+# your own recordings and their landmarks, per-candidate out-of-fold logits (regenerable, ~10 MB each)
+data/cache/
+data/me/
+data/landmarks/me/
+data/landmarks/webcam_v5/
+data/landmarks/wlasl_vocab/*
+!data/landmarks/wlasl_vocab/index.csv
+data/landmarks/wlasl_v5/*
+!data/landmarks/wlasl_v5/index.csv
+reports/oof/v*/

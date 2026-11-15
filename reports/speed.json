@@ -1,0 +1,28 @@
+{
+  "download_files": 10,
+  "download_failed": 0,
+  "download_seconds": 6.5,
+  "download_parallel": 4,
+  "download_files_per_s": 1.539,
+  "download_mb": 6.54,
+  "extract_videos": 10,
+  "extract_frames": 618,
+  "extract_serial_s_per_video": 2.64,
+  "extract_serial_frames_per_s": 23.4,
+  "extract_workers": 7,
+  "extract_parallel_s_per_video": 1.231,
+  "measured": "2026-11-14 22:16",
+  "cpu_count": 8,
+  "sample_video_ids": [
+    "69241",
+    "13633",
+    "13202",
+    "62970",
+    "25339",
+    "56840",
+    "13697",
+    "66297",
+    "05239",
+    "32947"
+  ]
+}

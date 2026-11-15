@@ -1,0 +1,10 @@
+CV cnn_f2_16_nobal seed 0: {'arch': 'cnn', 'fs': 'feat2dom', 'frames': 16, 'phase2': False} | 1106 WLASL videos, 116 classes, 0 own training clips, 0 own test clips
+  pool pool_feat2dom_16_base.npy: 12166 rows in 2s
+  eval views eval_feat2dom_16.npy: 1142 clips x 7 views in 2s
+  fold 0 done: best epoch 7, 328s  [342s]
+  fold 2 done: best epoch 14, 465s  [479s]
+  fold 1 done: best epoch 15, 540s  [554s]
+  fold 4 done: best epoch 28, 603s  [617s]
+  fold 3 done: best epoch 31, 709s  [723s]
+CV cnn_f2_16_nobal seed 0 finished in 724s
+EXIT 0

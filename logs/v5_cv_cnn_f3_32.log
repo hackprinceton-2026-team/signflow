@@ -1,0 +1,10 @@
+CV cnn_f3_32 seed 0: {'arch': 'cnn', 'fs': 'feat3', 'frames': 32, 'phase2': True} | 1106 WLASL videos, 116 classes, 0 own training clips, 0 own test clips
+    pool pool_feat3_32_p2.npy: 250/1106 videos
+    pool pool_feat3_32_p2.npy: 500/1106 videos
+    pool pool_feat3_32_p2.npy: 750/1106 videos
+    pool pool_feat3_32_p2.npy: 1000/1106 videos
+  pool pool_feat3_32_p2.npy: 12756 rows in 7s
+  eval views eval_feat3_32.npy: 1142 clips x 7 views in 6s
+  fold 1 done: best epoch 5, 1704s  [1719s]
+/opt/homebrew/Cellar/python@3.11/3.11.15/Frameworks/Python.framework/Versions/3.11/lib/python3.11/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 6 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '

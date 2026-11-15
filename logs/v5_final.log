@@ -1,0 +1,7 @@
+  final member seed 0: 15 epochs on all 1106 videos (12756 rows) [88s]
+  final member seed 1: 11 epochs on all 1106 videos (12756 rows) [60s]
+  final member seed 2: 13 epochs on all 1106 videos (12756 rows) [71s]
+  final member seed 3: 16 epochs on all 1106 videos (12756 rows) [88s]
+  final member seed 4: 12 epochs on all 1106 videos (12756 rows) [73s]
+saved models/v5_keyword_tf_f3_32.joblib (7.7 MB); webcam top-1 13/17, top-5 17/17; latency p95 3 ms
+PROMOTED: v5_keyword_tf_f3_32.joblib -> models/keyword_model.joblib

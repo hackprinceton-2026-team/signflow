@@ -1,0 +1,7 @@
+trial,prompt,predicted,confidence,shown,correct,outcome
+1,HELP,HELP,0.79,HELP,1,correct
+2,THANKYOU,GIVE,0.24,?,0,?
+3,HELP,HELP,0.84,HELP,1,correct
+4,THANKYOU,THANKYOU,0.42,?,0,?
+5,STOP,STOP,0.42,?,0,?
+6,STOP,STOP,0.39,?,0,?

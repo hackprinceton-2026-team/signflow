@@ -1,0 +1,1049 @@
+1180 videos in manifest: 136 already present, 1044 to download (4 in parallel). Safe to interrupt: rerun to resume.
+[   1/1044] 07069 book         ok (0.2 MB)  0.9 files/s, ~18 min left
+[   2/1044] 07068 book         ok (0.2 MB)  1.5 files/s, ~11 min left
+[   3/1044] 07070 book         ok (0.6 MB)  1.6 files/s, ~11 min left
+[   4/1044] 07074 book         ok (0.0 MB)  1.9 files/s, ~9 min left
+[   5/1044] 07099 book         ok (0.9 MB)  2.2 files/s, ~8 min left
+[   6/1044] 12328 computer     ok (0.1 MB)  2.6 files/s, ~7 min left
+[   7/1044] 12312 computer     ok (0.7 MB)  2.2 files/s, ~8 min left
+[   8/1044] 12311 computer     ok (0.2 MB)  2.4 files/s, ~7 min left
+[   9/1044] 12313 computer     ok (0.7 MB)  1.9 files/s, ~9 min left
+[  10/1044] 12338 computer     ok (1.0 MB)  1.8 files/s, ~9 min left
+[  11/1044] 12314 computer     ok (0.6 MB)  2.0 files/s, ~9 min left
+[  12/1044] 12315 computer     ok (0.8 MB)  2.0 files/s, ~9 min left
+[  13/1044] 12316 computer     ok (0.5 MB)  2.1 files/s, ~8 min left
+[  14/1044] 12317 computer     ok (0.6 MB)  1.9 files/s, ~9 min left
+[  15/1044] 12318 computer     ok (0.5 MB)  1.9 files/s, ~9 min left
+[  16/1044] 12319 computer     ok (0.5 MB)  2.0 files/s, ~9 min left
+[  17/1044] 12326 computer     ok (0.1 MB)  2.0 files/s, ~8 min left
+[  18/1044] 12320 computer     ok (0.7 MB)  2.1 files/s, ~8 min left
+[  19/1044] 12327 computer     ok (0.0 MB)  2.2 files/s, ~8 min left
+[  20/1044] 05728 before       ok (0.6 MB)  2.2 files/s, ~8 min left
+[  21/1044] 05749 before       ok (0.9 MB)  1.9 files/s, ~9 min left
+[  22/1044] 05730 before       ok (0.4 MB)  1.9 files/s, ~9 min left
+[  23/1044] 05729 before       ok (0.6 MB)  2.0 files/s, ~9 min left
+[  24/1044] 05750 before       ok (1.0 MB)  2.1 files/s, ~8 min left
+[  25/1044] 65167 before       ok (0.2 MB)  2.1 files/s, ~8 min left
+[  26/1044] 05731 before       ok (0.7 MB)  2.1 files/s, ~8 min left
+[  27/1044] 05732 before       ok (0.6 MB)  1.9 files/s, ~9 min left
+[  28/1044] 05733 before       ok (0.7 MB)  2.0 files/s, ~9 min left
+[  29/1044] 05734 before       ok (0.6 MB)  2.0 files/s, ~9 min left
+[  30/1044] 05727 before       ok (0.7 MB)  2.0 files/s, ~8 min left
+[  31/1044] 05739 before       ok (0.0 MB)  2.1 files/s, ~8 min left
+[  32/1044] 05740 before       ok (0.0 MB)  2.1 files/s, ~8 min left
+[  33/1044] 05741 before       ok (0.0 MB)  2.1 files/s, ~8 min left
+[  34/1044] 05742 before       ok (0.0 MB)  2.2 files/s, ~8 min left
+[  35/1044] 05743 before       ok (0.1 MB)  2.2 files/s, ~8 min left
+[  36/1044] 09848 chair        ok (0.1 MB)  2.3 files/s, ~7 min left
+[  37/1044] 09869 chair        ok (0.9 MB)  2.1 files/s, ~8 min left
+[  38/1044] 09849 chair        ok (0.6 MB)  2.1 files/s, ~8 min left
+[  39/1044] 09850 chair        ok (0.5 MB)  2.2 files/s, ~8 min left
+[  40/1044] 09851 chair        ok (0.6 MB)  2.2 files/s, ~8 min left
+[  41/1044] 65328 chair        ok (0.2 MB)  2.2 files/s, ~8 min left
+[  42/1044] 09854 chair        ok (0.0 MB)  2.2 files/s, ~8 min left
+[  43/1044] 24956 go           ok (0.0 MB)  2.1 files/s, ~8 min left
+[  44/1044] 24955 go           ok (0.1 MB)  2.1 files/s, ~8 min left
+[  45/1044] 69345 go           ok (2.9 MB)  2.1 files/s, ~8 min left
+[  46/1044] 24941 go           ok (0.2 MB)  2.2 files/s, ~8 min left
+[  47/1044] 24960 go           ok (0.0 MB)  2.2 files/s, ~8 min left
+[  48/1044] 24961 go           ok (0.0 MB)  2.2 files/s, ~7 min left
+[  49/1044] 24962 go           ok (0.0 MB)  2.2 files/s, ~7 min left
+[  50/1044] 65824 go           ok (0.1 MB)  2.3 files/s, ~7 min left
+[  51/1044] 24973 go           ok (0.9 MB)  2.2 files/s, ~7 min left
+[  52/1044] 24943 go           ok (0.2 MB)  2.3 files/s, ~7 min left
+[  53/1044] 24946 go           ok (0.5 MB)  2.2 files/s, ~7 min left
+[  54/1044] 24940 go           ok (0.1 MB)  2.3 files/s, ~7 min left
+[  55/1044] 24952 go           ok (0.0 MB)  2.3 files/s, ~7 min left
+[  56/1044] 24947 go           ok (0.5 MB)  2.3 files/s, ~7 min left
+[  57/1044] 24954 go           ok (0.1 MB)  2.3 files/s, ~7 min left
+[  58/1044] 11310 clothes      ok (0.6 MB)  2.3 files/s, ~7 min left
+[  59/1044] 11313 clothes      ok (0.0 MB)  2.3 files/s, ~7 min left
+[  60/1044] 11330 clothes      ok (0.8 MB)  2.3 files/s, ~7 min left
+[  61/1044] 11311 clothes      ok (0.6 MB)  2.3 files/s, ~7 min left
+[  62/1044] 11309 clothes      ok (0.1 MB)  2.4 files/s, ~7 min left
+[  63/1044] 63226 who          ok (0.2 MB)  2.3 files/s, ~7 min left
+[  64/1044] 63227 who          ok (0.4 MB)  2.2 files/s, ~7 min left
+[  65/1044] 63242 who          ok (0.8 MB)  2.3 files/s, ~7 min left
+[  66/1044] 63228 who          ok (0.5 MB)  2.2 files/s, ~7 min left
+[  67/1044] 63230 who          ok (0.6 MB)  2.1 files/s, ~8 min left
+[  68/1044] 69534 who          ok (2.7 MB)  2.2 files/s, ~8 min left
+[  69/1044] 63229 who          ok (0.6 MB)  2.2 files/s, ~7 min left
+[  70/1044] 63231 who          ok (0.6 MB)  2.2 files/s, ~7 min left
+[  71/1044] 66778 who          ok (0.2 MB)  2.2 files/s, ~7 min left
+[  72/1044] 66779 who          ok (0.2 MB)  2.2 files/s, ~7 min left
+[  73/1044] 63225 who          ok (0.1 MB)  2.2 files/s, ~7 min left
+[  74/1044] 63232 who          ok (0.9 MB)  2.2 files/s, ~7 min left
+[  75/1044] 63236 who          ok (0.0 MB)  2.3 files/s, ~7 min left
+[  76/1044] 63237 who          ok (0.0 MB)  2.3 files/s, ~7 min left
+[  77/1044] 08916 candy        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[  78/1044] 08918 candy        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[  79/1044] 08917 candy        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[  80/1044] 08919 candy        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[  81/1044] 08929 candy        ok (0.8 MB)  2.4 files/s, ~7 min left
+[  82/1044] 08920 candy        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[  83/1044] 08921 candy        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[  84/1044] 65298 candy        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[  85/1044] 08924 candy        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[  86/1044] 65299 candy        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[  87/1044] 65300 candy        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[  88/1044] 08915 candy        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[  89/1044] 08925 candy        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[  90/1044] 65415 cousin       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[  91/1044] 13647 cousin       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[  92/1044] 13648 cousin       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[  93/1044] 13631 cousin       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[  94/1044] 13632 cousin       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[  95/1044] 13634 cousin       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[  96/1044] 13635 cousin       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[  97/1044] 13636 cousin       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[  98/1044] 13630 cousin       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[  99/1044] 13640 cousin       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 100/1044] 13641 cousin       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 101/1044] 13642 cousin       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 102/1044] 13646 cousin       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 103/1044] 14882 deaf         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 104/1044] 14903 deaf         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 105/1044] 14884 deaf         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 106/1044] 14883 deaf         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 107/1044] 14885 deaf         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 108/1044] 14886 deaf         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 109/1044] 14887 deaf         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 110/1044] 65445 deaf         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 111/1044] 14888 deaf         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 112/1044] 14893 deaf         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 113/1044] 14894 deaf         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 114/1044] 21870 fine         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 115/1044] 21890 fine         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 116/1044] 21891 fine         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 117/1044] 21869 fine         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 118/1044] 21871 fine         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 119/1044] 21872 fine         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 120/1044] 21874 fine         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 121/1044] 21878 fine         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 122/1044] 57948 thin         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 123/1044] 21883 fine         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 124/1044] 57949 thin         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 125/1044] 57934 thin         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 126/1044] 57953 thin         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 127/1044] 57935 thin         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 128/1044] 57936 thin         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 129/1044] 66606 thin         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 130/1044] 57939 thin         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 131/1044] 57937 thin         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 132/1044] 57940 thin         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 133/1044] 57941 thin         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 134/1044] 57942 thin         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 135/1044] 66607 thin         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 136/1044] 57933 thin         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 137/1044] 57947 thin         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 138/1044] 57943 thin         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 139/1044] 62175 walk         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 140/1044] 62159 walk         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 141/1044] 62160 walk         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 142/1044] 62163 walk         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 143/1044] 62164 walk         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 144/1044] 66743 walk         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 145/1044] 66742 walk         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 146/1044] 62158 walk         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 147/1044] 62168 walk         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 148/1044] 62169 walk         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 149/1044] 62170 walk         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 150/1044] 64224 year         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 151/1044] 64211 year         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 152/1044] 64210 year         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 153/1044] 64212 year         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 154/1044] 64213 year         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 155/1044] 66818 year         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 156/1044] 66816 year         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 157/1044] 64209 year         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 158/1044] 64219 year         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 159/1044] 64218 year         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 160/1044] 69206 all          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 161/1044] 02003 all          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 162/1044] 01987 all          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 163/1044] 01988 all          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 164/1044] 01991 all          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 165/1044] 01992 all          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 166/1044] 65043 all          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 167/1044] 01986 all          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 168/1044] 69236 black        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 169/1044] 06472 black        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 170/1044] 06473 black        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 171/1044] 06474 black        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 172/1044] 06476 black        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 173/1044] 06477 black        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 174/1044] 06478 black        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 175/1044] 65200 black        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 176/1044] 06471 black        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 177/1044] 06486 black        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 178/1044] 69281 cool         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 179/1044] 65403 cool         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 180/1044] 13213 cool         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 181/1044] 13197 cool         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 182/1044] 13216 cool         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 183/1044] 13217 cool         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 184/1044] 13198 cool         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 185/1044] 13199 cool         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 186/1044] 13201 cool         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 187/1044] 13200 cool         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 188/1044] 65402 cool         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 189/1044] 13203 cool         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 190/1044] 13196 cool         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 191/1044] 13208 cool         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 192/1044] 13209 cool         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 193/1044] 21942 finish       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 194/1044] 21944 finish       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 195/1044] 21943 finish       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 196/1044] 21945 finish       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 197/1044] 21949 finish       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 198/1044] 21950 finish       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 199/1044] 65721 finish       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 200/1044] 21941 finish       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 201/1044] 21951 finish       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 202/1044] 69368 hot          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 203/1044] 28108 hot          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 204/1044] 28125 hot          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 205/1044] 28109 hot          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 206/1044] 28110 hot          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 207/1044] 28111 hot          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 208/1044] 28112 hot          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 209/1044] 28115 hot          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 210/1044] 28116 hot          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 211/1044] 28107 hot          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 212/1044] 69389 like         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 213/1044] 33266 like         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 214/1044] 33285 like         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 215/1044] 33267 like         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 216/1044] 33286 like         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 217/1044] 33268 like         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 218/1044] 33269 like         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 219/1044] 33270 like         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 220/1044] 33273 like         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 221/1044] 33274 like         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 222/1044] 69396 many         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 223/1044] 34823 many         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 224/1044] 34824 many         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 225/1044] 34825 many         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 226/1044] 34826 many         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 227/1044] 34827 many         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 228/1044] 34830 many         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 229/1044] 34831 many         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 230/1044] 34832 many         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 231/1044] 34839 many         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 232/1044] 69402 mother       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 233/1044] 36946 mother       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 234/1044] 36930 mother       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 235/1044] 36931 mother       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 236/1044] 36932 mother       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 237/1044] 36933 mother       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 238/1044] 36936 mother       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 239/1044] 36937 mother       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 240/1044] 66147 mother       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 241/1044] 66146 mother       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 242/1044] 36929 mother       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 243/1044] 69413 now          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 244/1044] 38994 now          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 245/1044] 38999 now          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 246/1044] 39000 now          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 247/1044] 38990 now          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 248/1044] 39006 now          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 249/1044] 38991 now          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 250/1044] 38995 now          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 251/1044] 38997 now          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 252/1044] 69422 orange       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 253/1044] 40115 orange       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 254/1044] 40116 orange       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 255/1044] 40117 orange       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 256/1044] 40118 orange       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 257/1044] 40119 orange       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 258/1044] 40121 orange       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 259/1044] 66246 orange       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 260/1044] 40129 orange       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 261/1044] 40130 orange       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 262/1044] 56579 table        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 263/1044] 56558 table        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 264/1044] 56557 table        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 265/1044] 56556 table        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 266/1044] 56563 table        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 267/1044] 57628 thanksgiving FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 268/1044] 57647 thanksgiving FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 269/1044] 57629 thanksgiving FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 270/1044] 57630 thanksgiving FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 271/1044] 57632 thanksgiving FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 272/1044] 57631 thanksgiving FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 273/1044] 57633 thanksgiving FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 274/1044] 57634 thanksgiving FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 275/1044] 57635 thanksgiving FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 276/1044] 57638 thanksgiving FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 277/1044] 57639 thanksgiving FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 278/1044] 57640 thanksgiving FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 279/1044] 57641 thanksgiving FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 280/1044] 69531 what         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 281/1044] 62967 what         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 282/1044] 62968 what         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 283/1044] 66769 what         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 284/1044] 62987 what         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 285/1044] 62964 what         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 286/1044] 62988 what         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 287/1044] 62975 what         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 288/1044] 62965 what         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 289/1044] 62979 what         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 290/1044] 62966 what         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 291/1044] 63679 woman        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 292/1044] 63665 woman        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 293/1044] 63666 woman        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 294/1044] 63667 woman        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 295/1044] 63668 woman        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 296/1044] 63669 woman        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 297/1044] 63672 woman        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 298/1044] 63673 woman        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 299/1044] 66798 woman        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 300/1044] 66799 woman        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 301/1044] 63664 woman        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 302/1044] 05644 bed          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 303/1044] 05629 bed          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 304/1044] 05630 bed          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 305/1044] 05631 bed          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 306/1044] 05633 bed          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 307/1044] 05632 bed          FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 308/1044] 05634 bed          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 309/1044] 05636 bed          FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 310/1044] 65162 bed          FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 311/1044] 05637 bed          FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 312/1044] 65163 bed          FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 313/1044] 65161 bed          FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 314/1044] 05638 bed          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 315/1044] 69238 blue         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 316/1044] 06835 blue         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 317/1044] 06839 blue         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 318/1044] 65216 blue         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 319/1044] 06845 blue         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 320/1044] 06832 blue         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 321/1044] 06833 blue         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 322/1044] 06834 blue         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 323/1044] 07389 bowling      FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 324/1044] 07390 bowling      FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 325/1044] 07391 bowling      FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 326/1044] 07392 bowling      FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 327/1044] 07393 bowling      FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 328/1044] 07394 bowling      FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 329/1044] 07397 bowling      FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 330/1044] 65242 bowling      FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 331/1044] 65241 bowling      FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 332/1044] 07388 bowling      FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 333/1044] 07398 bowling      FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 334/1044] 07399 bowling      FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 335/1044] 07400 bowling      FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 336/1044] 69257 can          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 337/1044] 65294 can          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 338/1044] 08955 can          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 339/1044] 08935 can          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 340/1044] 08936 can          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 341/1044] 08937 can          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 342/1044] 08938 can          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 343/1044] 08942 can          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 344/1044] 08944 can          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 345/1044] 69298 dog          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 346/1044] 17097 dog          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 347/1044] 17084 dog          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 348/1044] 17085 dog          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 349/1044] 17086 dog          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 350/1044] 17087 dog          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 351/1044] 17090 dog          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 352/1044] 17091 dog          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 353/1044] 65506 dog          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 354/1044] 65507 dog          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 355/1044] 17083 dog          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 356/1044] 69316 family       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 357/1044] 20980 family       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 358/1044] 20981 family       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 359/1044] 20982 family       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 360/1044] 20983 family       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 361/1044] 20986 family       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 362/1044] 20987 family       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 363/1044] 65677 family       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 364/1044] 20978 family       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 365/1044] 20992 family       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 366/1044] 20979 family       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 367/1044] 69325 fish         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 368/1044] 22130 fish         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 369/1044] 22114 fish         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 370/1044] 22115 fish         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 371/1044] 22116 fish         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 372/1044] 22117 fish         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 373/1044] 22120 fish         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 374/1044] 65731 fish         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 375/1044] 22121 fish         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 376/1044] 22113 fish         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 377/1044] 25322 graduate     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 378/1044] 25323 graduate     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 379/1044] 25324 graduate     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 380/1044] 25325 graduate     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 381/1044] 25326 graduate     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 382/1044] 65843 graduate     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 383/1044] 25329 graduate     FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 384/1044] 25330 graduate     FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 385/1044] 25321 graduate     FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 386/1044] 69359 hat          FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 387/1044] 26713 hat          FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 388/1044] 26739 hat          FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 389/1044] 26712 hat          FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 390/1044] 26741 hat          FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 391/1044] 26714 hat          FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 392/1044] 26715 hat          FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 393/1044] 26717 hat          FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 394/1044] 26719 hat          FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 395/1044] 65884 hearing      FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 396/1044] 26972 hearing      FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 397/1044] 26973 hearing      FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 398/1044] 26974 hearing      FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 399/1044] 26975 hearing      FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 400/1044] 26976 hearing      FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 401/1044] 26971 hearing      FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 402/1044] 26980 hearing      FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 403/1044] 31767 kiss         FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 404/1044] 31751 kiss         FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 405/1044] 31750 kiss         FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 406/1044] 31753 kiss         FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 407/1044] 31752 kiss         FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 408/1044] 31755 kiss         FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 409/1044] 31756 kiss         FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 410/1044] 65996 kiss         FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 411/1044] 31749 kiss         FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 412/1044] 32156 language     FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 413/1044] 32157 language     FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 414/1044] 32160 language     FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 415/1044] 32158 language     FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 416/1044] 32163 language     FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 417/1044] 66008 language     FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 418/1044] 32154 language     FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 419/1044] 66007 language     FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 420/1044] 32167 language     FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 421/1044] 32155 language     FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 422/1044] 32337 later        FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 423/1044] 32338 later        FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 424/1044] 32320 later        FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 425/1044] 32321 later        FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 426/1044] 32323 later        FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 427/1044] 32322 later        FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 428/1044] 32325 later        FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 429/1044] 32324 later        FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 430/1044] 66015 later        FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 431/1044] 32326 later        FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 432/1044] 66014 later        FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 433/1044] 32333 later        FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 434/1044] 69395 man          FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 435/1044] 34746 man          FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 436/1044] 34733 man          FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 437/1044] 34734 man          FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 438/1044] 34736 man          FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 439/1044] 34737 man          FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 440/1044] 34738 man          FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 441/1044] 66098 man          FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 442/1044] 66099 man          FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 443/1044] 66097 man          FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 444/1044] 34732 man          FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 445/1044] 34742 man          FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 446/1044] 51057 shirt        FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 447/1044] 51081 shirt        FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 448/1044] 51058 shirt        FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 449/1044] 51056 shirt        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 450/1044] 51059 shirt        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 451/1044] 51060 shirt        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 452/1044] 51061 shirt        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 453/1044] 51063 shirt        FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 454/1044] 51064 shirt        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 455/1044] 51066 shirt        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 456/1044] 51068 shirt        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 457/1044] 51067 shirt        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 458/1044] 55364 study        FAILED: requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/security.OAuthService/IntrospectToken
+[ 459/1044] 55365 study        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 460/1044] 55368 study        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 461/1044] 55369 study        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 462/1044] 55366 study        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 463/1044] 66575 study        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 464/1044] 55361 study        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 465/1044] 55375 study        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 466/1044] 55362 study        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 467/1044] 55363 study        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 468/1044] 56852 tall         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 469/1044] 56838 tall         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 470/1044] 56839 tall         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 471/1044] 56841 tall         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 472/1044] 56842 tall         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 473/1044] 56844 tall         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 474/1044] 56843 tall         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 475/1044] 66591 tall         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 476/1044] 66592 tall         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 477/1044] 56837 tall         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 478/1044] 56846 tall         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 479/1044] 56848 tall         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 480/1044] 69533 white        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 481/1044] 63204 white        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 482/1044] 63205 white        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 483/1044] 63207 white        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 484/1044] 63208 white        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 485/1044] 63200 white        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 486/1044] 63214 white        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 487/1044] 63201 white        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 488/1044] 63203 white        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 489/1044] 63202 white        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 490/1044] 64087 wrong        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 491/1044] 64088 wrong        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 492/1044] 64091 wrong        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 493/1044] 64090 wrong        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 494/1044] 64084 wrong        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 495/1044] 64097 wrong        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 496/1044] 64086 wrong        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 497/1044] 64085 wrong        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 498/1044] 00639 accident     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 499/1044] 00624 accident     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 500/1044] 00627 accident     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 501/1044] 00625 accident     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 502/1044] 00626 accident     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 503/1044] 00628 accident     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 504/1044] 00629 accident     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 505/1044] 00631 accident     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 506/1044] 00632 accident     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 507/1044] 65009 accident     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 508/1044] 00623 accident     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 509/1044] 00633 accident     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 510/1044] 00634 accident     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 511/1044] 69213 apple        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 512/1044] 03005 apple        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 513/1044] 03008 apple        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 514/1044] 65085 apple        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 515/1044] 65086 apple        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 516/1044] 65084 apple        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 517/1044] 02999 apple        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 518/1044] 03000 apple        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 519/1044] 03001 apple        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 520/1044] 03003 apple        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 521/1044] 69233 bird         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 522/1044] 03002 apple        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 523/1044] 06333 bird         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 524/1044] 06335 bird         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 525/1044] 06337 bird         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 526/1044] 06334 bird         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 527/1044] 65187 bird         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 528/1044] 06330 bird         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 529/1044] 06331 bird         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 530/1044] 06343 bird         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 531/1044] 06332 bird         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 532/1044] 09966 change       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 533/1044] 09967 change       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 534/1044] 09950 change       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 535/1044] 09970 change       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 536/1044] 09953 change       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 537/1044] 09954 change       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 538/1044] 09955 change       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 539/1044] 09956 change       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 540/1044] 09957 change       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 541/1044] 09949 change       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 542/1044] 09960 change       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 543/1044] 09963 change       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 544/1044] 69274 color        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 545/1044] 11772 color        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 546/1044] 11773 color        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 547/1044] 11767 color        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 548/1044] 11780 color        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 549/1044] 11769 color        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 550/1044] 11768 color        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 551/1044] 11770 color        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 552/1044] 69282 corn         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 553/1044] 13325 corn         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 554/1044] 13337 corn         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 555/1044] 13326 corn         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 556/1044] 13327 corn         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 557/1044] 13328 corn         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 558/1044] 13329 corn         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 559/1044] 65408 corn         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 560/1044] 65409 corn         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 561/1044] 13333 corn         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 562/1044] 13323 corn         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 563/1044] 13334 corn         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 564/1044] 13702 cow          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 565/1044] 69283 cow          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 566/1044] 13699 cow          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 567/1044] 13698 cow          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 568/1044] 13703 cow          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 569/1044] 13695 cow          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 570/1044] 13696 cow          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 571/1044] 13710 cow          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 572/1044] 65434 dance        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 573/1044] 14627 dance        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 574/1044] 14633 dance        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 575/1044] 14622 dance        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 576/1044] 14624 dance        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 577/1044] 14625 dance        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 578/1044] 14623 dance        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 579/1044] 69290 dark         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 580/1044] 14674 dark         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 581/1044] 14675 dark         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 582/1044] 14673 dark         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 583/1044] 14676 dark         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 584/1044] 65439 dark         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 585/1044] 65440 dark         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 586/1044] 14680 dark         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 587/1044] 14671 dark         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 588/1044] 14685 dark         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 589/1044] 69307 eat          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 590/1044] 14672 dark         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 591/1044] 14681 dark         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 592/1044] 65601 eat          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 593/1044] 18329 eat          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 594/1044] 18323 eat          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 595/1044] 18335 eat          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 596/1044] 19264 enjoy        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 597/1044] 19261 enjoy        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 598/1044] 18324 eat          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 599/1044] 18325 eat          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 600/1044] 65635 enjoy        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 601/1044] 19257 enjoy        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 602/1044] 19269 enjoy        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 603/1044] 19258 enjoy        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 604/1044] 22954 forget       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 605/1044] 19260 enjoy        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 606/1044] 65761 forget       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 607/1044] 19259 enjoy        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 608/1044] 22955 forget       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 609/1044] 22952 forget       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 610/1044] 22967 forget       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 611/1044] 22960 forget       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 612/1044] 24660 give         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 613/1044] 24638 give         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 614/1044] 69343 give         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 615/1044] 22953 forget       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 616/1044] 24641 give         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 617/1044] 24640 give         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 618/1044] 24636 give         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 619/1044] 24639 give         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 620/1044] 66010 last         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 621/1044] 24651 give         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 622/1044] 24648 give         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 623/1044] 24649 give         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 624/1044] 32249 last         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 625/1044] 32250 last         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 626/1044] 32248 last         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 627/1044] 32263 last         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 628/1044] 32246 last         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 629/1044] 32253 last         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 630/1044] 32254 last         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 631/1044] 32255 last         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 632/1044] 32260 last         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 633/1044] 32261 last         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 634/1044] 32257 last         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 635/1044] 35511 meet         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 636/1044] 35513 meet         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 637/1044] 35512 meet         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 638/1044] 35516 meet         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 639/1044] 35517 meet         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 640/1044] 35509 meet         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 641/1044] 35523 meet         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 642/1044] 35518 meet         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 643/1044] 66112 meet         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 644/1044] 42831 pink         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 645/1044] 69430 pink         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 646/1044] 42833 pink         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 647/1044] 42832 pink         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 648/1044] 42843 pink         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 649/1044] 42836 pink         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 650/1044] 66296 pink         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 651/1044] 42829 pink         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 652/1044] 42830 pink         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 653/1044] 69431 pizza        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 654/1044] 42958 pizza        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 655/1044] 42977 pizza        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 656/1044] 42959 pizza        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 657/1044] 42961 pizza        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 658/1044] 42960 pizza        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 659/1044] 42962 pizza        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 660/1044] 42967 pizza        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 661/1044] 42969 pizza        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 662/1044] 42956 pizza        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 663/1044] 42966 pizza        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 664/1044] 43166 play         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 665/1044] 43171 play         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 666/1044] 43170 play         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 667/1044] 69433 play         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 668/1044] 43180 play         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 669/1044] 43179 play         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 670/1044] 43173 play         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 671/1044] 43174 play         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 672/1044] 43169 play         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 673/1044] 69455 school       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 674/1044] 43167 play         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 675/1044] 43168 play         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 676/1044] 49596 school       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 677/1044] 49602 school       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 678/1044] 49606 school       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 679/1044] 49595 school       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 680/1044] 49599 school       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 681/1044] 49598 school       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 682/1044] 49597 school       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 683/1044] 49600 school       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 684/1044] 50038 secretary    FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 685/1044] 50037 secretary    FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 686/1044] 50039 secretary    FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 687/1044] 50040 secretary    FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 688/1044] 50044 secretary    FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 689/1044] 66441 secretary    FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 690/1044] 50041 secretary    FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 691/1044] 50045 secretary    FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 692/1044] 50046 secretary    FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 693/1044] 51223 short        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 694/1044] 51221 short        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 695/1044] 50052 secretary    FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 696/1044] 51227 short        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 697/1044] 51224 short        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 698/1044] 51225 short        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 699/1044] 51226 short        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 700/1044] 51232 short        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 701/1044] 51220 short        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 702/1044] 66469 short        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 703/1044] 51231 short        FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 704/1044] 51235 short        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 705/1044] 69511 time         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 706/1044] 51233 short        FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 707/1044] 51236 short        FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 708/1044] 58502 time         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 709/1044] 58503 time         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 710/1044] 66644 time         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 711/1044] 58497 time         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 712/1044] 58508 time         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 713/1044] 58498 time         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 714/1044] 58499 time         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 715/1044] 69524 want         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 716/1044] 62246 want         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 717/1044] 62247 want         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 718/1044] 62250 want         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 719/1044] 62248 want         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 720/1044] 62251 want         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 721/1044] 62244 want         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 722/1044] 62259 want         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 723/1044] 62245 want         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 724/1044] 63806 work         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 725/1044] 63789 work         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 726/1044] 63790 work         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 727/1044] 63791 work         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 728/1044] 63792 work         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 729/1044] 63793 work         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 730/1044] 66804 work         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 731/1044] 63795 work         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 732/1044] 63788 work         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 733/1044] 63799 work         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 734/1044] 01383 africa       FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 735/1044] 01384 africa       FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 736/1044] 01385 africa       FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 737/1044] 01386 africa       FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 738/1044] 01387 africa       FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 739/1044] 01388 africa       FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 740/1044] 01391 africa       FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 741/1044] 65029 africa       FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 742/1044] 69225 basketball   FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 743/1044] 01398 africa       FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 744/1044] 05230 basketball   FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 745/1044] 05231 basketball   FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 746/1044] 05232 basketball   FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 747/1044] 05233 basketball   FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 748/1044] 05234 basketball   FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 749/1044] 05238 basketball   FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 750/1044] 65144 basketball   FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 751/1044] 65145 basketball   FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 752/1044] 05229 basketball   FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 753/1044] 05243 basketball   FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 754/1044] 65192 birthday     FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 755/1044] 06365 birthday     FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 756/1044] 06359 birthday     FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 757/1044] 06371 birthday     FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 758/1044] 06360 birthday     FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 759/1044] 06363 birthday     FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 760/1044] 69252 brown        FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 761/1044] 07963 brown        FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 762/1044] 07966 brown        FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 763/1044] 65263 brown        FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 764/1044] 07960 brown        FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 765/1044] 07973 brown        FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 766/1044] 07961 brown        FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 767/1044] 07962 brown        FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 768/1044] 08429 but          FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 769/1044] 08431 but          FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 770/1044] 65278 but          FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 771/1044] 08424 but          FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 772/1044] 08437 but          FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 773/1044] 08425 but          FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 774/1044] 08426 but          FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 775/1044] 10147 cheat        FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 776/1044] 10166 cheat        FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 777/1044] 10148 cheat        FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 778/1044] 10149 cheat        FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 779/1044] 65341 cheat        FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 780/1044] 10151 cheat        FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 781/1044] 65342 cheat        FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 782/1044] 10157 cheat        FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 783/1044] 10158 cheat        FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 784/1044] 10159 cheat        FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 785/1044] 69269 city         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 786/1044] 10895 city         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 787/1044] 10898 city         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 788/1044] 65362 city         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 789/1044] 65363 city         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 790/1044] 10892 city         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 791/1044] 10904 city         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 792/1044] 10893 city         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 793/1044] 10894 city         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 794/1044] 13158 cook         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 795/1044] 13160 cook         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 796/1044] 13161 cook         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 797/1044] 13167 cook         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 798/1044] 13168 cook         FAILED: 404 Client Error: Not Found for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 799/1044] 13155 cook         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 800/1044] 13156 cook         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 801/1044] 13157 cook         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 802/1044] 15034 decide       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 803/1044] 15035 decide       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 804/1044] 15037 decide       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 805/1044] 15038 decide       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 806/1044] 65449 decide       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 807/1044] 65450 decide       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 808/1044] 15043 decide       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 809/1044] 15032 decide       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 810/1044] 15033 decide       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 811/1044] 65792 full         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 812/1044] 23782 full         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 813/1044] 23771 full         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 814/1044] 23774 full         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 815/1044] 23775 full         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 816/1044] 23766 full         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 817/1044] 23776 full         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 818/1044] 23767 full         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 819/1044] 23768 full         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 820/1044] 23769 full         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 821/1044] 69370 how          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 822/1044] 28205 how          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 823/1044] 28210 how          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 824/1044] 28201 how          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 825/1044] 28211 how          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 826/1044] 28214 how          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 827/1044] 28202 how          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 828/1044] 28203 how          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 829/1044] 28204 how          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 830/1044] 30849 jacket       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 831/1044] 30831 jacket       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 832/1044] 30832 jacket       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 833/1044] 30833 jacket       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 834/1044] 30834 jacket       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 835/1044] 30835 jacket       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 836/1044] 30840 jacket       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 837/1044] 66038 letter       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 838/1044] 32948 letter       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 839/1044] 32949 letter       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 840/1044] 32950 letter       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 841/1044] 32953 letter       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 842/1044] 32954 letter       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 843/1044] 32945 letter       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 844/1044] 32955 letter       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 845/1044] 32959 letter       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 846/1044] 32946 letter       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 847/1044] 66111 medicine     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 848/1044] 35454 medicine     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 849/1044] 35455 medicine     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 850/1044] 35456 medicine     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 851/1044] 35458 medicine     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 852/1044] 35452 medicine     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 853/1044] 35467 medicine     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 854/1044] 35453 medicine     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 855/1044] 37886 need         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 856/1044] 37881 need         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 857/1044] 37894 need         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 858/1044] 37882 need         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 859/1044] 37883 need         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 860/1044] 37884 need         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 861/1044] 40840 paint        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 862/1044] 40841 paint        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 863/1044] 40834 paint        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 864/1044] 40847 paint        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 865/1044] 40835 paint        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 866/1044] 40836 paint        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 867/1044] 40837 paint        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 868/1044] 41032 paper        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 869/1044] 41030 paper        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 870/1044] 41025 paper        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 871/1044] 41037 paper        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 872/1044] 41027 paper        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 873/1044] 41026 paper        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 874/1044] 41028 paper        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 875/1044] 41029 paper        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 876/1044] 69439 pull         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 877/1044] 45265 pull         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 878/1044] 45267 pull         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 879/1044] 66351 pull         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 880/1044] 45273 pull         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 881/1044] 45261 pull         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 882/1044] 45262 pull         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 883/1044] 45263 pull         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 884/1044] 45264 pull         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 885/1044] 69440 purple       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 886/1044] 45438 purple       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 887/1044] 66355 purple       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 888/1044] 45443 purple       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 889/1044] 45433 purple       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 890/1044] 45434 purple       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 891/1044] 45435 purple       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 892/1044] 48105 right        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 893/1044] 45436 purple       FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 894/1044] 48124 right        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 895/1044] 48126 right        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 896/1044] 48107 right        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 897/1044] 48106 right        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 898/1044] 48108 right        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 899/1044] 48109 right        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 900/1044] 48114 right        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 901/1044] 48115 right        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 902/1044] 49173 same         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 903/1044] 49175 same         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 904/1044] 49176 same         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 905/1044] 49178 same         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 906/1044] 49181 same         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 907/1044] 49182 same         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 908/1044] 49188 same         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 909/1044] 49183 same         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 910/1044] 49174 same         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 911/1044] 53273 son          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 912/1044] 53274 son          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 913/1044] 53275 son          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 914/1044] 66531 son          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 915/1044] 66532 son          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 916/1044] 53279 son          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 917/1044] 53268 son          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 918/1044] 53269 son          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 919/1044] 53270 son          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 920/1044] 53271 son          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 921/1044] 57278 tell         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 922/1044] 57282 tell         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 923/1044] 57283 tell         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 924/1044] 57285 tell         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 925/1044] 57284 tell         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 926/1044] 57276 tell         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 927/1044] 57286 tell         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 928/1044] 57287 tell         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 929/1044] 57277 tell         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 930/1044] 57291 tell         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 931/1044] 58362 thursday     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 932/1044] 58363 thursday     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 933/1044] 58366 thursday     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 934/1044] 58365 thursday     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 935/1044] 66637 thursday     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 936/1044] 66638 thursday     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 937/1044] 66639 thursday     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 938/1044] 66640 thursday     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 939/1044] 58370 thursday     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 940/1044] 58360 thursday     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 941/1044] 58361 thursday     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 942/1044] 62113 wait         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 943/1044] 62098 wait         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 944/1044] 62100 wait         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 945/1044] 62101 wait         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 946/1044] 62102 wait         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 947/1044] 62103 wait         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 948/1044] 62106 wait         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 949/1044] 66740 wait         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 950/1044] 62097 wait         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 951/1044] 62505 water        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 952/1044] 62107 wait         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 953/1044] 62506 water        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 954/1044] 66752 water        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 955/1044] 62510 water        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 956/1044] 62499 water        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 957/1044] 62500 water        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 958/1044] 62501 water        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 959/1044] 62503 water        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 960/1044] 62502 water        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 961/1044] 26835 headache     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 962/1044] 26836 headache     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 963/1044] 26837 headache     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 964/1044] 26839 headache     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 965/1044] 26840 headache     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 966/1044] 65881 headache     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 967/1044] 26846 headache     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 968/1044] 26833 headache     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 969/1044] 26834 headache     FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 970/1044] 69470 sick         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 971/1044] 51517 sick         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 972/1044] 51502 sick         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 973/1044] 51503 sick         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 974/1044] 51504 sick         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 975/1044] 66475 sick         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 976/1044] 51507 sick         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 977/1044] 51501 sick         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 978/1044] 64307 yesterday    FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 979/1044] 64309 yesterday    FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 980/1044] 64308 yesterday    FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 981/1044] 64311 yesterday    FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 982/1044] 66821 yesterday    FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 983/1044] 64315 yesterday    FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 984/1044] 66822 yesterday    FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 985/1044] 64304 yesterday    FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 986/1044] 64305 yesterday    FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 987/1044] 01466 again        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 988/1044] 64306 yesterday    FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 989/1044] 01460 again        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 990/1044] 65032 again        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 991/1044] 01461 again        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 992/1044] 01471 again        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 993/1044] 01463 again        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 994/1044] 01462 again        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 995/1044] 69219 bad          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 996/1044] 01464 again        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 997/1044] 04712 bad          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 998/1044] 04709 bad          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[ 999/1044] 04713 bad          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1000/1044] 04715 bad          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1001/1044] 04717 bad          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1002/1044] 65125 bad          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1003/1044] 04708 bad          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1004/1044] 04718 bad          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1005/1044] 65377 cold         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1006/1044] 04723 bad          FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1007/1044] 11638 cold         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1008/1044] 11622 cold         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1009/1044] 11623 cold         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1010/1044] 11624 cold         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1011/1044] 11625 cold         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1012/1044] 11627 cold         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1013/1044] 11628 cold         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1014/1044] 11621 cold         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1015/1044] 11634 cold         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1016/1044] 11633 cold         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1017/1044] 69347 good         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1018/1044] 11635 cold         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1019/1044] 25072 good         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1020/1044] 25073 good         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1021/1044] 25066 good         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1022/1044] 65835 good         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1023/1044] 25076 good         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1024/1044] 25067 good         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1025/1044] 25068 good         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1026/1044] 25069 good         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1027/1044] 69512 today        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1028/1044] 25070 good         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1029/1044] 58684 today        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1030/1044] 58687 today        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1031/1044] 58677 today        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1032/1044] 58678 today        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1033/1044] 58681 today        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1034/1044] 58679 today        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1035/1044] 58683 today        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1036/1044] 58682 today        FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1037/1044] 69532 when         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1038/1044] 63072 when         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1039/1044] 66773 when         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1040/1044] 63066 when         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1041/1044] 63077 when         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1042/1044] 63067 when         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1043/1044] 63070 when         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+[1044/1044] 63069 when         FAILED: 429 Client Error: Too Many Requests for url: https://api.kaggle.com/v1/datasets.DatasetApiService/GetDatasetMetadata
+
+Downloaded 77, already present 136, failed 967 in 151s
+Failed ids (rerun to retry): 08916 08918 08917 08919 08920 08921 65298 08924 65299 65300 08915 08925 65415 13647 13648 13631 13632 13634 13635 13636 13630 13640 13641 13642 13646 14882 14903 14884 14883 14885 14886 14887 65445 14888 14893 14894 21870 21890 21891 21869 21871 21872 21874 21878 57948 21883 57949 57934 57953 57935 57936 66606 57939 57937 57940 57941 57942 66607 57933 57947 57943 62175 62159 62160 62163 62164 66743 66742 62158 62168 62169 62170 64224 64211 64210 64212 64213 66818 66816 64209 64219 64218 69206 02003 01987 01988 01991 01992 65043 01986 69236 06472 06473 06474 06476 06477 06478 65200 06471 06486 69281 65403 13213 13197 13216 13217 13198 13199 13201 13200 65402 13203 13196 13208 13209 21942 21944 21943 21945 21949 21950 65721 21941 21951 69368 28108 28125 28109 28110 28111 28112 28115 28116 28107 69389 33266 33285 33267 33286 33268 33269 33270 33273 33274 69396 34823 34824 34825 34826 34827 34830 34831 34832 34839 69402 36946 36930 36931 36932 36933 36936 36937 66147 66146 36929 69413 38994 38999 39000 38990 39006 38991 38995 38997 69422 40115 40116 40117 40118 40119 40121 66246 40129 40130 56579 56558 56557 56556 56563 57628 57647 57629 57630 57632 57631 57633 57634 57635 57638 57639 57640 57641 69531 62967 62968 66769 62987 62964 62988 62975 62965 62979 62966 63679 63665 63666 63667 63668 63669 63672 63673 66798 66799 63664 05644 05629 05630 05631 05633 05632 05634 05636 65162 05637 65163 65161 05638 69238 06835 06839 65216 06845 06832 06833 06834 07389 07390 07391 07392 07393 07394 07397 65242 65241 07388 07398 07399 07400 69257 65294 08955 08935 08936 08937 08938 08942 08944 69298 17097 17084 17085 17086 17087 17090 17091 65506 65507 17083 69316 20980 20981 20982 20983 20986 20987 65677 20978 20992 20979 69325 22130 22114 22115 22116 22117 22120 65731 22121 22113 25322 25323 25324 25325 25326 65843 25329 25330 25321 69359 26713 26739 26712 26741 26714 26715 26717 26719 65884 26972 26973 26974 26975 26976 26971 26980 31767 31751 31750 31753 31752 31755 31756 65996 31749 32156 32157 32160 32158 32163 66008 32154 66007 32167 32155 32337 32338 32320 32321 32323 32322 32325 32324 66015 32326 66014 32333 69395 34746 34733 34734 34736 34737 34738 66098 66099 66097 34732 34742 51057 51081 51058 51056 51059 51060 51061 51063 51064 51066 51068 51067 55364 55365 55368 55369 55366 66575 55361 55375 55362 55363 56852 56838 56839 56841 56842 56844 56843 66591 66592 56837 56846 56848 69533 63204 63205 63207 63208 63200 63214 63201 63203 63202 64087 64088 64091 64090 64084 64097 64086 64085 00639 00624 00627 00625 00626 00628 00629 00631 00632 65009 00623 00633 00634 69213 03005 03008 65085 65086 65084 02999 03000 03001 03003 69233 03002 06333 06335 06337 06334 65187 06330 06331 06343 06332 09966 09967 09950 09970 09953 09954 09955 09956 09957 09949 09960 09963 69274 11772 11773 11767 11780 11769 11768 11770 69282 13325 13337 13326 13327 13328 13329 65408 65409 13333 13323 13334 13702 69283 13699 13698 13703 13695 13696 13710 65434 14627 14633 14622 14624 14625 14623 69290 14674 14675 14673 14676 65439 65440 14680 14671 14685 69307 14672 14681 65601 18329 18323 18335 19264 19261 18324 18325 65635 19257 19269 19258 22954 19260 65761 19259 22955 22952 22967 22960 24660 24638 69343 22953 24641 24640 24636 24639 66010 24651 24648 24649 32249 32250 32248 32263 32246 32253 32254 32255 32260 32261 32257 35511 35513 35512 35516 35517 35509 35523 35518 66112 42831 69430 42833 42832 42843 42836 66296 42829 42830 69431 42958 42977 42959 42961 42960 42962 42967 42969 42956 42966 43166 43171 43170 69433 43180 43179 43173 43174 43169 69455 43167 43168 49596 49602 49606 49595 49599 49598 49597 49600 50038 50037 50039 50040 50044 66441 50041 50045 50046 51223 51221 50052 51227 51224 51225 51226 51232 51220 66469 51231 51235 69511 51233 51236 58502 58503 66644 58497 58508 58498 58499 69524 62246 62247 62250 62248 62251 62244 62259 62245 63806 63789 63790 63791 63792 63793 66804 63795 63788 63799 01383 01384 01385 01386 01387 01388 01391 65029 69225 01398 05230 05231 05232 05233 05234 05238 65144 65145 05229 05243 65192 06365 06359 06371 06360 06363 69252 07963 07966 65263 07960 07973 07961 07962 08429 08431 65278 08424 08437 08425 08426 10147 10166 10148 10149 65341 10151 65342 10157 10158 10159 69269 10895 10898 65362 65363 10892 10904 10893 10894 13158 13160 13161 13167 13168 13155 13156 13157 15034 15035 15037 15038 65449 65450 15043 15032 15033 65792 23782 23771 23774 23775 23766 23776 23767 23768 23769 69370 28205 28210 28201 28211 28214 28202 28203 28204 30849 30831 30832 30833 30834 30835 30840 66038 32948 32949 32950 32953 32954 32945 32955 32959 32946 66111 35454 35455 35456 35458 35452 35467 35453 37886 37881 37894 37882 37883 37884 40840 40841 40834 40847 40835 40836 40837 41032 41030 41025 41037 41027 41026 41028 41029 69439 45265 45267 66351 45273 45261 45262 45263 45264 69440 45438 66355 45443 45433 45434 45435 48105 45436 48124 48126 48107 48106 48108 48109 48114 48115 49173 49175 49176 49178 49181 49182 49188 49183 49174 53273 53274 53275 66531 66532 53279 53268 53269 53270 53271 57278 57282 57283 57285 57284 57276 57286 57287 57277 57291 58362 58363 58366 58365 66637 66638 66639 66640 58370 58360 58361 62113 62098 62100 62101 62102 62103 62106 66740 62097 62505 62107 62506 66752 62510 62499 62500 62501 62503 62502 26835 26836 26837 26839 26840 65881 26846 26833 26834 69470 51517 51502 51503 51504 66475 51507 51501 64307 64309 64308 64311 66821 64315 66822 64304 64305 01466 64306 01460 65032 01461 01471 01463 01462 69219 01464 04712 04709 04713 04715 04717 65125 04708 04718 65377 04723 11638 11622 11623 11624 11625 11627 11628 11621 11634 11633 69347 11635 25072 25073 25066 65835 25076 25067 25068 25069 69512 25070 58684 58687 58677 58678 58681 58679 58683 58682 69532 63072 66773 63066 63077 63067 63070 63069
+slenv/bin/python src/wlasl_download.py --manifest  --workers 4  213.19s user 50.79s system 174% cpu 2:31.44 total
