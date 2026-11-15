@@ -101,7 +101,7 @@ export class WebSpeechEngine implements SpeechEngine {
 /** Silent stand-in (tests, or machines without speech synthesis). */
 export class MockSpeechEngine implements SpeechEngine {
   readonly name = 'Silent (mock)';
-  readonly available = true;
+  readonly available: boolean = true;
   readonly spoken: { text: string; opts: SpeechOptions }[] = [];
   private readonly stateEmitter = new Emitter<SpeechState>();
   private readonly voicesEmitter = new Emitter<SpeechVoice[]>();

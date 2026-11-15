@@ -68,10 +68,25 @@ describe('useSignSession', () => {
     act(() => result.current.confirm());
     expect(onConfirm).toHaveBeenCalledWith(
       expect.objectContaining({ text: 'Thank you so much.', edited: true }),
-      expect.objectContaining({ autoSpeak: true }),
+      expect.objectContaining({ autoSpeak: false }),
+      {},
     );
     expect(result.current.state.transcript).toHaveLength(1);
     expect(result.current.state.draft).toBeNull();
+  });
+
+  it('confirm({ speak: true }) passes the speak intent through', async () => {
+    const { recognizer, result, onConfirm } = setup();
+    act(() => void recognizer.emit('HELLO'));
+    await act(() => vi.advanceTimersByTimeAsync(1100));
+    act(() => result.current.confirm({ speak: true }));
+    expect(onConfirm).toHaveBeenCalledWith(expect.objectContaining({ text: 'Hello.' }), expect.anything(), { speak: true });
+  });
+
+  it('confirm() without a draft does nothing', () => {
+    const { result, onConfirm } = setup();
+    act(() => result.current.confirm({ speak: true }));
+    expect(onConfirm).not.toHaveBeenCalled();
   });
 
   it('translateNow() skips the pause', async () => {

@@ -15,7 +15,7 @@ function cspMetaPlugin(): Plugin {
     transformIndexHtml(html) {
       return html.replace(
         '<!-- CSP -->',
-        `<meta http-equiv="Content-Security-Policy" content="${buildCsp(mode)}" />`,
+        `<meta http-equiv="Content-Security-Policy" content="${buildCsp(mode, { meta: true })}" />`,
       );
     },
   };

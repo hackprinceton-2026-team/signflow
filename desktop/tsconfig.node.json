@@ -14,7 +14,8 @@
     "src/main/**/*",
     "src/preload/**/*",
     "src/shared/**/*",
-    "contract/**/*"
+    "contract/**/*",
+    "src/renderer/src/**/*.node.test.ts"
   ],
   "exclude": ["contract/fixtures/**"]
 }

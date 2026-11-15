@@ -16,7 +16,10 @@ export interface SessionSettings {
   minConfidence: number;
   /** Silence (ms) after the last accepted sign before a draft is generated. */
   pauseMs: number;
-  /** Speak each sentence as soon as it's confirmed. */
+  /**
+   * Also speak on plain Confirm. Off by default: the explicit Speak action is
+   * the normal way to speak, and nothing unconfirmed is ever spoken.
+   */
   autoSpeak: boolean;
 }
 
@@ -46,8 +49,26 @@ export const LIVE_FEED_LIMIT = 24;
 export const DEFAULT_SETTINGS: SessionSettings = {
   minConfidence: 0.6,
   pauseMs: 1600,
-  autoSpeak: true,
+  autoSpeak: false,
 };
+
+export const SETTINGS_LIMITS = {
+  minConfidence: [0.3, 0.95],
+  pauseMs: [600, 3000],
+} as const;
+
+/** Validate persisted settings (localStorage) so stale or corrupt values can't break the session. */
+export function isSessionSettings(value: unknown): value is SessionSettings {
+  if (!value || typeof value !== 'object') return false;
+  const v = value as Record<string, unknown>;
+  const inRange = (x: unknown, [min, max]: readonly [number, number]) =>
+    typeof x === 'number' && Number.isFinite(x) && x >= min && x <= max;
+  return (
+    inRange(v['minConfidence'], SETTINGS_LIMITS.minConfidence) &&
+    inRange(v['pauseMs'], SETTINGS_LIMITS.pauseMs) &&
+    typeof v['autoSpeak'] === 'boolean'
+  );
+}
 
 export function initialSessionState(settings: Partial<SessionSettings> = {}): SessionState {
   return {

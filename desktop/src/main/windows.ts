@@ -51,7 +51,12 @@ export function createMainWindow(): BrowserWindow {
     minHeight: 640,
     show: false,
     title: 'SignFlow',
-    backgroundColor: '#0f1115',
+    backgroundColor: '#0a0b0e', // matches --bg, so there is no flash before first paint
+    // macOS: content extends under an inset title bar; the renderer reserves room
+    // for the traffic lights and marks drag regions. Other platforms keep the native frame.
+    ...(process.platform === 'darwin'
+      ? { titleBarStyle: 'hiddenInset' as const, trafficLightPosition: { x: 20, y: 20 } }
+      : {}),
     webPreferences,
   });
   recordPrefsForE2e(win, webPreferences);

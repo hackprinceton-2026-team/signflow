@@ -7,6 +7,12 @@ let app: ElectronApplication;
 let page: Page;
 let userData: string;
 
+/** Click a destination in the main navigation rail. */
+async function go(label: 'Live' | 'Workspace' | 'Notes' | 'Settings') {
+  await page.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: label }).click();
+  await expect(page.getByRole('heading', { level: 2, name: label })).toBeVisible();
+}
+
 test.beforeAll(async () => {
   userData = mkdtempSync(join(tmpdir(), 'signflow-e2e-'));
   app = await electron.launch({
@@ -30,7 +36,10 @@ test('uses an isolated profile for e2e runs', async () => {
 test('main window loads from the app:// origin', async () => {
   await expect(page).toHaveTitle('SignFlow');
   expect(page.url()).toBe('app://signflow/index.html?e2e=1');
-  await expect(page.getByRole('heading', { name: 'SignFlow' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: 'SignFlow' })).toHaveCount(1);
+  await expect(page.getByRole('navigation', { name: 'Main' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 2, name: 'Live' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Camera is off' })).toBeVisible();
 });
 
 test('renderer has no Node.js access, only the typed bridge', async () => {
@@ -73,39 +82,64 @@ test('CSP is enforced: inline scripts are blocked', async () => {
   expect(ran).toBe(false);
 });
 
-test('app info comes through the IPC bridge', async () => {
+test('app info comes through the IPC bridge (Settings › About)', async () => {
+  await go('Settings');
   await expect(page.getByTestId('app-info')).toContainText('SignFlow v0.1.0');
   await expect(page.getByTestId('app-info')).toContainText('Electron');
+  await go('Live');
 });
 
-test('camera → live signs → draft → edit + confirm (mock adapters)', async () => {
+test('Live: camera → signs over the camera → draft → edit + Confirm, then Speak', async () => {
   await page.getByRole('button', { name: 'Start camera' }).click();
   await expect(page.getByTestId('recognizer-status')).toContainText('Recognizing', { timeout: 5000 });
+  await expect(page.getByTestId('status-camera')).toHaveText('Camera on');
 
   // The fake camera produces real frames; the mock model only emits while frames flow.
   const videoReady = await page.getByTestId('webcam-video').evaluate((v: HTMLVideoElement) => v.videoWidth > 0);
   expect(videoReady).toBe(true);
 
-  await expect(page.getByTestId('sign-row').first()).toBeVisible({ timeout: 5000 });
+  await expect(page.getByTestId('sign-chip').first()).toBeVisible({ timeout: 5000 });
   await expect(page.getByRole('meter').first()).toHaveAttribute('aria-valuenow', /\d+/);
   await expect(page.getByTestId('draft-text')).toHaveValue('Hello, nice to meet you.', { timeout: 15_000 });
+
+  // Confirm (edited) commits without speaking.
+  await page.getByRole('button', { name: 'Edit' }).click();
+  await expect(page.getByTestId('draft-text')).toBeFocused();
   await page.getByTestId('draft-text').fill('Hello, nice to meet you all.');
   await page.getByTestId('draft-text').press('ControlOrMeta+Enter');
-  await expect(page.getByTestId('utterance').first()).toContainText('Hello, nice to meet you all.');
-  // Auto-speak fired (silent engine in e2e runs).
-  await expect(page.getByTestId('speech-state')).toHaveText('Speaking');
+  await expect(page.getByTestId('confirm-toast')).toContainText('Confirmed');
+  await expect(page.getByTestId('status-speaking')).toHaveCount(0);
 
+  // Speak confirms and reads aloud (silent engine in e2e runs).
+  await expect(page.getByTestId('draft-text')).toHaveValue('How are you?', { timeout: 15_000 });
+  await page.getByRole('button', { name: /^Speak/ }).click();
+  await expect(page.getByTestId('status-speaking')).toBeVisible();
+  await expect(page.getByTestId('confirm-toast')).toContainText('Spoken');
+
+  // Workspace shows the details; recognition keeps running there.
+  await go('Workspace');
+  await expect(page.getByTestId('sign-row').first()).toBeVisible();
+  await expect(page.getByTestId('utterance').nth(0)).toContainText('Hello, nice to meet you all.');
+  await expect(page.getByTestId('utterance').nth(1)).toContainText('How are you?');
+
+  await go('Live');
   await page.getByRole('button', { name: 'Stop camera' }).click();
   await expect(page.getByText('Camera is off')).toBeVisible();
 });
 
-test('notes mode: confirmed sentences are appended and exported as Markdown', async () => {
-  await page.getByRole('tab', { name: 'Notes' }).click();
+test('notes: capture confirmed sentences from the dock and export Markdown', async () => {
+  await go('Notes');
   await page.getByLabel('Note title').fill('E2E lecture');
+  await page.getByRole('switch', { name: 'Capture from Live' }).click();
+  await expect(page.getByText('Capturing to notes')).toBeVisible();
+
+  await go('Live');
   await page.getByRole('button', { name: 'Start camera' }).click();
+  await go('Notes');
+  // The draft follows onto other screens as a dock.
   await expect(page.getByTestId('draft-text')).toBeVisible({ timeout: 15_000 });
   const sentence = await page.getByTestId('draft-text').inputValue();
-  await page.getByRole('button', { name: /Add to notes/ }).click();
+  await page.getByRole('button', { name: /^Confirm/ }).click();
   await expect(page.getByTestId('note-body')).toHaveValue(new RegExp(sentence.replace(/[.?]/g, '\\$&')));
 
   // Stub the native Save dialog in the main process, then export for real.
@@ -119,8 +153,9 @@ test('notes mode: confirmed sentences are appended and exported as Markdown', as
   expect(md.startsWith('# E2E lecture')).toBe(true);
   expect(md).toContain(sentence);
 
+  await page.getByRole('switch', { name: 'Capture from Live' }).click();
+  await go('Live');
   await page.getByRole('button', { name: 'Stop camera' }).click();
-  await page.getByRole('tab', { name: 'Conversation' }).click();
 });
 
 test('IPC rejects malformed export payloads', async () => {

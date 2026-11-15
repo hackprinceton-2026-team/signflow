@@ -8,7 +8,11 @@
 /** Backend origins the real adapters may talk to (see docs/interfaces.md). */
 export const BACKEND_ORIGINS = ['http://localhost:8000', 'ws://localhost:8000'] as const;
 
-export function buildCsp(mode: 'development' | 'production'): string {
+/**
+ * @param opts.meta  Build the <meta> variant. `frame-ancestors` is omitted there
+ *   because browsers ignore it in <meta> (it is enforced by the response header).
+ */
+export function buildCsp(mode: 'development' | 'production', opts: { meta?: boolean } = {}): string {
   const dev = mode === 'development';
   const directives: Record<string, string[]> = {
     'default-src': ["'self'"],
@@ -29,6 +33,7 @@ export function buildCsp(mode: 'development' | 'production'): string {
     'frame-ancestors': ["'none'"],
     'worker-src': ["'self'", 'blob:'],
   };
+  if (opts.meta) delete directives['frame-ancestors'];
   return Object.entries(directives)
     .map(([k, v]) => `${k} ${v.join(' ')}`)
     .join('; ');

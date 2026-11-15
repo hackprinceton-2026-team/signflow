@@ -1,14 +1,25 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import type { NotesController } from '../hooks/useNotes';
 import { noteToMarkdown, wordCount } from '../state/notes';
+import { Button, Icon, IconButton, Switch } from '../ui';
 
 interface Props {
   notes: NotesController;
+  /** Extra controls shown in the editor toolbar (e.g. "Capture from Live"). */
+  toolbar?: ReactNode;
 }
 
 type Flash = { kind: 'ok' | 'error'; text: string } | null;
 
-export function NotesPanel({ notes }: Props) {
+function relativeTime(ms: number): string {
+  const s = Math.round((Date.now() - ms) / 1000);
+  if (s < 60) return 'just now';
+  if (s < 3600) return `${Math.floor(s / 60)} min ago`;
+  if (s < 86_400) return `${Math.floor(s / 3600)} h ago`;
+  return new Date(ms).toLocaleDateString([], { month: 'short', day: 'numeric' });
+}
+
+export function NotesPanel({ notes, toolbar }: Props) {
   const { state, current } = notes;
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [flash, setFlash] = useState<Flash>(null);
@@ -43,108 +54,102 @@ export function NotesPanel({ notes }: Props) {
   const empty = !current.body.trim();
 
   return (
-    <section className="panel notes-panel" aria-labelledby="notes-title">
-      <div className="panel-head">
-        <h2 id="notes-title" className="panel-title">
-          Notes
-        </h2>
-        <div className="panel-actions">
-          <label className="toggle toggle-sm">
-            <input
-              type="checkbox"
-              checked={state.timestamps}
-              onChange={(e) => notes.setTimestamps(e.target.checked)}
-            />
-            <span>Timestamps</span>
-          </label>
-          <button type="button" className="btn btn-sm" onClick={() => void copy()} disabled={empty}>
-            Copy
-          </button>
-          <button type="button" className="btn btn-sm" onClick={() => void exportMd()} disabled={empty}>
-            Export .md
-          </button>
+    <section className="notes" aria-label="Notes">
+      <nav className="notes-list" aria-label="All notes">
+        <div className="notes-list-head">
+          <span className="eyebrow">Notes</span>
+          <Button size="sm" icon="plus" onClick={notes.create}>
+            New note
+          </Button>
         </div>
-      </div>
-
-      <div className="notes-layout">
-        <nav className="notes-list" aria-label="Notes">
-          <button type="button" className="btn btn-sm notes-new" onClick={notes.create}>
-            + New note
-          </button>
-          <ul>
-            {state.notes.map((n) => (
-              <li key={n.id}>
-                <button
-                  type="button"
-                  className={`notes-item ${n.id === current.id ? 'active' : ''}`}
-                  aria-current={n.id === current.id ? 'true' : undefined}
-                  onClick={() => {
-                    setConfirmingDelete(false);
-                    notes.select(n.id);
-                  }}
-                >
-                  <span className="notes-item-title">{n.title || 'Untitled'}</span>
-                  <span className="notes-item-meta">{wordCount(n.body)} words</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        <div className="notes-editor">
-          <div className="notes-title-row">
-            <label className="sr-only" htmlFor="note-title">
-              Note title
-            </label>
-            <input
-              id="note-title"
-              className="notes-title-input"
-              value={current.title}
-              onChange={(e) => notes.rename(current.id, e.target.value)}
-              placeholder="Untitled"
-            />
-            {confirmingDelete ? (
-              <span className="confirm-delete">
-                <span>Delete this note?</span>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-danger"
-                  onClick={() => {
-                    notes.remove(current.id);
-                    setConfirmingDelete(false);
-                  }}
-                >
-                  Delete
-                </button>
-                <button type="button" className="btn btn-sm" onClick={() => setConfirmingDelete(false)}>
-                  Cancel
-                </button>
-              </span>
-            ) : (
-              <button type="button" className="btn btn-sm btn-ghost" onClick={() => setConfirmingDelete(true)}>
-                Delete…
+        <ul>
+          {state.notes.map((n) => (
+            <li key={n.id}>
+              <button
+                type="button"
+                className={`notes-item ${n.id === current.id ? 'is-active' : ''}`}
+                aria-current={n.id === current.id ? 'true' : undefined}
+                onClick={() => {
+                  setConfirmingDelete(false);
+                  notes.select(n.id);
+                }}
+              >
+                <span className="notes-item-title">{n.title || 'Untitled'}</span>
+                <span className="notes-item-meta tabular">
+                  {wordCount(n.body)} words · {relativeTime(n.updatedAt)}
+                </span>
               </button>
-            )}
-          </div>
-          <label className="sr-only" htmlFor="note-body">
-            Note body
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <div className="notes-editor">
+        <div className="notes-toolbar">
+          {toolbar}
+          <Switch checked={state.timestamps} onChange={notes.setTimestamps} label="Timestamps" />
+          <span className="notes-toolbar-spacer" />
+          <Button size="sm" icon="copy" onClick={() => void copy()} disabled={empty}>
+            Copy
+          </Button>
+          <Button size="sm" icon="download" onClick={() => void exportMd()} disabled={empty}>
+            Export .md
+          </Button>
+        </div>
+
+        <div className="notes-title-row">
+          <label className="sr-only" htmlFor="note-title">
+            Note title
           </label>
-          <textarea
-            id="note-body"
-            className="notes-body"
-            value={current.body}
-            onChange={(e) => notes.edit(current.id, e.target.value)}
-            placeholder="Confirmed sentences are added here. You can also type."
-            data-testid="note-body"
+          <input
+            id="note-title"
+            className="notes-title-input"
+            value={current.title}
+            onChange={(e) => notes.rename(current.id, e.target.value)}
+            placeholder="Untitled"
           />
-          <div className="notes-footer muted">
-            <span>{wordCount(current.body)} words · saved locally</span>
-            {flash && (
-              <span className={`flash flash-${flash.kind}`} role="status">
-                {flash.text}
-              </span>
-            )}
-          </div>
+          {confirmingDelete ? (
+            <span className="confirm-delete" role="group" aria-label="Confirm delete">
+              <span>Delete this note?</span>
+              <Button
+                size="sm"
+                variant="danger"
+                onClick={() => {
+                  notes.remove(current.id);
+                  setConfirmingDelete(false);
+                }}
+              >
+                Delete
+              </Button>
+              <Button size="sm" variant="ghost" onClick={() => setConfirmingDelete(false)}>
+                Cancel
+              </Button>
+            </span>
+          ) : (
+            <IconButton icon="trash" label="Delete…" onClick={() => setConfirmingDelete(true)} />
+          )}
+        </div>
+
+        <label className="sr-only" htmlFor="note-body">
+          Note body
+        </label>
+        <textarea
+          id="note-body"
+          className="notes-body"
+          value={current.body}
+          onChange={(e) => notes.edit(current.id, e.target.value)}
+          placeholder="Confirmed sentences are added here. You can also type."
+          data-testid="note-body"
+        />
+        <div className="notes-footer">
+          <span className="subtle tabular">
+            {wordCount(current.body)} words · <Icon name="shield" size={12} /> saved on this device
+          </span>
+          {flash && (
+            <span className={`flash flash-${flash.kind}`} role="status">
+              {flash.text}
+            </span>
+          )}
         </div>
       </div>
     </section>

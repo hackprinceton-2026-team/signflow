@@ -127,22 +127,33 @@
 
 .ui-btn-shortcut {
   display: inline-flex;
-  gap: 1px;
   margin-left: 2px;
-  padding: 1px 5px;
-  border-radius: 5px;
-  background: rgba(255, 255, 255, 0.14);
-  font-size: var(--text-2xs);
-  font-weight: var(--weight-semibold);
-  letter-spacing: 0.02em;
-  opacity: 0.85;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  opacity: 0.72;
+}
+
+/* Inside buttons, shortcut keys read as compact inline text, not boxed keys. */
+.ui-btn-shortcut .ui-kbd {
+  gap: 1px;
+}
+
+.ui-btn-shortcut .ui-kbd kbd {
+  min-width: 0;
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
 }
 
 .ui-btn-ghost .ui-btn-shortcut,
 .ui-btn-secondary .ui-btn-shortcut,
 .ui-btn-glass .ui-btn-shortcut {
-  background: rgba(255, 255, 255, 0.07);
   color: var(--text-tertiary);
+  opacity: 1;
 }
 
 .ui-icon-btn {

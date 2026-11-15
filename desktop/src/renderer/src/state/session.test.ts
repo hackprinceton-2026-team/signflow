@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { initialSessionState, LIVE_FEED_LIMIT, sessionReducer, type SessionState } from './session';
+import {
+  DEFAULT_SETTINGS,
+  initialSessionState,
+  isSessionSettings,
+  LIVE_FEED_LIMIT,
+  sessionReducer,
+  type SessionState,
+} from './session';
 import type { EnglishDraft, RecognizedSign } from '../adapters/types';
 
 const sign = (id: string, gloss: string, confidence = 0.9, final = true): RecognizedSign => ({
@@ -162,5 +169,19 @@ describe('sessionReducer: confirm / discard', () => {
     expect(s.settings.autoSpeak).toBe(false);
     expect(s.liveSigns).toHaveLength(0);
     expect(s.buffer).toHaveLength(0);
+  });
+});
+
+describe('session settings', () => {
+  it('defaults to not speaking on plain confirm (speech needs explicit intent)', () => {
+    expect(DEFAULT_SETTINGS.autoSpeak).toBe(false);
+  });
+
+  it('validates persisted settings', () => {
+    expect(isSessionSettings(DEFAULT_SETTINGS)).toBe(true);
+    expect(isSessionSettings({ ...DEFAULT_SETTINGS, minConfidence: 2 })).toBe(false);
+    expect(isSessionSettings({ ...DEFAULT_SETTINGS, pauseMs: 100 })).toBe(false);
+    expect(isSessionSettings({ ...DEFAULT_SETTINGS, autoSpeak: 'yes' })).toBe(false);
+    expect(isSessionSettings(null)).toBe(false);
   });
 });

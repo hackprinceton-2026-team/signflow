@@ -8,12 +8,20 @@ import {
   type Utterance,
 } from '../state/session';
 
+/** What the user asked for when confirming: plain confirm, or confirm and speak. */
+export interface ConfirmIntent {
+  speak?: boolean;
+}
+
 export interface SignSessionOptions {
   /** Recognition runs only while this is true (e.g. the camera is on). */
   active: boolean;
   initialSettings?: Partial<SessionSettings>;
-  /** Called once per confirmed sentence (TTS, captions, notes…). */
-  onConfirm?: (utterance: Utterance, settings: SessionSettings) => void;
+  /**
+   * Called once per confirmed sentence (TTS, captions, notes…). Speech must only
+   * ever happen here, i.e. for text the user explicitly confirmed.
+   */
+  onConfirm?: (utterance: Utterance, settings: SessionSettings, intent: ConfirmIntent) => void;
 }
 
 /**
@@ -93,14 +101,14 @@ export function useSignSession(adapters: Pick<Adapters, 'recognizer' | 'translat
     void translate(s.buffer);
   }, [translate]);
 
-  const confirm = useCallback(() => {
+  const confirm = useCallback((intent: ConfirmIntent = {}) => {
     const s = stateRef.current;
     if (!s.draft) return;
     const at = Date.now();
     const next = sessionReducer(s, { type: 'draft/confirmed', at });
     dispatch({ type: 'draft/confirmed', at });
     const added = next.transcript.length > s.transcript.length ? next.transcript.at(-1) : undefined;
-    if (added) onConfirmRef.current?.(added, next.settings);
+    if (added) onConfirmRef.current?.(added, next.settings, intent);
   }, []);
 
   const editDraft = useCallback((text: string) => dispatch({ type: 'draft/edited', text }), []);

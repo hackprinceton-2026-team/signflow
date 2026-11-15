@@ -38,4 +38,11 @@ describe('buildCsp', () => {
     expect(d.get('script-src')).toContain("'unsafe-inline'");
     expect(buildCsp('development')).not.toMatch(/unsafe-eval/);
   });
+
+  it('the <meta> variant omits frame-ancestors (ignored there); the header keeps it', () => {
+    expect(directives(buildCsp('production')).get('frame-ancestors')).toEqual(["'none'"]);
+    const meta = directives(buildCsp('production', { meta: true }));
+    expect(meta.has('frame-ancestors')).toBe(false);
+    expect(meta.get('script-src')).toEqual(["'self'"]);
+  });
 });

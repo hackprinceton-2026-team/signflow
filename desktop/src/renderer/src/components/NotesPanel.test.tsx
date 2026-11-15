@@ -61,7 +61,7 @@ describe('<NotesPanel />', () => {
   it('creates, switches, and deletes notes with confirmation', () => {
     installFakeBridge();
     render(<Harness />);
-    fireEvent.click(screen.getByRole('button', { name: '+ New note' }));
+    fireEvent.click(screen.getByRole('button', { name: 'New note' }));
     expect(controller.state.notes).toHaveLength(2);
 
     fireEvent.click(screen.getByRole('button', { name: 'Delete…' }));
@@ -76,7 +76,7 @@ describe('<NotesPanel />', () => {
   it('toggles timestamps', () => {
     installFakeBridge();
     render(<Harness />);
-    fireEvent.click(screen.getByRole('checkbox', { name: 'Timestamps' }));
+    fireEvent.click(screen.getByRole('switch', { name: 'Timestamps' }));
     act(() => controller.append('Plain line'));
     expect(screen.getByTestId('note-body')).toHaveValue('Plain line');
   });
