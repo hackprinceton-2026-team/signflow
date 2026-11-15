@@ -26,12 +26,17 @@ const modelInstalled = KOKORO_MODEL_FILES.every((f) => {
   }
 });
 
-async function launch(modelsRoot: string): Promise<{ app: ElectronApplication; page: Page; userData: string; logs: string[]; requests: string[] }> {
+async function launch(
+  modelsRoot: string,
+): Promise<{ app: ElectronApplication; page: Page; userData: string; logs: string[]; requests: string[]; mainOutput: string[] }> {
   const userData = mkdtempSync(join(tmpdir(), 'signflow-kokoro-'));
   const app = await electron.launch({
     args: [join(__dirname, '..'), '--use-fake-device-for-media-stream'],
     env: { ...process.env, SIGNFLOW_E2E: '1', SIGNFLOW_USER_DATA: userData, SIGNFLOW_KOKORO_MODELS: modelsRoot, ELECTRON_RENDERER_URL: '' },
   });
+  const mainOutput: string[] = [];
+  app.process().stdout?.on('data', (d: Buffer) => mainOutput.push(String(d)));
+  app.process().stderr?.on('data', (d: Buffer) => mainOutput.push(String(d)));
   const page = await app.firstWindow();
   const logs: string[] = [];
   const requests: string[] = [];
@@ -40,7 +45,7 @@ async function launch(modelsRoot: string): Promise<{ app: ElectronApplication; p
     if (!r.url().startsWith('app://') && !r.url().startsWith('blob:') && !r.url().startsWith('data:')) requests.push(r.url());
   });
   await page.waitForLoadState('domcontentloaded');
-  return { app, page, userData, logs, requests };
+  return { app, page, userData, logs, requests, mainOutput };
 }
 
 const go = async (page: Page, label: string) => {
@@ -115,9 +120,38 @@ test.describe('Kokoro: model missing', () => {
     for (const e of errors) expect(e).toMatch(/Kokoro|Invalid/);
     expect(errors.some((e) => e === 'accepted')).toBe(false);
   });
+
+  test('only the main window may use Kokoro (the captions overlay is refused)', async () => {
+    const { app, page } = ctx;
+    await go(page, 'Live');
+    const opened = app.waitForEvent('window');
+    await page.getByTestId('captions-toggle').click();
+    const captions = await opened;
+    await captions.waitForLoadState('domcontentloaded');
+    const result = await captions.evaluate(async () => {
+      const out: string[] = [];
+      for (const call of [
+        () => window.signflow.kokoro.status(),
+        () => window.signflow.kokoro.synthesize({ id: 'x', text: 'Hi.', voice: 'af_heart', speed: 1 }),
+        () => window.signflow.kokoro.release(),
+      ]) {
+        try {
+          await call();
+          out.push('accepted');
+        } catch (err) {
+          out.push(String((err as Error).message));
+        }
+      }
+      return out;
+    });
+    for (const r of result) expect(r).toMatch(/Blocked IPC "kokoro:/);
+    await expect(page.evaluate(() => window.signflow.kokoro.status())).resolves.toMatchObject({ state: 'missing' });
+    await captions.getByRole('button', { name: 'Close captions' }).click();
+  });
 });
 
 test.describe('Kokoro: real model', () => {
+  test.describe.configure({ mode: 'serial' });
   test.skip(!modelInstalled, `Kokoro model not installed in ${installedRoot} (run npm run kokoro:install)`);
   let ctx: Awaited<ReturnType<typeof launch>>;
 
@@ -169,6 +203,58 @@ test.describe('Kokoro: real model', () => {
 
     console.log(`[kokoro e2e] ready ${readyAfterMs} ms after selecting; Test voice playing ${startedAfterMs} ms after click (incl. Playwright overhead)`);
     for (const l of logs.filter((x) => x.startsWith('[kokoro]'))) console.log(`[kokoro e2e] ${l}`);
+    expect(ctx.requests).toEqual([]);
+  });
+
+  const kokoroProcess = (app: ElectronApplication) =>
+    app.evaluate(({ app: electronApp }) => electronApp.getAppMetrics().some((m) => m.serviceName === 'SignFlow Kokoro voice' || m.name === 'SignFlow Kokoro voice'));
+
+  test('Stop: nothing stale plays, whether stopped during synthesis or mid-sentence', async () => {
+    test.setTimeout(60_000);
+    const { page, logs } = ctx;
+    const sentences = () => logs.filter((l) => l.startsWith('[kokoro] sentence')).length;
+    const speak = async (text: string) => {
+      await go(page, 'Live');
+      const draft = page.getByTestId('draft-text');
+      await expect(draft).toBeVisible({ timeout: 20_000 });
+      await draft.fill(text);
+      await page.getByRole('button', { name: /^Speak/ }).click();
+      await go(page, 'Workspace');
+    };
+
+    // 1. Stop before any audio exists.
+    let before = sentences();
+    await speak('My doctor said I should take this twice a day. Please call the clinic tomorrow. Thank you.');
+    await page.getByRole('button', { name: 'Stop', exact: true }).click();
+    await expect(page.getByTestId('speech-state')).toHaveText('Idle');
+    await page.waitForTimeout(4000);
+    expect(sentences()).toBe(before);
+
+    // 2. Stop while sentence 1 plays: sentences 2 and 3 (already synthesizing or queued) never play.
+    before = sentences();
+    await speak('I am allergic to penicillin. I have never smoked. My appointment is tomorrow at three.');
+    await expect.poll(sentences, { timeout: 15_000 }).toBe(before + 1);
+    await page.getByRole('button', { name: 'Stop', exact: true }).click();
+    await expect(page.getByTestId('speech-state')).toHaveText('Idle');
+    await page.waitForTimeout(5000);
+    expect(sentences()).toBe(before + 1);
+    await expect(page.getByTestId('notice-toast')).toHaveCount(0); // a stop is not a failure: no fallback voice
+  });
+
+  test('switching to the system voice frees the Kokoro process; switching back reloads it', async () => {
+    test.setTimeout(60_000);
+    const { app, page } = ctx;
+    expect(await kokoroProcess(app)).toBe(true);
+    await go(page, 'Settings');
+    await choose(page, 'Speech engine', 'System voice');
+    await expect.poll(() => kokoroProcess(app), { timeout: 10_000 }).toBe(false);
+    await choose(page, 'Speech engine', 'Kokoro — Local Neural Voice');
+    await expect(page.getByTestId('kokoro-status')).toContainText('Ready', { timeout: 60_000 });
+    expect(await kokoroProcess(app)).toBe(true);
+  });
+
+  test('the voice engine never even tried to reach the network', () => {
+    expect(ctx.mainOutput.join('')).not.toContain('blocked a network request');
     expect(ctx.requests).toEqual([]);
   });
 });
