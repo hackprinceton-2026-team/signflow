@@ -9,7 +9,7 @@ SignFlow watches your webcam and recognizes signs as you make them. It turns the
 | Path        | Owner     | What lives here                                               |
 | ----------- | --------- | ------------------------------------------------------------- |
 | `desktop/`  | Raimbek   | Electron + React + TypeScript desktop app (UI, webcam, TTS)   |
-| `backend/`  | Raimbek   | API / realtime gateway between the desktop app and the model (originally built by Muhammad) |
+| `backend/`  | Muhammad   | API / realtime gateway between the desktop app and the model (originally built by Muhammad) |
 | `ml/`       | Umar      | Sign recognition model: data, training, inference             |
 | `docs/`     | Everyone  | Architecture, interface contracts, demo script                |
 
