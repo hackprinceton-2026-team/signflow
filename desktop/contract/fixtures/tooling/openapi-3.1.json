@@ -1,0 +1,62 @@
+{
+  "openapi": "3.1.0",
+  "info": { "title": "Tooling fixture (not SignFlow)", "version": "0.0.0" },
+  "paths": {
+    "/tooling/widgets/{widget_id}": {
+      "get": {
+        "operationId": "get_widget",
+        "parameters": [
+          { "name": "widget_id", "in": "path", "required": true, "schema": { "type": "string", "title": "Widget Id" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ToolingWidget" } } }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ToolingKind": { "type": "string", "enum": ["alpha", "beta"], "title": "ToolingKind" },
+      "ToolingWidget": {
+        "type": "object",
+        "title": "ToolingWidget",
+        "properties": {
+          "id": { "type": "string", "format": "uuid", "title": "Id" },
+          "label": { "type": "string", "minLength": 1, "title": "Label" },
+          "score": { "type": "number", "minimum": 0, "maximum": 1, "title": "Score" },
+          "kind": { "$ref": "#/components/schemas/ToolingKind" },
+          "note": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null, "title": "Note" },
+          "created_at": { "type": "string", "format": "date-time", "title": "Created At" },
+          "tags": { "type": "array", "items": { "type": "string" }, "title": "Tags" }
+        },
+        "required": ["id", "label", "score", "kind", "created_at"]
+      },
+      "ToolingPing": {
+        "type": "object",
+        "title": "ToolingPing",
+        "properties": { "type": { "const": "ping", "title": "Type" }, "seq": { "type": "integer", "title": "Seq" } },
+        "required": ["type", "seq"]
+      },
+      "ToolingPong": {
+        "type": "object",
+        "title": "ToolingPong",
+        "properties": {
+          "type": { "const": "pong", "title": "Type" },
+          "widget": { "$ref": "#/components/schemas/ToolingWidget" }
+        },
+        "required": ["type", "widget"]
+      },
+      "ToolingEvent": {
+        "title": "ToolingEvent",
+        "oneOf": [{ "$ref": "#/components/schemas/ToolingPing" }, { "$ref": "#/components/schemas/ToolingPong" }],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": { "ping": "#/components/schemas/ToolingPing", "pong": "#/components/schemas/ToolingPong" }
+        }
+      }
+    }
+  }
+}

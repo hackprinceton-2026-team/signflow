@@ -1,0 +1,121 @@
+/*
+ * SignFlow design tokens. Dark, camera-first.
+ *
+ * Every color, size, and timing in the app comes from here. Text colors meet
+ * WCAG AA (4.5:1) on --bg and --surface; the primary button meets it with white.
+ */
+:root {
+  color-scheme: dark;
+
+  /* ---- Typography ---- */
+  --font-sans: 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+
+  --text-2xs: 10.5px;
+  --text-xs: 11.5px;
+  --text-sm: 12.5px;
+  --text-base: 13.5px;
+  --text-md: 15px;
+  --text-lg: 17px;
+  --text-xl: 21px;
+  --text-2xl: 26px;
+  --text-3xl: 34px;
+
+  --leading-tight: 1.2;
+  --leading-snug: 1.35;
+  --leading-normal: 1.5;
+
+  --weight-regular: 420;
+  --weight-medium: 520;
+  --weight-semibold: 600;
+  --weight-bold: 680;
+
+  --tracking-tight: -0.011em;
+  --tracking-eyebrow: 0.08em;
+
+  /* ---- Spacing (4px grid) ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 48px;
+  --space-10: 64px;
+
+  /* ---- Radii ---- */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --radius-pill: 999px;
+
+  /* ---- Color: neutrals ---- */
+  --bg: #0a0b0e;
+  --bg-raised: #0f1014;
+  --surface: #14161b;
+  --surface-2: #1a1d23;
+  --surface-3: #22262e;
+  --surface-hover: #262a33;
+  --border: rgba(255, 255, 255, 0.07);
+  --border-strong: rgba(255, 255, 255, 0.13);
+  --border-focus: rgba(139, 147, 255, 0.9);
+
+  --text: #eceef3;
+  --text-secondary: #a6acba;
+  --text-tertiary: #7d8495;
+  --text-on-accent: #ffffff;
+
+  /* ---- Color: accent + semantic ---- */
+  --accent: #8b93ff;
+  --accent-strong: #5b63e6;
+  --accent-hover: #6971f0;
+  --accent-soft: rgba(139, 147, 255, 0.14);
+  --accent-ring: rgba(139, 147, 255, 0.35);
+
+  --success: #3dd68c;
+  --success-soft: rgba(61, 214, 140, 0.14);
+  --warning: #f5b74f;
+  --warning-soft: rgba(245, 183, 79, 0.14);
+  --danger: #ff6b6b;
+  --danger-soft: rgba(255, 107, 107, 0.13);
+  --info: #6cc4ff;
+
+  /* ---- Glass (overlays on top of the camera) ---- */
+  --glass-bg: rgba(14, 15, 19, 0.68);
+  --glass-bg-strong: rgba(14, 15, 19, 0.82);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-blur: 20px;
+  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  /* ---- Elevation ---- */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-2: 0 6px 18px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-3: 0 18px 48px rgba(0, 0, 0, 0.5), 0 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-focus: 0 0 0 3px var(--accent-ring);
+
+  /* ---- Motion ---- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-slow: 320ms;
+
+  /* ---- Layout ---- */
+  --rail-width: 76px;
+  --topbar-height: 56px;
+  --titlebar-inset: 0px; /* space reserved for macOS traffic lights */
+  --content-max: 1280px;
+}
+
+/* Respect the OS setting: no movement, only instant state changes. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur-base: 0ms;
+    --dur-slow: 0ms;
+  }
+}
