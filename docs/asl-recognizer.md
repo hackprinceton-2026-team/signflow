@@ -1,32 +1,29 @@
 # Real ASL recognition: Umar's recognizer in SignFlow
 
-SignFlow can take its signs from Umar's live ASL recognizer (`live.py`, branch `keyword-model-v5`) instead of the scripted demo recognizer. The recognizer runs as its own local process and owns the camera. SignFlow connects to it over a loopback WebSocket. Everything after recognition (drafting English with Gemini or the demo rules, the editable draft, confirmation, Kokoro or system speech) is unchanged.
+SignFlow can take its signs from Umar's live ASL recognizer (`ml/src/live.py`) instead of the scripted demo recognizer. By default SignFlow expects its **116-sign keyword model** (`live.py --keyword`); the 14-sign model still works. The recognizer runs as its own local process and owns the camera. SignFlow connects to it over a loopback WebSocket. Everything after recognition (drafting English with Gemini or the demo rules, the editable draft, confirmation, Kokoro or system speech) is unchanged.
 
-> **Tested recognizer version:** branch `keyword-model-v5` at commit **`d911607`** (`d911607869bd3d5ac8051093b8c2f63bc384dd1f`, "Ignore large models and caches; add live test logs"). The setup below pins that commit.
+> **Recognizer version:** `ml/` contains the source of Umar's branch `keyword-model-v5` at commit **`d911607`** (`d911607869bd3d5ac8051093b8c2f63bc384dd1f`, "Ignore large models and caches; add live test logs"), imported unchanged. `ml/scripts/fetch_models.sh` takes the two models from that same commit and checks their sha256.
 >
 > **Verification status:** recorded-data tests passed (the built app against a WebSocket stand-in replaying the recognizer's message format, and Umar's real engine fed recorded landmark rows from his branch). **Accuracy with a live human signer has not been verified yet.**
 
-> `keyword-model-v5` has **unrelated Git history** (no common ancestor with `main`). Never merge or rebase it into `main`. Check it out separately (below). SignFlow's repo contains none of its code, models, landmarks or data.
+> `keyword-model-v5` has **unrelated Git history** (no common ancestor with `main`). Never merge or rebase it into `main`: its source was copied into `ml/` instead. The models, landmarks, training data and reports stay on that branch (binaries, and WLASL's license); `main` has none of them.
 
 ## Run it
 
 **Once, set up the recognizer** (Python 3.11, macOS; about 1 GB with PyTorch):
 
 ```bash
-# from the signflow repo: a separate, read-only checkout of Umar's branch
-git fetch origin keyword-model-v5
-git worktree add --detach ../signflow-ml d911607869bd3d5ac8051093b8c2f63bc384dd1f
-cd ../signflow-ml
+cd ml
 python3.11 -m venv slenv
 ./slenv/bin/pip install -r requirements.txt
-shasum -a 256 models/sign_model.joblib   # must match "sha256" in models/RELEASE.json
+./scripts/fetch_models.sh       # models from the pinned commit, sha256-checked (git-ignored)
 ```
 
 **Each demo (two terminals):**
 
 ```bash
 # Terminal 1: the recognizer (camera + preview window with hand tracking, ws://localhost:8765)
-cd ../signflow-ml && ./slenv/bin/python src/live.py
+cd ml && ./slenv/bin/python src/live.py --keyword
 
 # Terminal 2: SignFlow
 cd desktop && npm run dev
@@ -41,15 +38,15 @@ In SignFlow, go to **Settings › Recognition › Sign recognizer › SignFlow A
 
 ## Models
 
-| | 14-sign demo model (default) | 116-sign keyword model (opt-in) |
+| | 116-sign keyword model (**default**) | 14-sign demo model |
 | --- | --- | --- |
-| Start | `python src/live.py` | `python src/live.py --keyword`, **and** turn on "Allow the 116-sign keyword model" in Settings › Recognition |
-| Signs | BATHROOM, DOCTOR, DRINK, FOOD, HELP, HUNGRY, NO, PLEASE, READY, SORRY, STOP, THANK-YOU, THIRSTY, YES | 116 (`models/vocab_116.json` in the recognizer) |
-| Sent | Signs with confidence ≥ 0.5 only, with the top-3 | Every segmented sign, with the top-5 and a `confident` flag (calibrated top-1 ≥ 0.35) |
-| Held-out signers (model card) | top-1 94% (optimistic: picked on these folds) | top-1 ~75%, top-5 ~91% |
-| Webcam (one tester, 17 clips) | 14/17 | 13/17 top-1, 17/17 top-5 |
+| Start | `python src/live.py --keyword` ("Allow the 116-sign keyword model" in Settings › Recognition is on by default) | `python src/live.py` |
+| Signs | 116 ([`ml/models/vocab_116.json`](../ml/models/vocab_116.json): English words, synonyms, categories) | BATHROOM, DOCTOR, DRINK, FOOD, HELP, HUNGRY, NO, PLEASE, READY, SORRY, STOP, THANK-YOU, THIRSTY, YES |
+| Sent | Every segmented sign, with the top-5 and a `confident` flag (calibrated top-1 ≥ 0.35) | Signs with confidence ≥ 0.5 only, with the top-3 |
+| Held-out signers (model card) | top-1 ~75%, top-5 ~91% (macro over the 116 signs) | top-1 94% (optimistic: picked on these folds) |
+| Webcam (one tester, 17 clips) | 13/17 top-1, 17/17 top-5 | 14/17 |
 
-Without the opt-in, SignFlow refuses keyword-model messages and says so on the Live screen. That keeps the demo predictable: the default path is the small, more reliable vocabulary.
+With the switch on (the default), SignFlow accepts both models, whichever the recognizer runs. Turn it off to accept only the 14-sign model: keyword-model messages are then refused, and the Live screen says so. The 14-sign model is more reliable on its 14 signs (94% vs ~83% on those signs); the keyword model covers far more words, and its uncertain signs are shown with their alternatives but never used in a draft.
 
 ## What SignFlow does with the messages
 
@@ -84,7 +81,7 @@ Switching back to **Demo (simulated)** restores the camera and the scripted demo
 - **Network:** SignFlow connects only to `ws://127.0.0.1:8765` (`SIGNFLOW_RECOGNIZER_PORT` overrides the port, for tests). It opens no listener, and the renderer's Content Security Policy is unchanged; the renderer never talks to the recognizer directly. The recognizer itself binds `localhost` (loopback), not a public interface.
 - **IPC:** `recognizer:start/stop/status` are accepted only from the main window's own page, and events go only to the main window.
 - **Trust:** any local process could pretend to be the recognizer on that port. Validation limits it to producing glosses, and nothing is spoken or sent anywhere without the user confirming the English first.
-- **Model files:** the recognizer loads `joblib` (pickle) models, which can execute code. Only run models from the team branch, and check `sign_model.joblib` against `models/RELEASE.json`.
+- **Model files:** the recognizer loads `joblib` (pickle) models, which can execute code. Only run models fetched with `ml/scripts/fetch_models.sh`, which refuses any file whose sha256 doesn't match.
 
 ## License
 
@@ -101,10 +98,12 @@ The models and landmark files in the recognizer are derived from **WLASL**, whic
 - **Real camera, idle check:** the unmodified `live.py` captured the webcam (1920×1080, ~32 fps), SignFlow connected, and SignFlow opened no camera of its own. In 25 s with nobody signing, it sent nothing.
 - **Not verified yet:** recognition accuracy with a live human signer through SignFlow. Rehearse with the actual demo signer, lighting and camera.
 
+- **`ml/` import (2026-11-15):** `ml/scripts/fetch_models.sh` fetched both models with matching sha256; `ml/src/live.py --keyword` on two recorded webcam clips sent YES 0.98 and HELP 0.97 as confident keyword messages. The desktop unit tests cover the new default (switch on) and turning it off.
+
 ## Limitations
 
 - **Isolated signs only:** no grammar, fingerspelling, facial expressions or continuous signing.
-- **Small vocabulary (14 by default):** anything else comes out as the closest known sign, or nothing.
+- **Limited vocabulary (116 signs, or 14 with the small model):** anything else comes out as the closest known sign, or nothing.
 - **Unknown gestures aren't rejected:** on the keyword model they often come out *confident* (53% of out-of-vocabulary clips in the model card).
 - **Look-alike signs get confused:** STOP/COOK, THANK YOU/GIVE.
 - **Pace and framing:** the signer must keep a steady pace (≤ 1.5 s between signs), stay in frame, and have good light.

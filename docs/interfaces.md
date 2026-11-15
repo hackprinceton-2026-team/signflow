@@ -78,7 +78,7 @@ interface SpeechEngine {
 
 ## Local ASL recognizer (implemented)
 
-Umar's `live.py` (branch `keyword-model-v5`) broadcasts its own JSON events on `ws://localhost:8765`: `sign` (14-sign model: `sign`, `confidence`, `candidates`; keyword model: `candidates`, `top1`, `confident`) and `end_of_sentence`, with `ts` in seconds. The desktop consumes that format **as is**: Electron main is the client, and it normalizes the events into `RecognizedSign`s (ms timestamps, `THANK-YOU`-style glosses, derived ids, `uncertain` for `confident: false`). If the recognizer's message shape changes, update `desktop/src/shared/recognizer.ts` and its tests. Details: [`asl-recognizer.md`](asl-recognizer.md).
+Umar's `ml/src/live.py` (imported from branch `keyword-model-v5`; SignFlow runs it with `--keyword` by default) broadcasts its own JSON events on `ws://localhost:8765`: `sign` (14-sign model: `sign`, `confidence`, `candidates`; keyword model: `candidates`, `top1`, `confident`) and `end_of_sentence`, with `ts` in seconds. The desktop consumes that format **as is**: Electron main is the client, and it normalizes the events into `RecognizedSign`s (ms timestamps, `THANK-YOU`-style glosses, derived ids, `uncertain` for `confident: false`). If the recognizer's message shape changes, update `desktop/src/shared/recognizer.ts` and its tests. Details: [`asl-recognizer.md`](asl-recognizer.md).
 
 ## Open questions
 
