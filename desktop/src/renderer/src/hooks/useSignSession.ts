@@ -3,6 +3,7 @@ import type { AdapterStatus, Adapters, RecognizedSign } from '../adapters/types'
 import type { CommMode } from '../state/realtime';
 import {
   initialSessionState,
+  isAccepted,
   sessionReducer,
   type SessionSettings,
   type SessionState,
@@ -56,7 +57,9 @@ export function useSignSession(adapters: Pick<Adapters, 'recognizer' | 'translat
   const onWordsRef = useRef(options.onWords);
   const onSentenceReadyRef = useRef(options.onSentenceReady);
   const mode: CommMode = options.mode ?? 'review';
+  const modeRef = useRef(mode);
   useLayoutEffect(() => {
+    modeRef.current = mode;
     stateRef.current = state;
     onConfirmRef.current = options.onConfirm;
     onWordsRef.current = options.onWords;
@@ -73,13 +76,25 @@ export function useSignSession(adapters: Pick<Adapters, 'recognizer' | 'translat
 
   // Recognizer events → reducer.
   useEffect(() => {
-    const offSign = recognizer.onSign((sign) => dispatch({ type: 'sign/received', sign }));
+    // Accepted signs since the last sentence end, tracked as they arrive: a sentence end
+    // can come right after its last sign, before React has rendered that sign.
+    const acceptedSinceEnd = new Set<string>();
+    const offSign = recognizer.onSign((sign) => {
+      if (isAccepted(sign, stateRef.current.settings)) acceptedSinceEnd.add(sign.id);
+      else acceptedSinceEnd.delete(sign.id); // a refinement below the threshold
+      dispatch({ type: 'sign/received', sign });
+    });
     const offStatus = recognizer.onStatus(setRecognizerStatus);
     // A sentence end matters only if accepted signs are waiting (now, or behind a
     // translation in flight). With nothing accepted, ignore it: it must not make
     // the first sign of the next sentence draft on its own.
     const offEnd = recognizer.onSentenceEnd?.(() => {
-      if (stateRef.current.buffer.length > 0) setSentenceEnds((n) => n + 1);
+      // Words mode speaks each sign on its own; a sentence end means nothing there (and
+      // must not be left over to end the next sentence early after switching modes).
+      if (modeRef.current !== 'words' && (acceptedSinceEnd.size > 0 || stateRef.current.buffer.length > 0)) {
+        setSentenceEnds((n) => n + 1);
+      }
+      acceptedSinceEnd.clear();
     });
     return () => {
       offSign();

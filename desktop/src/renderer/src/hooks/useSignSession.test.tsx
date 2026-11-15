@@ -324,3 +324,26 @@ describe('useSignSession with a recognizer that reports sentence ends (the local
     expect(translator.calls).toHaveLength(0);
   });
 });
+
+describe('sentence end right after its last sign (before React renders it)', () => {
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => vi.useRealTimers());
+
+  it('still ends the sentence: no 6 s fallback wait', async () => {
+    class SegmentingRecognizer extends FakeRecognizer {
+      readonly ends = new Emitter<void>();
+      onSentenceEnd(cb: () => void) {
+        return this.ends.on(cb);
+      }
+    }
+    const recognizer = new SegmentingRecognizer();
+    const translator = new ManualTranslator('asl', 'demo');
+    renderHook(() => useSignSession({ recognizer, translator }, { active: true, initialSettings: { pauseMs: 1000 } }));
+    act(() => {
+      recognizer.emit('THANK-YOU'); // the same tick: no render in between
+      recognizer.ends.emit();
+    });
+    await act(() => vi.advanceTimersByTimeAsync(0));
+    expect(translator.calls.map((c) => c.glosses)).toEqual([['THANK-YOU']]);
+  });
+});
