@@ -1,0 +1,9 @@
+# Python 3.11. Exact versions this project was built and tested with.
+mediapipe==0.10.21        # legacy mp.solutions.holistic API (removed in later versions); pulls opencv-contrib-python
+opencv-python==4.11.0.86
+numpy==1.26.4             # mediapipe 0.10.21 needs numpy < 2
+scikit-learn==1.9.1
+joblib==1.6.0
+websockets==17.4          # live.py WebSocket output
+torch==2.15.0             # only for the GRU candidate in train_select.py
+kaggle==2.2.5             # only for wlasl_download.py

@@ -1,0 +1,8 @@
+# Recognizer environment, models and data stay out of git (binaries; WLASL is academic/non-commercial).
+# Get the models with scripts/fetch_models.sh.
+slenv/
+models/*.joblib
+models/*.part
+data/
+logs/
+reports/
