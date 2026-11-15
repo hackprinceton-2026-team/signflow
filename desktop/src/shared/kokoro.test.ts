@@ -1,5 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest';
+import { splitForSpeech } from './audio';
 import {
   decodeKokoroError,
   encodeKokoroError,
@@ -54,6 +55,13 @@ describe('validateKokoroSynthesize (renderer input is untrusted)', () => {
     ['bad id', { ...ok, id: '../../etc' }],
   ])('rejects %s', (_label, value) => {
     expect(() => validateKokoroSynthesize(value)).toThrow();
+  });
+
+  it("the renderer's sentence chunks always fit the limit, so long confirmed text is never refused or cut", () => {
+    const long = `${'I need to tell you about my medication history and allergies, '.repeat(40)}Thank you.`;
+    const chunks = splitForSpeech(long);
+    expect(chunks.length).toBeGreaterThan(5);
+    for (const c of chunks) expect(() => validateKokoroSynthesize({ ...ok, text: c })).not.toThrow();
   });
 
   it('validates cancel ids', () => {

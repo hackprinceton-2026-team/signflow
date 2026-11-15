@@ -113,8 +113,15 @@ export function isKokoroStatus(value: unknown): value is KokoroStatus {
 
 // ---------- Synthesis requests (renderer → main, untrusted) ----------
 
-/** Confirmed sentences are short; the renderer sends one sentence-sized chunk at a time. */
-export const KOKORO_MAX_TEXT_CHARS = 1000;
+/**
+ * The renderer sends one sentence-sized chunk (≤ 220 chars) at a time. Kokoro
+ * silently drops whatever exceeds its 510-token context (~450 characters of
+ * English), so the main process refuses anything longer instead of speaking
+ * part of it.
+ */
+export const KOKORO_MAX_TEXT_CHARS = 400;
+/** Queued + running requests the engine accepts at once (a long confirmed text is ~25 sentences). */
+export const KOKORO_MAX_PENDING = 64;
 export const KOKORO_SPEED_RANGE = [0.5, 2] as const;
 
 export interface KokoroSynthesizeRequest {

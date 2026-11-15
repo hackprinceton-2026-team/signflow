@@ -2,6 +2,7 @@ import {
   encodeKokoroError,
   KOKORO_INSTALL_COMMAND,
   KOKORO_MODEL_DIRNAME,
+  KOKORO_MAX_PENDING,
   KOKORO_MODEL_FILES,
   type KokoroErrorCode,
   type KokoroStatus,
@@ -83,6 +84,7 @@ export class KokoroService {
 
   async synthesize(req: KokoroSynthesizeRequest): Promise<KokoroSynthesizeResult> {
     if (this.pending.has(req.id)) throw kokoroError('synthesis_failed', 'Duplicate request id');
+    if (this.pending.size >= KOKORO_MAX_PENDING) throw kokoroError('synthesis_failed', 'Too many sentences are waiting to be spoken.');
     await this.ensureLoaded();
     const worker = this.worker;
     if (!worker) throw kokoroError('crashed', 'The local voice engine stopped.');

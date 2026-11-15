@@ -2,9 +2,11 @@ import { execFileSync } from 'node:child_process';
 import { statSync } from 'node:fs';
 import { availableParallelism } from 'node:os';
 import { join } from 'node:path';
-import { app, BrowserWindow, utilityProcess } from 'electron';
+import { app, BrowserWindow, ipcMain, utilityProcess, type IpcMainInvokeEvent } from 'electron';
 import { IpcChannels } from '@shared/ipc';
 import { validateKokoroRequestId, validateKokoroSynthesize, type KokoroStatus, type KokoroSynthesizeResult } from '@shared/kokoro';
+import { isTrustedSender } from '../security';
+import { workerEnv } from './env';
 import { checkModelFiles, KokoroService, type WorkerHandle } from './service';
 import type { FromWorker } from './protocol';
 
@@ -35,7 +37,10 @@ function onnxThreads(): number {
 }
 
 function forkWorker(): WorkerHandle {
-  const child = utilityProcess.fork(join(__dirname, 'kokoroWorker.js'), [], { serviceName: 'SignFlow Kokoro voice' });
+  const child = utilityProcess.fork(join(__dirname, 'kokoroWorker.js'), [], {
+    serviceName: 'SignFlow Kokoro voice',
+    env: workerEnv(),
+  });
   return {
     postMessage: (msg) => child.postMessage(msg),
     on: ((event: 'message' | 'exit', cb: (arg: never) => void) => {
@@ -52,10 +57,21 @@ function broadcast(status: KokoroStatus): void {
   }
 }
 
-type Handle = <T>(channel: string, handler: (event: Electron.IpcMainInvokeEvent, ...args: unknown[]) => T | Promise<T>) => void;
-
-/** Create the service and register its IPC handlers (each validates sender and payload). */
-export function registerKokoro(handle: Handle): KokoroService {
+/**
+ * Create the service and register its IPC handlers. Only the main window's own
+ * top-level page may use them (not the captions overlay), and every payload is
+ * validated.
+ */
+export function registerKokoro(getMainWindow: () => BrowserWindow | null): KokoroService {
+  const handle = <T>(channel: string, handler: (event: IpcMainInvokeEvent, ...args: unknown[]) => T | Promise<T>) => {
+    ipcMain.handle(channel, (event, ...args) => {
+      const main = getMainWindow();
+      if (!main || event.sender !== main.webContents || !isTrustedSender(event.senderFrame)) {
+        throw new Error(`Blocked IPC "${channel}" from untrusted sender`);
+      }
+      return handler(event, ...args);
+    });
+  };
   const service = new KokoroService({
     modelRoot: kokoroModelRoot(),
     fork: forkWorker,

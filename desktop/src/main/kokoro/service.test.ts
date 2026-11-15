@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { decodeKokoroError, KOKORO_MODEL_FILES, type KokoroStatus } from '@shared/kokoro';
+import { decodeKokoroError, KOKORO_MAX_PENDING, KOKORO_MODEL_FILES, type KokoroStatus } from '@shared/kokoro';
 import { checkModelFiles, KokoroService, type WorkerHandle } from './service';
 import type { FromWorker, ToWorker } from './protocol';
 
@@ -164,6 +164,17 @@ describe('KokoroService', () => {
     expect(workers[0]!.killed).toBe(true);
     void service.prepare();
     expect(workers).toHaveLength(2);
+  });
+
+  it('refuses work beyond the pending limit instead of queueing without bound', async () => {
+    const { service, workers } = setup();
+    void service.prepare();
+    workers[0]!.emit({ type: 'loaded', loadMs: 10 });
+    const queued = Array.from({ length: KOKORO_MAX_PENDING }, (_, i) => service.synthesize(req(`q${i}`)));
+    for (const q of queued) q.catch(() => undefined);
+    await vi.waitFor(() => expect(workers[0]!.synthIds()).toHaveLength(KOKORO_MAX_PENDING));
+    expect(await codeOf(service.synthesize(req('one-too-many')))).toBe('synthesis_failed');
+    service.cancel();
   });
 
   it('rejects a duplicate request id', async () => {
