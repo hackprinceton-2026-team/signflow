@@ -4,9 +4,17 @@ import { usePersistentState } from './usePersistentState';
 
 /**
  * Natural playback: normal rate and pitch, full volume, the best installed
- * system voice, and the default cloud voice (Ruth, Amazon Polly Generative).
+ * system voice, the default cloud voice (Ruth, Amazon Polly Generative), and
+ * the default Kokoro voice (Heart).
  */
-export const DEFAULT_SPEECH_OPTIONS: SpeechOptions = { voiceId: undefined, cloudVoiceId: undefined, rate: 1, pitch: 1, volume: 1 };
+export const DEFAULT_SPEECH_OPTIONS: SpeechOptions = {
+  voiceId: undefined,
+  cloudVoiceId: undefined,
+  kokoroVoiceId: undefined,
+  rate: 1,
+  pitch: 1,
+  volume: 1,
+};
 
 function isSpeechOptions(v: unknown): v is SpeechOptions {
   if (!v || typeof v !== 'object') return false;
@@ -16,7 +24,8 @@ function isSpeechOptions(v: unknown): v is SpeechOptions {
     typeof o['pitch'] === 'number' &&
     typeof o['volume'] === 'number' &&
     (o['voiceId'] === undefined || typeof o['voiceId'] === 'string') &&
-    (o['cloudVoiceId'] === undefined || typeof o['cloudVoiceId'] === 'string')
+    (o['cloudVoiceId'] === undefined || typeof o['cloudVoiceId'] === 'string') &&
+    (o['kokoroVoiceId'] === undefined || typeof o['kokoroVoiceId'] === 'string')
   );
 }
 
@@ -77,6 +86,8 @@ export function useSpeech(engine: SpeechEngine) {
   return {
     available: engine.available,
     engineName: engine.name,
+    /** The engine's own label for the selected voice (Kokoro, cloud); undefined for system voices. */
+    voiceLabel: engine.describeVoice?.(options),
     voices: sortedVoices,
     state,
     options,

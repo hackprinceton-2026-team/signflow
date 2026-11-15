@@ -26,7 +26,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['src/main/**/*.ts', 'src/preload/**/*.ts', 'e2e/**/*.ts', 'contract/**/*.{ts,mts}', '*.config.{mts,mjs}'],
+    files: ['src/main/**/*.ts', 'src/preload/**/*.ts', 'e2e/**/*.ts', 'contract/**/*.{ts,mts}', 'scripts/**/*.mts', '*.config.{mts,mjs}'],
     languageOptions: { globals: globals.node },
   },
   {

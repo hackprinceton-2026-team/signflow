@@ -14,7 +14,11 @@ export function SpeechTransport({ speech, lastText }: { speech: SpeechController
   return (
     <Card
       title="Speech"
-      subtitle={speech.available ? (voice ? `${voice.name} · ${voice.lang}` : 'System default voice') : 'Unavailable on this system'}
+      subtitle={
+        !speech.available
+          ? 'Unavailable on this system'
+          : (speech.voiceLabel ?? (voice ? `${voice.name} · ${voice.lang}` : 'System default voice'))
+      }
       actions={
         <StatusPill tone={STATE[state].tone} pulse={state === 'speaking'} role="status" data-testid="speech-state">
           {STATE[state].label}

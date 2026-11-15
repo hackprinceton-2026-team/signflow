@@ -4,12 +4,14 @@ import { DEFAULT_CONNECTION, isConnectionSettings, type ConnectionSettings } fro
 import { newId } from '../adapters/emitter';
 import { BackendError, createBackendClient, type BackendClient } from '../adapters/remote/backendClient';
 import { CloudSpeechEngine, FallbackSpeechEngine } from '../adapters/remote/cloudSpeech';
+import { KokoroSpeechEngine, KokoroSpeechError, type KokoroBridge } from '../adapters/kokoroSpeech';
 import { RemoteTranslator } from '../adapters/remote/remoteTranslator';
 import type { Adapters, SpeechEngine, Translator } from '../adapters/types';
 import { useBackendHealth } from '../hooks/useBackendHealth';
 import { useCamera } from '../hooks/useCamera';
 import { useCaptions } from '../hooks/useCaptions';
 import { useFrameSampler } from '../hooks/useFrameSampler';
+import { useKokoro } from '../hooks/useKokoro';
 import { useNotes } from '../hooks/useNotes';
 import { usePersistentState } from '../hooks/usePersistentState';
 import { useSignSession, type ConfirmIntent } from '../hooks/useSignSession';
@@ -17,6 +19,17 @@ import { useSpeech } from '../hooks/useSpeech';
 import { DEFAULT_SETTINGS, isSessionSettings, type SessionSettings, type Utterance } from '../state/session';
 
 const isBoolean = (v: unknown): v is boolean => typeof v === 'boolean';
+
+/** The on-device speech engine: macOS/system voices, or Kokoro's local neural voice. */
+export type DeviceSpeechEngine = 'system' | 'kokoro';
+const isDeviceSpeechEngine = (v: unknown): v is DeviceSpeechEngine => v === 'system' || v === 'kokoro';
+
+function kokoroFailureMessage(err: unknown): string {
+  if (err instanceof KokoroSpeechError && err.code === 'missing') return "Kokoro voice isn't installed.";
+  if (err instanceof KokoroSpeechError && err.code === 'playback_failed') return "Kokoro voice couldn't play audio.";
+  if (err instanceof KokoroSpeechError && err.code === 'timeout') return 'Kokoro voice took too long.';
+  return 'Kokoro voice is unavailable.';
+}
 
 /** Notes capture was a "mode" before the redesign; carry that choice over once. */
 function legacyCaptureDefault(): boolean {
@@ -68,6 +81,7 @@ export function useSignFlowController({ adapters, initialSettings, backendClient
     DEFAULT_CONNECTION,
     isConnectionSettings,
   );
+  const [deviceEngine, setDeviceEngine] = usePersistentState<DeviceSpeechEngine>('signflow.speechEngine', 'system', isDeviceSpeechEngine);
   const [client] = useState<BackendClient>(() => backendClient ?? createBackendClient());
   const [notice, setNotice] = useState<Notice | null>(null);
   const [feedback, setFeedback] = useState<ConfirmFeedback | null>(null);
@@ -89,15 +103,34 @@ export function useSignFlowController({ adapters, initialSettings, backendClient
     () => (live ? new RemoteTranslator(client, connection.context, () => void recheckBackend()) : adapters.translator),
     [adapters.translator, client, connection.context, live, recheckBackend],
   );
+  const kokoroBridge = useMemo<KokoroBridge | undefined>(() => window.signflow?.kokoro, []);
+  const kokoroSelected = deviceEngine === 'kokoro' && kokoroBridge !== undefined;
+  const kokoro = useKokoro(kokoroBridge, kokoroSelected);
+  // The on-device voice: Kokoro (with the system voice behind it) or the system voice.
+  const deviceSpeech = useMemo<SpeechEngine>(() => {
+    if (!kokoroSelected || !kokoroBridge) return adapters.speech;
+    const engine = new KokoroSpeechEngine({
+      bridge: kokoroBridge,
+      muted: silentSpeech,
+      onTiming: (t) =>
+        console.info(
+          `[kokoro] sentence ${t.index + 1}: ${t.chars} chars, model ${t.modelMs} ms, audio ready +${t.synthesizedMs} ms, playing +${t.startedMs} ms, ${t.audioS.toFixed(2)} s of audio`,
+        ),
+    });
+    return new FallbackSpeechEngine(engine, adapters.speech, (err) => {
+      setNotice({ id: newId(), message: `${kokoroFailureMessage(err)} Used the system voice instead.` });
+    });
+  }, [adapters.speech, kokoroBridge, kokoroSelected, silentSpeech]);
   const speechEngine = useMemo<SpeechEngine>(() => {
-    if (!live || connection.voice !== 'cloud') return adapters.speech;
+    if (!live || connection.voice !== 'cloud') return deviceSpeech;
     const cloud = new CloudSpeechEngine({ client, muted: silentSpeech });
-    return new FallbackSpeechEngine(cloud, adapters.speech, (err) => {
+    const fallbackName = kokoroSelected ? 'the Kokoro voice' : 'the system voice';
+    return new FallbackSpeechEngine(cloud, deviceSpeech, (err) => {
       const reason = err instanceof BackendError ? err.message : 'playback failed.';
-      setNotice({ id: newId(), message: `Cloud voice unavailable: ${reason} Used the system voice instead.` });
+      setNotice({ id: newId(), message: `Cloud voice unavailable: ${reason} Used ${fallbackName} instead.` });
       if (err instanceof BackendError) void recheckBackend();
     });
-  }, [adapters.speech, client, connection.voice, live, recheckBackend, silentSpeech]);
+  }, [client, connection.voice, deviceSpeech, kokoroSelected, live, recheckBackend, silentSpeech]);
 
   const speech = useSpeech(speechEngine);
   const notes = useNotes();
@@ -167,6 +200,9 @@ export function useSignFlowController({ adapters, initialSettings, backendClient
     switchToDemo,
     live,
     backend: { client, health },
+    deviceEngine,
+    setDeviceEngine,
+    kokoro: { ...kokoro, available: kokoroBridge !== undefined },
     notice,
     clearNotice: useCallback(() => setNotice(null), []),
     info,

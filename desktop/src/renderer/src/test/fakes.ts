@@ -1,4 +1,7 @@
-import { vi } from 'vitest';
+import { encodeKokoroError, type KokoroErrorCode, type KokoroStatus, type KokoroSynthesizeRequest, type KokoroSynthesizeResult } from '@shared/kokoro';
+import type { KokoroBridge } from '../adapters/kokoroSpeech';
+import type { AudioLike } from '../adapters/remote/cloudSpeech';
+import { vi, type Mock } from 'vitest';
 import { Emitter } from '../adapters/emitter';
 import type { AdapterStatus, RecognizedSign, SignRecognizer, VideoFrameInput } from '../adapters/types';
 
@@ -89,4 +92,102 @@ export function installFakeMediaDevices(
   });
   HTMLMediaElement.prototype.play = vi.fn(async () => undefined);
   return { getUserMedia, streams };
+}
+
+// ---------- Kokoro ----------
+
+/** An <audio> stand-in: `play()` resolves (or rejects with `failWith`), `end()` finishes it. */
+export class FakeAudio implements AudioLike {
+  src = '';
+  volume = 1;
+  playbackRate = 1;
+  preservesPitch = false;
+  muted = false;
+  onended: AudioLike['onended'] = null;
+  onerror: AudioLike['onerror'] = null;
+  failWith: Error | null = null;
+  play: Mock<() => Promise<void>> = vi.fn(async () => {
+    if (this.failWith) throw this.failWith;
+  });
+  pause: Mock<() => void> = vi.fn();
+  end() {
+    this.onended?.call(this as unknown as HTMLAudioElement, new Event('ended'));
+  }
+}
+
+interface PendingSynthesis {
+  req: KokoroSynthesizeRequest;
+  resolve: (r: KokoroSynthesizeResult) => void;
+  reject: (e: Error) => void;
+}
+
+/**
+ * A controllable `window.signflow.kokoro`. Requests stay pending until the test
+ * calls `respond()`/`fail()` (or set `autoRespond`). `cancel()` rejects pending
+ * requests with the same coded error the main process uses.
+ */
+export class FakeKokoro implements KokoroBridge {
+  current: KokoroStatus;
+  autoRespond = false;
+  /** Every request ever made, in order. */
+  readonly requests: KokoroSynthesizeRequest[] = [];
+  readonly pending: PendingSynthesis[] = [];
+  private readonly listeners = new Set<(s: KokoroStatus) => void>();
+  /** What `prepare()` moves the status to (default: ready, unless missing). */
+  prepareResult: KokoroStatus | null = null;
+
+  constructor(status: KokoroStatus = { state: 'ready', loadMs: 1234 }) {
+    this.current = status;
+  }
+
+  status: Mock<KokoroBridge['status']> = vi.fn(async () => this.current);
+  prepare: Mock<KokoroBridge['prepare']> = vi.fn(async () => {
+    if (this.prepareResult) this.setStatus(this.prepareResult);
+    return this.current;
+  });
+  synthesize: Mock<KokoroBridge['synthesize']> = vi.fn((req: KokoroSynthesizeRequest) => {
+    this.requests.push(req);
+    if (this.current.state === 'missing') return Promise.reject(new Error(encodeKokoroError('missing', 'The Kokoro voice model is not installed.')));
+    return new Promise<KokoroSynthesizeResult>((resolve, reject) => {
+      this.pending.push({ req, resolve, reject });
+      if (this.autoRespond) queueMicrotask(() => this.respond(req.id));
+    });
+  });
+  cancel: Mock<KokoroBridge['cancel']> = vi.fn(async (ids?: string[]) => {
+    for (const p of [...this.pending]) {
+      if (!ids || ids.includes(p.req.id)) this.fail(p.req.id, 'cancelled', 'Cancelled');
+    }
+  });
+  release: Mock<KokoroBridge['release']> = vi.fn(async () => {
+    await this.cancel();
+    if (this.current.state === 'ready' || this.current.state === 'loading') this.setStatus({ state: 'installed' });
+  });
+  onStatus: Mock<KokoroBridge['onStatus']> = vi.fn((cb: (s: KokoroStatus) => void) => {
+    this.listeners.add(cb);
+    return () => void this.listeners.delete(cb);
+  });
+
+  setStatus(status: KokoroStatus): void {
+    this.current = status;
+    for (const l of this.listeners) l(status);
+  }
+
+  private take(id?: string): PendingSynthesis {
+    const i = id === undefined ? 0 : this.pending.findIndex((p) => p.req.id === id);
+    const p = this.pending[i];
+    if (!p) throw new Error(`No pending Kokoro request ${id ?? ''}`);
+    this.pending.splice(i, 1);
+    return p;
+  }
+
+  /** Resolve the oldest pending request (or the one with `id`) with a tiny WAV. */
+  respond(id?: string): void {
+    const p = this.take(id);
+    p.resolve({ id: p.req.id, wav: new Uint8Array([82, 73, 70, 70]), durationS: 1.5, synthMs: 300 });
+  }
+
+  fail(id: string | undefined, code: KokoroErrorCode, message = 'boom'): void {
+    const p = this.take(id);
+    p.reject(new Error(`Error invoking remote method 'kokoro:synthesize': Error: ${encodeKokoroError(code, message)}`));
+  }
 }

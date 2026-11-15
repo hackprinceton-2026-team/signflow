@@ -2,6 +2,7 @@ import { contextBridge, ipcRenderer } from 'electron';
 import { IpcChannels } from '@shared/ipc';
 import type { SignflowApi } from '@shared/api';
 import type { CaptionPayload } from '@shared/captions';
+import type { KokoroStatus } from '@shared/kokoro';
 
 /** Subscribe to a main→renderer channel without leaking the IpcRendererEvent. */
 function subscribe<T>(channel: string, cb: (value: T) => void): () => void {
@@ -35,6 +36,14 @@ const api: SignflowApi = {
     getState: () => ipcRenderer.invoke(IpcChannels.captionsGetState),
     onRender: (cb) => subscribe<CaptionPayload>(IpcChannels.captionsRender, cb),
     close: () => ipcRenderer.send(IpcChannels.captionsClose),
+  },
+  kokoro: {
+    status: () => ipcRenderer.invoke(IpcChannels.kokoroStatus),
+    prepare: () => ipcRenderer.invoke(IpcChannels.kokoroPrepare),
+    synthesize: (request) => ipcRenderer.invoke(IpcChannels.kokoroSynthesize, request),
+    cancel: (ids) => ipcRenderer.invoke(IpcChannels.kokoroCancel, ids),
+    release: () => ipcRenderer.invoke(IpcChannels.kokoroRelease),
+    onStatus: (cb) => subscribe<KokoroStatus>(IpcChannels.kokoroStatusChanged, cb),
   },
   view: {
     setFullScreen: (fullScreen) => ipcRenderer.invoke(IpcChannels.viewSetFullScreen, fullScreen),

@@ -2,6 +2,7 @@ import '@testing-library/jest-dom/vitest';
 import { afterEach, vi } from 'vitest';
 import { cleanup, configure } from '@testing-library/react';
 import type { SignflowApi } from '@shared/api';
+import { encodeKokoroError } from '@shared/kokoro';
 
 // jsdom under a parallel full-suite run can be slow; 1s (the default) is tight.
 configure({ asyncUtilTimeout: 3000 });
@@ -39,6 +40,17 @@ export function installFakeBridge(overrides: Partial<SignflowApi> = {}): Signflo
       })),
       onRender: vi.fn(() => () => undefined),
       close: vi.fn(),
+    },
+    // Default: Kokoro isn't installed (tests that need it pass a FakeKokoro bridge).
+    kokoro: {
+      status: vi.fn(async () => ({ state: 'missing' as const, message: 'The Kokoro voice model is not installed.' })),
+      prepare: vi.fn(async () => ({ state: 'missing' as const, message: 'The Kokoro voice model is not installed.' })),
+      synthesize: vi.fn(async () => {
+        throw new Error(encodeKokoroError('missing', 'The Kokoro voice model is not installed.'));
+      }),
+      cancel: vi.fn(async () => undefined),
+      release: vi.fn(async () => undefined),
+      onStatus: vi.fn(() => () => undefined),
     },
     view: {
       setFullScreen: vi.fn(async (v: boolean) => v),

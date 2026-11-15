@@ -27,6 +27,15 @@ const shared = { '@shared': resolve(root, 'src/shared') };
 export default defineConfig({
   main: {
     resolve: { alias: shared },
+    build: {
+      rollupOptions: {
+        input: {
+          index: resolve(root, 'src/main/index.ts'),
+          // Kokoro local voice, run in an Electron utilityProcess (see src/main/kokoro).
+          kokoroWorker: resolve(root, 'src/main/kokoro/worker.ts'),
+        },
+      },
+    },
   },
   preload: {
     resolve: { alias: shared },

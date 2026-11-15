@@ -1262,7 +1262,9 @@
   flex-wrap: wrap;
 }
 
-.cloud-voice-picker {
+.cloud-voice-picker,
+.speech-engine-picker,
+.kokoro-panel {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);

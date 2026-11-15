@@ -7,6 +7,7 @@ export function clampSpeechOptions(opts: SpeechOptions): SpeechOptions {
   return {
     voiceId: opts.voiceId,
     cloudVoiceId: opts.cloudVoiceId,
+    kokoroVoiceId: opts.kokoroVoiceId,
     rate: clamp(opts.rate, 0.1, 10, 1),
     pitch: clamp(opts.pitch, 0, 2, 1),
     volume: clamp(opts.volume, 0, 1, 1),

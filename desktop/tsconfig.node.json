@@ -15,6 +15,7 @@
     "src/preload/**/*",
     "src/shared/**/*",
     "contract/**/*",
+    "scripts/**/*",
     "src/renderer/src/**/*.node.test.ts",
     "src/renderer/src/adapters/remote/guards.ts",
     "src/renderer/src/contract/**/*"
