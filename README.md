@@ -48,5 +48,5 @@ See [`desktop/README.md`](desktop/README.md) for scripts and architecture.
 ## Team
 
 - **Raimbek**: desktop app
-- **Muhammad**: backend
+- **Muhammad**: Backend and AI Engineering
 - **Umar**: ML
