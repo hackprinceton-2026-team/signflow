@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { MAX_SIGNS_PER_REQUEST, RemoteTranslator } from './remoteTranslator';
 import { createFakeBackend } from '../../test/fakeBackend';
 import type { RecognizedSign } from '../types';
@@ -30,6 +30,21 @@ describe('RemoteTranslator', () => {
     expect(backend.callsTo('/translate').map((c) => (c.body as { raw_signs: string[] }).raw_signs.length)).toEqual([64, 6]);
     expect(draft.text).toBe('part(64) part(6)');
     expect(draft.signIds).toHaveLength(70);
+  });
+
+  it('reports failures (for a status refresh) but not cancellations', async () => {
+    const onFailure = vi.fn();
+    const offline = createFakeBackend({ offline: true });
+    await expect(new RemoteTranslator(offline.client, 'chat', onFailure).translate([sign('HI')])).rejects.toMatchObject({ kind: 'offline' });
+    expect(onFailure).toHaveBeenCalledWith(expect.objectContaining({ kind: 'offline' }));
+
+    onFailure.mockClear();
+    const ctrl = new AbortController();
+    ctrl.abort();
+    await expect(new RemoteTranslator(createFakeBackend().client, 'chat', onFailure).translate([sign('HI')], { signal: ctrl.signal })).rejects.toMatchObject({
+      kind: 'aborted',
+    });
+    expect(onFailure).not.toHaveBeenCalled();
   });
 
   it('propagates backend errors with their user-facing message', async () => {

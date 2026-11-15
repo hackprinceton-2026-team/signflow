@@ -1,6 +1,6 @@
 import { newId } from '../emitter';
 import type { EnglishDraft, RecognizedSign, Translator } from '../types';
-import type { BackendClient } from './backendClient';
+import { BackendError, type BackendClient } from './backendClient';
 import type { TranslationMode } from './guards';
 
 /** The backend accepts at most this many glosses per request (TranslationRequest.raw_signs). */
@@ -13,15 +13,22 @@ export class RemoteTranslator implements Translator {
   constructor(
     private readonly client: BackendClient,
     private readonly mode: TranslationMode = 'chat',
+    /** Told about backend failures (not cancellations), e.g. to refresh the connection status. */
+    private readonly onFailure?: (error: BackendError) => void,
   ) {}
 
   async translate(signs: readonly RecognizedSign[], { signal }: { signal?: AbortSignal } = {}): Promise<EnglishDraft> {
     const glosses = signs.map((s) => s.gloss);
     // Unusually long runs (no pause) are translated in order, in chunks the backend accepts.
     const parts: string[] = [];
-    for (let i = 0; i < glosses.length; i += MAX_SIGNS_PER_REQUEST) {
-      const res = await this.client.translate({ raw_signs: glosses.slice(i, i + MAX_SIGNS_PER_REQUEST), mode: this.mode }, { signal });
-      parts.push(res.translated_text);
+    try {
+      for (let i = 0; i < glosses.length; i += MAX_SIGNS_PER_REQUEST) {
+        const res = await this.client.translate({ raw_signs: glosses.slice(i, i + MAX_SIGNS_PER_REQUEST), mode: this.mode }, { signal });
+        parts.push(res.translated_text);
+      }
+    } catch (err) {
+      if (err instanceof BackendError && err.kind !== 'aborted') this.onFailure?.(err);
+      throw err;
     }
     const confidence = signs.length ? signs.reduce((sum, s) => sum + s.confidence, 0) / signs.length : 0;
     return {

@@ -95,17 +95,18 @@ body {
 }
 
 .caption-line:not(:last-child) {
-  opacity: 0.7;
+  /* Older lines step back by size and tone, but stay well above AA contrast. */
+  color: rgba(255, 255, 255, 0.86);
   font-size: 0.85em;
 }
 
 .caption-live {
   font-style: italic;
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .caption-idle {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.88);
   font-weight: 500;
   font-size: 0.7em;
 }

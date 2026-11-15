@@ -17,11 +17,30 @@
 
 The draft follows you: on Workspace and Notes it appears as a dock at the bottom, so you can confirm without going back to Live.
 
+## Demo and live modes
+
+Choose in **Settings › Connection**:
+
+| Mode     | Translation                                            | Speech                                     | Needs                          |
+| -------- | ------------------------------------------------------ | ------------------------------------------ | ------------------------------ |
+| **Demo** | Mock translator, on the device                         | System voice                               | Nothing                        |
+| **Live** | SignFlow backend (`POST /translate`, Gemini), with an Everyday / Medical / Emergency context | System voice, or **cloud voice** (`POST /speak`, Amazon Polly) with automatic fallback to the system voice | The backend running on `http://localhost:8000` (see `backend/README.md`) |
+
+Signs come from the demo recognizer in both modes until the ML model is connected. Switching modes never restarts recognition.
+
+Live mode is built to fail gracefully:
+- **Status:** the backend's state shows in the top bar and in Settings (online, not configured, offline), with setup hints and "Check again". It's polled every 15 s, re-checked when the network returns, and refreshed immediately after any failed request.
+- **Translation errors:** the backend's explanation appears in the draft (for example a missing `GOOGLE_API_KEY`), with **Retry** and **Use demo mode**. The latter finishes the same phrase locally; the signs are kept.
+- **Cloud voice errors:** the same confirmed text is spoken with the system voice instead, and a notice says so.
+
+The backend URL is fixed to `http://localhost:8000` because it's the only backend origin the renderer's CSP allows (`src/shared/csp.ts`).
+
 ## Speech and confirmation safety
 
 - Nothing is **spoken or saved** until you confirm it.
 - **Confirm** commits the text to the conversation (and to notes when capture is on).
 - **Speak** confirms first, then speaks exactly the confirmed text. There is no way to speak an unconfirmed draft.
+- In live mode, `/translate` returns text only. `/speak` is called only from the confirm path, with the final (possibly edited) text. Tests assert both on the wire.
 - **Speak when confirming** (Settings) is opt-in and off by default. **Test voice** speaks a fixed phrase, never your text.
 - Floating captions show unconfirmed in-progress text only if **Show in-progress text** is on.
 
@@ -61,9 +80,9 @@ All shortcuts come from one table (`src/renderer/src/app/shortcuts.ts`), which a
 | `npm run typecheck`         | `tsc` for main/preload, renderer, and e2e projects                   |
 | `npm run lint`              | ESLint (includes guards against unsafe `webPreferences`)             |
 | `npm test`                  | Vitest unit + component tests                                        |
-| `npm run test:e2e`          | Builds, then runs Playwright against Electron (smoke + accessibility) |
+| `npm run test:e2e`          | Builds, then runs Playwright against Electron: smoke, accessibility, and live mode (against a contract-validating stand-in backend; `SIGNFLOW_E2E_BACKEND=external` uses a backend you started) |
 | `npm run check`             | typecheck + lint + unit tests + contract check                       |
-| `npm run contract:generate` | TypeScript types from the backend's OpenAPI document (see `contract/`) |
+| `npm run contract:sync`     | Pin `../backend/openapi.json` and regenerate the TypeScript types (see `contract/`) |
 
 ## Layout
 
@@ -82,7 +101,7 @@ src/
       components/  panels used by the screens (signs feed, transcript, notes, speech)
       ui/          design-system primitives and icons
       styles/      tokens, base, components, app
-      adapters/    SignRecognizer / Translator / SpeechEngine interfaces + mocks
+      adapters/    SignRecognizer / Translator / SpeechEngine interfaces, mocks (demo), remote/ (live backend)
       state/       pure reducers (session, notes): most logic is unit-tested here
       hooks/       camera, frame sampler, session orchestration, speech, notes, captions
       contract/    generated wire types from the backend contract (placeholder for now)
@@ -101,7 +120,7 @@ The UI depends only on the interfaces in `src/renderer/src/adapters/types.ts`:
 | `Translator`     | signs → `EnglishDraft` (backend/)             | `mock/mockTranslator.ts`    |
 | `SpeechEngine`   | text → audio                                  | `speech.ts` (system voices) |
 
-Wire types will be generated from the backend's Pydantic models (see [`contract/README.md`](contract/README.md)). Then a `remote` adapter maps them to these interfaces and is registered in `createAdapters()`. No screen or component needs to change.
+Live mode implements them over HTTP in `src/renderer/src/adapters/remote/`: `createBackendClient` (typed by the generated contract, with timeouts and typed errors), `RemoteTranslator`, `CloudSpeechEngine`, and `FallbackSpeechEngine`. Wire types are generated from the backend's Pydantic models (see [`contract/README.md`](contract/README.md)). A real recognizer can plug in the same way once `ml/` serves one.
 
 ## Security model
 

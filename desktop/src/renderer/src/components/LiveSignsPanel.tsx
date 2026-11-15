@@ -71,7 +71,8 @@ export function LiveSignsPanel({
       {liveSigns.length === 0 ? (
         <p className="empty-state">Recognized signs will stream here with their confidence.</p>
       ) : (
-        <ol className="sign-feed" aria-label="Recognized signs, newest first">
+        // Focusable so keyboard users can scroll it (it has no interactive children).
+        <ol className="sign-feed" aria-label="Recognized signs, newest first" tabIndex={0}>
           {liveSigns.map((sign) => {
             const st = signState(sign, settings);
             return (

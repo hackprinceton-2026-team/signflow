@@ -81,21 +81,25 @@ export function useSignFlowController({ adapters, initialSettings, backendClient
   // Live mode swaps the translator (and optionally speech) for the backend's. The
   // recognizer is the same object in both modes, so switching never restarts it.
   const live = connection.mode === 'live';
+  const health = useBackendHealth(client, live);
+  // A failed request refreshes the status right away, so the top bar never says
+  // "AI online" next to an "unreachable" error.
+  const { check: recheckBackend } = health;
   const translator = useMemo<Translator>(
-    () => (live ? new RemoteTranslator(client, connection.context) : adapters.translator),
-    [adapters.translator, client, connection.context, live],
+    () => (live ? new RemoteTranslator(client, connection.context, () => void recheckBackend()) : adapters.translator),
+    [adapters.translator, client, connection.context, live, recheckBackend],
   );
   const speechEngine = useMemo<SpeechEngine>(() => {
     if (!live || connection.voice !== 'cloud') return adapters.speech;
     const cloud = new CloudSpeechEngine({ client, muted: silentSpeech });
     return new FallbackSpeechEngine(cloud, adapters.speech, (err) => {
-      const reason = err instanceof BackendError ? err.message : 'playback failed';
+      const reason = err instanceof BackendError ? err.message : 'playback failed.';
       setNotice({ id: newId(), message: `Cloud voice unavailable: ${reason} Used the system voice instead.` });
+      if (err instanceof BackendError) void recheckBackend();
     });
-  }, [adapters.speech, client, connection.voice, live, silentSpeech]);
+  }, [adapters.speech, client, connection.voice, live, recheckBackend, silentSpeech]);
 
   const speech = useSpeech(speechEngine);
-  const health = useBackendHealth(client, live);
   const notes = useNotes();
 
   const { speak, available: speechAvailable } = speech;

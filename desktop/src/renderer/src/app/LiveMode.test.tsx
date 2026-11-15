@@ -154,6 +154,16 @@ describe('live mode: offline and error handling', () => {
     expect(backend.callsTo('/translate')).toHaveLength(1); // the failed attempt only
   });
 
+  it('a failed translation refreshes the status at once (no stale "AI online")', async () => {
+    const { backend, recognizer } = renderApp();
+    await goLive();
+    await waitFor(() => expect(screen.getByTestId('status-backend')).toHaveTextContent('AI online'));
+    backend.state.offline = true;
+    await signPhrase(recognizer, ['HELLO']);
+    await screen.findByRole('alert');
+    await waitFor(() => expect(screen.getByTestId('status-backend')).toHaveTextContent('AI offline'));
+  });
+
   it('retry succeeds once the backend is back', async () => {
     const { backend, recognizer } = renderApp(createFakeBackend({ offline: true }));
     await goLive();

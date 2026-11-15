@@ -39,6 +39,11 @@ describe('<LiveSignsPanel />', () => {
     expect(screen.getByRole('meter', { name: 'HOW confidence' })).toHaveAttribute('aria-valuenow', '91');
   });
 
+  it('the feed is keyboard-scrollable (focusable list)', () => {
+    renderPanel();
+    expect(screen.getByRole('list', { name: 'Recognized signs, newest first' })).toHaveAttribute('tabindex', '0');
+  });
+
   it('shows the current phrase and wires its actions', () => {
     const props = renderPanel();
     expect(within(screen.getByTestId('phrase-buffer')).getByText('HOW')).toBeInTheDocument();

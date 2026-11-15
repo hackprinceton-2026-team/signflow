@@ -800,6 +800,12 @@
   overflow: auto;
 }
 
+.sign-feed:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
 .sign-row {
   display: grid;
   grid-template-columns: minmax(96px, 1fr) minmax(120px, 2fr) 48px 104px;
@@ -841,11 +847,19 @@
 }
 
 .sign-rejected {
-  opacity: 0.55;
+  background: transparent;
 }
 
+/* Rejected = struck-through gloss and a dimmed bar. Text keeps full contrast
+   (no row opacity), so it stays readable and passes WCAG AA. */
 .sign-rejected .sign-gloss {
+  color: var(--text-secondary);
   text-decoration: line-through;
+  text-decoration-color: var(--text-tertiary);
+}
+
+.sign-rejected .ui-meter {
+  opacity: 0.6;
 }
 
 .conf-high {
